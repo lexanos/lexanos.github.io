@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>David Axel Dascanio | Game Developer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0f1115;
+      --card: #1a1d24;
+      --accent: #4da3ff;
+      --text: #e6e6e6;
+      --muted: #9aa0aa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    header {
+      padding: 24px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0b0d12;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    header h1 { font-size: 20px; margin: 0; }
+    nav a {
+      margin-left: 20px;
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    nav a:hover { color: var(--accent); }
+    .hero {
+      padding: 80px 40px 40px;
+    }
+    .hero h2 {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+    .hero p { max-width: 700px; color: var(--muted); }
+    .section {
+      padding: 40px;
+    }
+    .section h3 {
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: var(--card);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.4);
+    }
+    .thumb {
+      height: 150px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .content {
+      padding: 16px;
+    }
+    .content h4 { margin: 0 0 6px; }
+    .content p { margin: 0; font-size: 14px; color: var(--muted); }
+    footer {
+      padding: 40px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .tags span {
+      display: inline-block;
+      background: #2a2f3a;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      margin-right: 6px;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Dascanio David Axel</h1>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#projects">Games</a>
+    <a href="#blog">Blog</a>
+    <a href="#notes">Notes</a>
+    <a href="#donations">Donations</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<section class="hero" id="home">
+  <h2>Game Developer · Unity · C#</h2>
+  <p>
+    Unity developer and game designer with experience in full-cycle game development, from concept and narrative to programming, shaders, UI/UX and publishing. Specialized in solo and small-team projects.
+  </p>
+</section>
+
+<section class="section" id="projects">
+  <h3>Featured Games & Projects</h3>
+  <div class="grid">
+
+    <div class="card">
+      <div class="thumb">Video / Image</div>
+      <div class="content">
+        <h4>Pirate Penguin – Forja de Almas</h4>
+        <p>Unity · GUI Programming · Multiplayer · Shaders</p>
+        <div class="tags">
+          <span>C#</span><span>Unity</span><span>URP</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="thumb">Video / Image</div>
+      <div class="content">
+        <h4>LLamageddon</h4>
+        <p>Solo Dev · Meme Game</p>
+        <div class="tags">
+          <span>Game Design</span><span>2D Art</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="thumb">Video / Image</div>
+      <div class="content">
+        <h4>Agent Rabbit Climber Ninja</h4>
+        <p>Mobile Casual Game</p>
+        <div class="tags">
+          <span>Mobile</span><span>Audio</span><span>Art</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="thumb">Video / Image</div>
+      <div class="content">
+        <h4>Artool</h4>
+        <p>Creative Tool · Brainstorming</p>
+        <div class="tags">
+          <span>Tool</span><span>UX</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="section" id="blog">
+  <h3>Blog (Coming Soon)</h3>
+  <p class="muted">Personal posts, dev thoughts and experiences.</p>
+</section>
+
+<section class="section" id="notes">
+  <h3>Notes & Ideas</h3>
+  <p class="muted">Game ideas, mechanics concepts and experiments.</p>
+</section>
+
+<section class="section" id="donations">
+  <h3>Support & Donations</h3>
+  <p class="muted">This section will allow donations and community voting in the future.</p>
+</section>
+
+<section class="section" id="contact">
+  <h3>Contact</h3>
+  <p>Email: <a href="mailto:lexa.nosferatu@gmail.com">lexa.nosferatu@gmail.com</a></p>
+  <p>LinkedIn: <a href="https://www.linkedin.com/in/daviddascanio/" target="_blank">Profile</a></p>
+  <p>Itch.io: <a href="https://lexanos.itch.io/" target="_blank">Portfolio</a></p>
+</section>
+
+<footer>
+  © 2025 David Axel Dascanio · Built for GitHub Pages
+</footer>
+
+</body>
+</html>
