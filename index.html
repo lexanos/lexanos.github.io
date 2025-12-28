@@ -114,14 +114,14 @@
   </nav>
 </header>
 
-<section class="hero" id="home">
+<section class="hero section-page" id="home">
   <h2>Game Developer · Unity · C#</h2>
   <p>
     Unity developer and game designer with experience in full-cycle game development, from concept and narrative to programming, shaders, UI/UX and publishing. Specialized in solo and small-team projects.
   </p>
 </section>
 
-<section class="section" id="projects">
+<section class="section section-page" id="projects">
   <h3>Featured Games & Projects</h3>
   <div class="grid">
 
@@ -172,22 +172,22 @@
   </div>
 </section>
 
-<section class="section" id="blog">
+<section class="section section-page" id="blog">
   <h3>Blog (Coming Soon)</h3>
   <p class="muted">Personal posts, dev thoughts and experiences.</p>
 </section>
 
-<section class="section" id="notes">
+<section class="section section-page" id="notes">
   <h3>Notes & Ideas</h3>
   <p class="muted">Game ideas, mechanics concepts and experiments.</p>
 </section>
 
-<section class="section" id="donations">
+<section class="section section-page" id="donations">
   <h3>Support & Donations</h3>
   <p class="muted">This section will allow donations and community voting in the future.</p>
 </section>
 
-<section class="section" id="contact">
+<section class="section section-page" id="contact">
   <h3>Contact</h3>
   <p>Email: <a href="mailto:lexa.nosferatu@gmail.com">lexa.nosferatu@gmail.com</a></p>
   <p>LinkedIn: <a href="https://www.linkedin.com/in/daviddascanio/" target="_blank">Profile</a></p>
@@ -197,6 +197,30 @@
 <footer>
   © 2025 David Axel Dascanio · Built for GitHub Pages
 </footer>
+
+<script>
+  const pages = document.querySelectorAll('.section-page');
+  const navLinks = document.querySelectorAll('nav a');
+
+  function showPage(id) {
+    pages.forEach(p => p.style.display = 'none');
+    const page = document.getElementById(id);
+    if (page) page.style.display = 'block';
+  }
+
+  navLinks.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const id = link.getAttribute('href').replace('#', '');
+      history.pushState(null, '', '#' + id);
+      showPage(id);
+    });
+  });
+
+  // Initial load
+  const initial = location.hash ? location.hash.replace('#', '') : 'home';
+  showPage(initial);
+</script>
 
 </body>
 </html>
