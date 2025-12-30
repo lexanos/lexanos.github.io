@@ -62,7 +62,7 @@
       <div class="hero-left">
         <h2 id="homeTitle">Desarrollador de Juegos · Unity · C#</h2>
         <p id="homeDesc">Programador y artista de videojuegos. Experiencia en Unity, C#, shaders, UI/UX, diseño y arte 2D/3D.</p>
-        <a class="cta" data-target="projects">Ver Juegos</a>
+        <a class="cta" href="#" data-target="projects" id="homeProjectsBtn">Ver Juegos</a>
       </div>
       <div class="hero-right">
         <img src="photo.jpg" alt="Foto de David Axel Dascanio" />
@@ -71,7 +71,7 @@
   </section>
 
   <section id="projects" class="section">
-    <h3>Proyectos</h3>
+    <h3>Proyectos <button id="importItchBtn" class="cta" style="margin-left:12px;font-size:14px">Importar desde itch.io</button></h3>
     <div class="grid" id="projectsGrid"></div>
   </section>
 
@@ -246,64 +246,120 @@ const sections=document.querySelectorAll('main .section');
 function showSection(id){sections.forEach(s=>s.classList.remove('active'));const el=document.getElementById(id);if(el)el.classList.add('active');navLinks.forEach(a=>a.classList.toggle('active',a.dataset.target===id));window.scrollTo(0,0);} 
 navLinks.forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showSection(a.dataset.target);}));
 
+// Home "Ver Juegos" button
+const homeProjectsBtn = document.getElementById('homeProjectsBtn');
+if(homeProjectsBtn){
+  homeProjectsBtn.addEventListener('click', (e)=>{
+    e.preventDefault();
+    showSection('projects');
+  });
+}
+
 // --- Language
 function applyLang(){const d=I18N[LANG];document.getElementById('homeTitle').innerText=d.homeTitle;document.getElementById('homeDesc').innerText=d.homeDesc;} 
 applyLang();
 
 // --- Render cards (with hover video support)
-const grid=document.getElementById('projectsGrid');
-grid.innerHTML='';
-PROJECTS.forEach(p=>{
-  const card=document.createElement('div'); card.className='card';
+function renderProjects(){
+  const grid=document.getElementById('projectsGrid');
+  grid.innerHTML='';
+  PROJECTS.forEach(p=>{
+    const card=document.createElement('div'); card.className='card';
 
-  // Thumbnail container with image + optional hover video
-  const thumb=document.createElement('div'); thumb.className='thumb'; thumb.style.position='relative';
-  const imgSrc = (p.media && p.media.find(m=>m.type==='image')) ? p.media.find(m=>m.type==='image').src : 'images/placeholder_thumb.jpg';
-  const img=document.createElement('img'); img.src=imgSrc; img.alt=p.title;
-  thumb.appendChild(img);
+    // Thumbnail container with image + optional hover video
+    const thumb=document.createElement('div'); thumb.className='thumb'; thumb.style.position='relative';
+    const imgSrc = (p.media && p.media.find(m=>m.type==='image')) ? p.media.find(m=>m.type==='image').src : 'images/placeholder_thumb.jpg';
+    const img=document.createElement('img'); img.src=imgSrc; img.alt=p.title;
+    thumb.appendChild(img);
 
-  const videoItem = (p.media || []).find(m=>m.type==='video');
-  if(videoItem){
-    const vid=document.createElement('video');
-    vid.muted=true; vid.loop=true; vid.preload='metadata';
-    vid.style.position='absolute'; vid.style.top='0'; vid.style.left='0'; vid.style.width='100%'; vid.style.height='100%'; vid.style.objectFit='cover'; vid.style.display='none';
-    if(videoItem.src && videoItem.src!=='PLACEHOLDER_VIDEO') vid.src=videoItem.src;
-    if(videoItem.poster) img.src = videoItem.poster; // use poster as default image if provided
-    thumb.appendChild(vid);
+    const videoItem = (p.media || []).find(m=>m.type==='video');
+    if(videoItem){
+      const vid=document.createElement('video');
+      vid.muted=true; vid.loop=true; vid.preload='metadata';
+      vid.style.position='absolute'; vid.style.top='0'; vid.style.left='0'; vid.style.width='100%'; vid.style.height='100%'; vid.style.objectFit='cover'; vid.style.display='none';
+      if(videoItem.src && videoItem.src!=='PLACEHOLDER_VIDEO') vid.src=videoItem.src;
+      if(videoItem.poster) img.src = videoItem.poster; // use poster as default image if provided
+      thumb.appendChild(vid);
 
-    // hover play on desktop, click toggle on touch
-    thumb.addEventListener('mouseenter', ()=>{
-      if(vid.src){ img.style.display='none'; vid.style.display='block'; vid.play().catch(()=>{}); }
+      // hover play on desktop, click toggle on touch
+      thumb.addEventListener('mouseenter', ()=>{
+        if(vid.src){ img.style.display='none'; vid.style.display='block'; vid.play().catch(()=>{}); }
+      });
+      thumb.addEventListener('mouseleave', ()=>{
+        if(vid.src){ vid.pause(); vid.style.display='none'; img.style.display='block'; }
+      });
+      thumb.addEventListener('click', (ev)=>{
+        // prevent opening detail when toggling video
+        ev.stopPropagation();
+        if(vid.src){ if(vid.paused){ vid.play().catch(()=>{}); vid.style.display='block'; img.style.display='none'; } else { vid.pause(); vid.style.display='none'; img.style.display='block'; } }
+      });
+    }
+
+    const meta=document.createElement('div'); meta.className='meta';
+    meta.innerHTML = `<h4>${p.title} <span style="color:var(--muted);font-size:13px">(${p.year})</span></h4><p>${p.desc[LANG]}</p><div class="tags">${(p.tags||[]).map(t=>`<span>${t}</span>`).join('')}</div>`;
+
+    // make title clickable to open overview (stop propagation to avoid double firing)
+    const titleEl = meta.querySelector('h4');
+    if(titleEl){ titleEl.style.cursor = 'pointer'; titleEl.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); }); }
+
+    // make image clickable to open overview (and still allow toggling video via other clicks)
+    img.style.cursor = 'pointer';
+    img.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); });
+
+    card.appendChild(thumb);
+    card.appendChild(meta);
+
+    // click opens detail (but clicks on thumb video toggle are stopped)
+    card.addEventListener('click', ()=>openDetail(p.id));
+
+    grid.appendChild(card);
+  });
+}
+
+// initial render
+renderProjects();
+
+// --- Itch.io import (uses a public proxy; may fail due to CORS restrictions)
+async function importFromItch(username){
+  if(!username) return alert('Username is required');
+  const proxy = 'https://r.jina.ai/http://' + username + '.itch.io/';
+  try{
+    const res = await fetch(proxy);
+    if(!res.ok) throw new Error('Failed to fetch: '+res.status);
+    const text = await res.text();
+    const doc = new DOMParser().parseFromString(text,'text/html');
+    const anchors = Array.from(doc.querySelectorAll('a'));
+    const games = [];
+    anchors.forEach(a=>{
+      const href = a.getAttribute('href') || a.href || '';
+      const title = (a.textContent||'').trim();
+      // filter likely game links: non-empty title, not too long, and href contains username or starts with '/'
+      if(title && title.length<60 && (href.includes(username+'.itch.io') || href.startsWith('/'))){
+        // avoid duplicates
+        if(!games.find(g=>g.title===title)) games.push({title, href});
+      }
     });
-    thumb.addEventListener('mouseleave', ()=>{
-      if(vid.src){ vid.pause(); vid.style.display='none'; img.style.display='block'; }
+
+    let added = 0;
+    games.forEach(g=>{
+      if(!PROJECTS.find(p=>p.title===g.title)){
+        const id = g.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+        PROJECTS.push({ id:id, title:g.title, year:'', desc:{es:'',en:''}, longDesc:{es:'',en:''}, links:{itch: g.href.startsWith('http')?g.href:'https://'+username+'.itch.io'+g.href}, media:[{type:'image',src:'images/placeholder_thumb.jpg'}], tags:[], devlog:[] });
+        added++;
+      }
     });
-    thumb.addEventListener('click', (ev)=>{
-      // prevent opening detail when toggling video
-      ev.stopPropagation();
-      if(vid.src){ if(vid.paused){ vid.play().catch(()=>{}); vid.style.display='block'; img.style.display='none'; } else { vid.pause(); vid.style.display='none'; img.style.display='block'; } }
-    });
-  }
 
-  const meta=document.createElement('div'); meta.className='meta';
-  meta.innerHTML = `<h4>${p.title} <span style="color:var(--muted);font-size:13px">(${p.year})</span></h4><p>${p.desc[LANG]}</p><div class="tags">${(p.tags||[]).map(t=>`<span>${t}</span>`).join('')}</div>`;
+    if(added>0){ renderProjects(); alert('Importados '+added+' juegos desde '+username); }
+    else alert('No se importaron juegos nuevos desde '+username);
+  }catch(err){ alert('Import falló: '+err.message+' — si falla por CORS, podés exportar la lista manualmente.'); }
+}
 
-  // make title clickable to open overview (stop propagation to avoid double firing)
-  const titleEl = meta.querySelector('h4');
-  if(titleEl){ titleEl.style.cursor = 'pointer'; titleEl.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); }); }
-
-  // make image clickable to open overview (and still allow toggling video via other clicks)
-  img.style.cursor = 'pointer';
-  img.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); });
-
-  card.appendChild(thumb);
-  card.appendChild(meta);
-
-  // click opens detail (but clicks on thumb video toggle are stopped)
-  card.addEventListener('click', ()=>openDetail(p.id));
-
-  grid.appendChild(card);
-});
+// attach import button
+const importBtn = document.getElementById('importItchBtn');
+if(importBtn){ importBtn.addEventListener('click', ()=>{
+  const user = prompt('Nombre de usuario de itch.io (ej: lexanos):','lexanos');
+  if(user) importFromItch(user.trim());
+}); }
 
 // --- Detail
 function openDetail(id){
