@@ -275,3 +275,46 @@ document.getElementById('tabDevlog').onclick = ()=>{
 
   showSection('home');
 });
+// ===============================
+// Contact form submit (real)
+// ===============================
+const contactForm = document.getElementById('contactForm');
+
+if (contactForm) {
+  contactForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById('cName').value.trim();
+    const email = document.getElementById('cEmail').value.trim();
+    const msg = document.getElementById('cMsg').value.trim();
+
+    if (!name || !email || !msg) {
+      alert('Por favor completá todos los campos.');
+      return;
+    }
+
+    try {
+      const res = await fetch(contactForm.action, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: name,
+          email: email,
+          message: msg
+        })
+      });
+
+      if (res.ok) {
+        alert('Mensaje enviado correctamente. ¡Gracias!');
+        contactForm.reset();
+      } else {
+        alert('Error al enviar el mensaje. Intentá más tarde.');
+      }
+    } catch (err) {
+      alert('Error de conexión. Intentá nuevamente.');
+    }
+  });
+}
