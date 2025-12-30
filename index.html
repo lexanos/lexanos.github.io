@@ -65,7 +65,6 @@
         <a class="cta" data-target="projects">Ver Juegos</a>
       </div>
       <div class="hero-right">
-        <!-- Reemplazá photo.jpg por tu foto -->
         <img src="photo.jpg" alt="Foto de David Axel Dascanio" />
       </div>
     </div>
@@ -87,6 +86,7 @@
       <div id="detailOverview">
         <h2 id="detailTitle"></h2>
         <div id="detailMedia" style="margin:12px 0"></div>
+        <div id="detailThumbs" style="margin:12px 0"></div>
         <p id="detailDesc" style="color:var(--muted)"></p>
         <div id="detailLinks" style="margin-top:10px"></div>
       </div>
@@ -152,177 +152,223 @@
 </footer>
 
 <script>
-// --- Data (built from the CV content you provided)
+// --- Data (restaurado + ampliado con assets placeholders)
 const PROJECTS = [
   { id:'piratepenguin', title:'Pirate Penguin / Forja de Almas', year:2024,
     desc:{ es:'Juego de acción con fuerte foco en combate, estética cartoon y progresión de habilidades.', en:'Action game focused on combat, cartoon aesthetics and skill progression.' },
-    links:{}, tags:['Action','Unity'] },
-  { id:'axiebrawl', title:'Pirate Penguin (Axie Brawl) - Axie Sky Mavis', year:2023,
+    longDesc:{ es:'Proyecto de acción con énfasis en combate fluido, shaders personalizados, UI avanzada y progresión de habilidades.', en:'Action project focused on fluid combat, custom shaders, advanced UI and skill progression.' },
+    links:{ itch:'', download:'' },
+    media:[ { type:'image', src:'images/pirate_thumb.jpg' }, { type:'video', src:'PLACEHOLDER_VIDEO', poster:'images/pirate_poster.jpg' } ], tags:['Action','Unity'], devlog:['Inicio del proyecto','Primer prototipo de combate','Iteraciones de UI y shaders'] },
+
+  { id:'axiebrawl', title:'Pirate Penguin (Axie Brawl)', year:2023,
     desc:{ es:'MOBA competitivo con énfasis en partidas rápidas y juego en equipo.', en:'Competitive MOBA focused on fast matches and team play.' },
-    links:{}, tags:['MOBA','Multiplayer'] },
+    longDesc:{ es:'Participación en desarrollo MOBA con foco en C#, gameplay y sistemas multiplayer.', en:'MOBA development with focus on C#, gameplay and multiplayer systems.' },
+    links:{ itch:'', download:'' },
+    media:[ { type:'image', src:'images/axiebrawl_thumb.jpg' }, { type:'video', src:'PLACEHOLDER_VIDEO' } ], tags:['MOBA','Multiplayer'], devlog:['Integración de sistemas multiplayer','Balance inicial de personajes'] },
+
   { id:'llamageddon', title:'Llamageddon', year:2020,
-    desc:{ es:'Juego meme de acción arcade con humor absurdo y partidas cortas.', en:'Arcade meme game with absurd humor and short play sessions.' },
-    links:{ itch:'https://lexanos.itch.io/llamageddon'}, tags:['Arcade'] },
+    desc:{ es:'Juego arcade meme con humor absurdo.', en:'Arcade meme game with absurd humor.' },
+    longDesc:{ es:'Juego corto de acción arcade desarrollado como experimento creativo.', en:'Short arcade action game developed as a creative experiment.' },
+    links:{ itch:'https://lexanos.itch.io/llamageddon', download:'https://lexanos.itch.io/llamageddon' },
+    media:[ { type:'video', src:'PLACEHOLDER_VIDEO', poster:'images/llamageddon_poster.jpg' }, { type:'image', src:'images/llamageddon_ss1.jpg' } ], tags:['Arcade'], devlog:['Concepto inicial','Publicación en itch.io'] },
+
   { id:'artool', title:'Artool', year:2019,
-    desc:{ es:'Herramienta creativa para arte y lluvia de ideas.', en:'Creative tool for art and brainstorming.' },
-    links:{ itch:'https://lexanos.itch.io/artool' }, tags:['Tool'] },
-  { id:'agentrabbit', title:'Agent Rabbit Climber Ninja', year:2018,
-    desc:{ es:'Juego mobile casual de escalada y reflejos.', en:'Casual mobile game focused on climbing and reflexes.' },
-    links:{ itch:'https://lexanos.itch.io/agent-rabbit-climber-ninja' }, tags:['Mobile'] }
+    desc:{ es:'Herramienta creativa para lluvia de ideas.', en:'Creative brainstorming tool.' },
+    longDesc:{ es:'Herramienta experimental para procesos creativos y concept art.', en:'Experimental tool for creative processes and concept art.' },
+    links:{ itch:'https://lexanos.itch.io/artool', download:'https://lexanos.itch.io/artool' },
+    media:[ { type:'image', src:'images/artool_thumb.jpg' } ], tags:['Tool'], devlog:['Diseño de herramienta','Release público'] },
+
+  { id:'agentrabbit', title:'Agent Rabbit - Climber Ninja', year:2018,
+    desc:{ es:'Juego mobile casual de reflejos.', en:'Casual reflex-based mobile game.' },
+    longDesc:{ es:'Juego mobile enfocado en escalada, timing y reflejos rápidos.', en:'Mobile game focused on climbing, timing and fast reflexes.' },
+    links:{ itch:'https://lexanos.itch.io/agent-rabbit-climber-ninja', download:'https://lexanos.itch.io/agent-rabbit-climber-ninja' },
+    media:[ { type:'image', src:'images/agentrabbit_thumb.jpg' }, { type:'video', src:'PLACEHOLDER_VIDEO' } ], tags:['Mobile'], devlog:['Prototipo','Optimización mobile','Release'] },
+
+  { id:'wildroad', title:'Wild Road', year:2019,
+    desc:{ es:'Beat em up clásico con estética contemporánea.', en:'Classic beat em up with contemporary aesthetics.' },
+    longDesc:{ es:'Wild Road es un beat em up con niveles diseñados para combate fluido y mecánicas acumulativas.', en:'Wild Road is a beat em up with levels designed for fluid combat and cumulative mechanics.' },
+    links:{ itch:'', download:'' },
+    media:[ { type:'image', src:'images/wildroad_thumb.jpg' } ], tags:['BeatEmUp'], devlog:[] },
+
+  { id:'pachis', title:'Pachis', year:2020,
+    desc:{ es:'Juego educativo.', en:'Educational game.' },
+    longDesc:{ es:'Pachis es un juego educativo pensado para enseñar conceptos básicos mediante minijuegos.', en:'Pachis is an educational game designed to teach basic concepts through minigames.' },
+    links:{ itch:'https://lexanos.itch.io/pachis', download:'https://lexanos.itch.io/pachis' },
+    media:[ { type:'image', src:'images/pachis_thumb.jpg' } ], tags:['Educational'], devlog:[] },
+
+  { id:'greenbrush', title:'Green Brush', year:2018,
+    desc:{ es:'Strategy game.', en:'Strategy game.' },
+    longDesc:{ es:'Green Brush es un juego de estrategia con componentes educativos y resolución por turnos.', en:'Green Brush is a strategy game with educational components and turn-based resolution.' },
+    links:{ itch:'', download:'' },
+    media:[ { type:'image', src:'images/greenbrush_thumb.jpg' } ], tags:['Strategy'], devlog:[] },
+
+  { id:'thebeyond', title:'The Beyond', year:2017,
+    desc:{ es:'3D Adventure.', en:'3D Adventure.' },
+    longDesc:{ es:'The Beyond explora mecánicas 3D y narrativa ambiental en un mundo semi abierto.', en:'The Beyond explores 3D mechanics and environmental narrative in a semi-open world.' },
+    links:{ itch:'', download:'' },
+    media:[ { type:'image', src:'images/thebeyond_thumb.jpg' } ], tags:['3D'], devlog:[] },
+
+  { id:'alphabet', title:'Alphabet', year:2015,
+    desc:{ es:'Platform Puzzle.', en:'Platform Puzzle.' },
+    longDesc:{ es:'Alphabet es un puzzle-platform premiado por su diseño intuitivo.', en:'Alphabet is a prize-winning puzzle-platformer known for intuitive design.' },
+    links:{ itch:'', download:'' },
+    media:[ { type:'image', src:'images/alphabet_thumb.jpg' } ], tags:['Puzzle'], devlog:[] },
+
+  { id:'drunkaholic', title:'Drunkaholic', year:2015,
+    desc:{ es:'Casual 3D.', en:'Casual 3D game.' },
+    longDesc:{ es:'Proyecto 3D casual orientado a la diversión y experimentación.', en:'Casual 3D project oriented to fun and experimentation.' },
+    links:{ itch:'', download:'' },
+    media:[ { type:'image', src:'images/drunkaholic_thumb.jpg' } ], tags:['Simulation'], devlog:[] },
+
+  { id:'samuraiblade', title:'Samurai Blade : Rock, Paper & Scissors', year:2024,
+    desc:{ es:'Roguelite arcade basado en piedra-papel-tijera.', en:'Roguelite arcade based on rock-paper-scissors combat.' },
+    longDesc:{ es:'Combate roguelite con mecánicas de piedra-papel-tijera como núcleo.', en:'Roguelite combat with rock-paper-scissors mechanics at its core.' },
+    links:{ itch:'', download:'' },
+    media:[ { type:'image', src:'images/samuraiblade_thumb.jpg' } ], tags:['Action'], devlog:[] },
+
+  { id:'zombieattack', title:'Zombie Attack Nightmare Endurance Apocalyptic Edition', year:2020,
+    desc:{ es:'Shooter apocalíptico.', en:'Apocalyptic shooter.' },
+    longDesc:{ es:'Modo endurance apocalíptico con hordas de enemigos.', en:'Endurance apocalyptic mode with hordes of enemies.' },
+    links:{ itch:'', download:'' },
+    media:[ { type:'image', src:'images/zombieattack_thumb.jpg' } ], tags:['Action'], devlog:[] }
 ];
 
-// --- Simple i18n (ES / EN)
+// --- i18n
 const I18N = {
-  es: {
-    homeTitle: 'Desarrollador de Juegos · Unity · C#',
-    homeDesc: 'Programador y artista de videojuegos. Experiencia en Unity, C#, shaders, UI/UX, diseño y arte 2D/3D.',
-    projects: 'Proyectos', blog:'Blog', donations:'Donaciones', about:'Sobre mí', contact:'Contacto', view:'Ver Juegos'
-  },
-  en: {
-    homeTitle: 'Game Developer · Unity · C#',
-    homeDesc: 'Programmer and game artist. Experience in Unity, C#, shaders, UI/UX, design and 2D/3D art.',
-    projects: 'Projects', blog:'Blog / Devlogs', donations:'Donations', about:'About', contact:'Contact', view:'View Games'
-  }
+  es:{ homeTitle:'Desarrollador de Juegos · Unity · C#', homeDesc:'Programador y artista de videojuegos. Experiencia en Unity, C#, shaders, UI/UX, diseño y arte 2D/3D.' },
+  en:{ homeTitle:'Game Developer · Unity · C#', homeDesc:'Programmer and game artist. Experience in Unity, C#, shaders, UI/UX, design and 2D/3D art.' }
 };
-let LANG = 'es';
+let LANG='es';
 
-// --- UI helpers
-const navLinks = document.querySelectorAll('header nav a');
-const sections = document.querySelectorAll('main .section');
-function showSection(id){ sections.forEach(s=>s.classList.remove('active')); const el=document.getElementById(id); if(el) el.classList.add('active'); navLinks.forEach(a=>a.classList.toggle('active', a.dataset.target===id)); window.scrollTo(0,0);} 
+// --- Navigation
+const navLinks=document.querySelectorAll('header nav a');
+const sections=document.querySelectorAll('main .section');
+function showSection(id){sections.forEach(s=>s.classList.remove('active'));const el=document.getElementById(id);if(el)el.classList.add('active');navLinks.forEach(a=>a.classList.toggle('active',a.dataset.target===id));window.scrollTo(0,0);} 
+navLinks.forEach(a=>a.addEventListener('click',e=>{e.preventDefault();showSection(a.dataset.target);}));
 
-navLinks.forEach(a=>a.addEventListener('click', (e)=>{ e.preventDefault(); const t=a.dataset.target; showSection(t); }));
-document.querySelectorAll('[data-target]').forEach(btn=>btn.addEventListener('click', e=>{ const t=btn.dataset.target||btn.getAttribute('data-target'); if(t) showSection(t); }));
-
-document.getElementById('lang').addEventListener('change', e=>{ LANG=e.target.value; applyLang(); });
-function applyLang(){ const d=I18N[LANG]; document.getElementById('homeTitle').innerText=d.homeTitle; document.getElementById('homeDesc').innerText=d.homeDesc; navLinks.forEach(a=>{ const key=a.dataset.target; if(key && d[key]) a.innerText=d[key]; }); document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.datasetI18n || el.getAttribute('data-i18n'); if(k && d[k]) el.innerText=d[k]; }); }
+// --- Language
+function applyLang(){const d=I18N[LANG];document.getElementById('homeTitle').innerText=d.homeTitle;document.getElementById('homeDesc').innerText=d.homeDesc;} 
 applyLang();
 
-// --- Render projects
-const grid = document.getElementById('projectsGrid');
+// --- Render cards (with hover video support)
+const grid=document.getElementById('projectsGrid');
+grid.innerHTML='';
 PROJECTS.forEach(p=>{
-  const card = document.createElement('div'); card.className='card';
-  const thumb = document.createElement('div'); thumb.className='thumb';
-  // If there is a thumbnail image available, you can replace this with an <img> tag
-  thumb.innerHTML = `<div style="padding:12px;color:var(--muted)"><strong>${p.title}</strong></div>`;
-  const meta = document.createElement('div'); meta.className='meta';
-  meta.innerHTML = `<h4>${p.title} <span style="font-weight:600;color:var(--muted);font-size:13px">(${p.year})</span></h4><p>${p.desc[LANG]}</p><div class="tags">${(p.tags||[]).map(t=>`<span>${t}</span>`).join('')}</div>`;
-  card.appendChild(thumb); card.appendChild(meta);
+  const card=document.createElement('div'); card.className='card';
+
+  // Thumbnail container with image + optional hover video
+  const thumb=document.createElement('div'); thumb.className='thumb'; thumb.style.position='relative';
+  const imgSrc = (p.media && p.media.find(m=>m.type==='image')) ? p.media.find(m=>m.type==='image').src : 'images/placeholder_thumb.jpg';
+  const img=document.createElement('img'); img.src=imgSrc; img.alt=p.title;
+  thumb.appendChild(img);
+
+  const videoItem = (p.media || []).find(m=>m.type==='video');
+  if(videoItem){
+    const vid=document.createElement('video');
+    vid.muted=true; vid.loop=true; vid.preload='metadata';
+    vid.style.position='absolute'; vid.style.top='0'; vid.style.left='0'; vid.style.width='100%'; vid.style.height='100%'; vid.style.objectFit='cover'; vid.style.display='none';
+    if(videoItem.src && videoItem.src!=='PLACEHOLDER_VIDEO') vid.src=videoItem.src;
+    if(videoItem.poster) img.src = videoItem.poster; // use poster as default image if provided
+    thumb.appendChild(vid);
+
+    // hover play on desktop, click toggle on touch
+    thumb.addEventListener('mouseenter', ()=>{
+      if(vid.src){ img.style.display='none'; vid.style.display='block'; vid.play().catch(()=>{}); }
+    });
+    thumb.addEventListener('mouseleave', ()=>{
+      if(vid.src){ vid.pause(); vid.style.display='none'; img.style.display='block'; }
+    });
+    thumb.addEventListener('click', (ev)=>{
+      // prevent opening detail when toggling video
+      ev.stopPropagation();
+      if(vid.src){ if(vid.paused){ vid.play().catch(()=>{}); vid.style.display='block'; img.style.display='none'; } else { vid.pause(); vid.style.display='none'; img.style.display='block'; } }
+    });
+  }
+
+  const meta=document.createElement('div'); meta.className='meta';
+  meta.innerHTML = `<h4>${p.title} <span style="color:var(--muted);font-size:13px">(${p.year})</span></h4><p>${p.desc[LANG]}</p><div class="tags">${(p.tags||[]).map(t=>`<span>${t}</span>`).join('')}</div>`;
+
+  // make title clickable to open overview (stop propagation to avoid double firing)
+  const titleEl = meta.querySelector('h4');
+  if(titleEl){ titleEl.style.cursor = 'pointer'; titleEl.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); }); }
+
+  // make image clickable to open overview (and still allow toggling video via other clicks)
+  img.style.cursor = 'pointer';
+  img.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); });
+
+  card.appendChild(thumb);
+  card.appendChild(meta);
+
+  // click opens detail (but clicks on thumb video toggle are stopped)
   card.addEventListener('click', ()=>openDetail(p.id));
+
   grid.appendChild(card);
 });
 
-// --- Detail view
+// --- Detail
 function openDetail(id){
-  const p = PROJECTS.find(x=>x.id===id); if(!p) return;
-  document.getElementById('detailTitle').innerText = p.title;
-  const media = document.getElementById('detailMedia'); media.innerHTML = '';
-  if(p.links && p.links.itch){
-    const iframe = document.createElement('iframe'); iframe.src = p.links.itch;
-    iframe.style.width='100%'; iframe.style.height='400px'; iframe.style.border='0';
-    media.appendChild(iframe);
+  const p=PROJECTS.find(x=>x.id===id); if(!p) return;
+  document.getElementById('detailTitle').innerText=p.title;
+
+  // Main preview area: image or video (video not autoplayed in detail)
+  const media=document.getElementById('detailMedia'); media.innerHTML='';
+  let mainItem = null;
+  if(p.media && p.media.length) mainItem = p.media.find(m=>m.type==='video') || p.media[0];
+  if(mainItem){
+    if(mainItem.type==='video' && mainItem.src && mainItem.src!=='PLACEHOLDER_VIDEO'){
+      const v=document.createElement('video'); v.controls=true; v.src=mainItem.src; v.style.width='100%'; v.style.height='400px'; v.preload='metadata'; media.appendChild(v);
+    } else if(mainItem.type==='image'){
+      const im=document.createElement('img'); im.src=mainItem.src; im.style.width='100%'; im.style.borderRadius='8px'; media.appendChild(im);
+    } else if(mainItem.type==='video' && mainItem.src==='PLACEHOLDER_VIDEO'){
+      const ph=document.createElement('div'); ph.style.height='320px'; ph.style.display='flex'; ph.style.alignItems='center'; ph.style.justifyContent='center'; ph.style.background='#0b0d12'; ph.style.color='var(--muted)'; ph.innerText='Video placeholder'; media.appendChild(ph);
+    }
+  } else if(p.links && p.links.itch){
+    const iframe=document.createElement('iframe'); iframe.src=p.links.itch; iframe.style.width='100%'; iframe.style.height='400px'; iframe.style.border='0'; media.appendChild(iframe);
   } else {
-    media.innerHTML = `<div style="height:320px;background:#0b0d12;display:flex;align-items:center;justify-content:center;color:var(--muted)">Preview disponible</div>`;
+    media.innerHTML = '<div style="height:320px;background:#0b0d12;display:flex;align-items:center;justify-content:center;color:var(--muted)">Preview disponible</div>';
   }
-  document.getElementById('detailDesc').innerText = p.desc[LANG];
-  const linksEl = document.getElementById('detailLinks'); linksEl.innerHTML='';
-  if(p.links){ Object.keys(p.links).forEach(k=>{ const a=document.createElement('a'); a.href=p.links[k]||'#'; a.target='_blank'; a.innerText = k; a.style.marginRight='12px'; linksEl.appendChild(a); }); }
-  const devlog = document.getElementById('detailDevlog'); devlog.innerHTML='';
-  (p.devlog||[]).forEach(d=>{ const li=document.createElement('li'); li.innerText=d; devlog.appendChild(li); });
+
+  // thumbnails row (images/videos)
+  const thumbs=document.getElementById('detailThumbs'); thumbs.innerHTML='';
+  (p.media||[]).forEach(m=>{
+    const t=document.createElement('div'); t.style.width='120px'; t.style.height='68px'; t.style.overflow='hidden'; t.style.borderRadius='8px'; t.style.cursor='pointer'; t.style.background='#000'; t.style.marginRight='8px';
+    if(m.type==='video'){
+      const mv=document.createElement('video'); mv.src = (m.src && m.src!=='PLACEHOLDER_VIDEO') ? m.src : ''; mv.muted=true; mv.preload='metadata'; mv.style.width='100%'; mv.style.height='100%'; mv.style.objectFit='cover'; t.appendChild(mv);
+      t.addEventListener('click', ()=>{
+        // replace main preview
+        const main = document.getElementById('detailMedia'); main.innerHTML='';
+        if(mv.src){ const v=document.createElement('video'); v.controls=true; v.src=mv.src; v.style.width='100%'; v.style.height='400px'; main.appendChild(v); }
+      });
+    } else {
+      const mi=document.createElement('img'); mi.src=m.src; mi.style.width='100%'; mi.style.height='100%'; mi.style.objectFit='cover'; t.appendChild(mi);
+      t.addEventListener('click', ()=>{ const main=document.getElementById('detailMedia'); main.innerHTML=''; const im=document.createElement('img'); im.src=m.src; im.style.width='100%'; im.style.borderRadius='8px'; main.appendChild(im); });
+    }
+    thumbs.appendChild(t);
+  });
+
+  // Description
+  const detailDesc=document.getElementById('detailDesc'); detailDesc.innerText = (p.longDesc && p.longDesc[LANG]) ? p.longDesc[LANG] : p.desc[LANG];
+
+  // Links / download
+  const linksEl=document.getElementById('detailLinks'); linksEl.innerHTML='';
+  if(p.links && p.links.download){ const a=document.createElement('a'); a.href=p.links.download; a.target='_blank'; a.innerText='Download / Play'; a.className='cta'; linksEl.appendChild(a); }
+  else if(p.links && p.links.itch){ const a=document.createElement('a'); a.href=p.links.itch; a.target='_blank'; a.innerText='View on itch.io'; a.className='cta'; linksEl.appendChild(a); }
+  else { const span=document.createElement('div'); span.style.color='var(--muted)'; span.innerText='No download link available yet.'; linksEl.appendChild(span); }
+
+  // devlog
+  const devlog=document.getElementById('detailDevlog'); devlog.innerHTML=''; (p.devlog||[]).forEach(d=>{ const li=document.createElement('li'); li.innerText=d; devlog.appendChild(li); });
+
   showDetailTab('overview');
   showSection('detail');
 }
 
-function showDetailTab(tab){
-  const ov = document.getElementById('detailOverview');
-  const dl = document.getElementById('detailDevlogWrap');
-  const tOv = document.getElementById('tabOverview');
-  const tDl = document.getElementById('tabDevlog');
-  if(tab==='devlog'){
-    ov.style.display='none'; dl.style.display='block';
-    tDl.style.background='var(--accent)'; tOv.style.background='#1a2333';
-  } else {
-    ov.style.display='block'; dl.style.display='none';
-    tOv.style.background='var(--accent)'; tDl.style.background='#1a2333';
-  }
-}
+function showDetailTab(tab){const ov=document.getElementById('detailOverview');const dl=document.getElementById('detailDevlogWrap');const tOv=document.getElementById('tabOverview');const tDl=document.getElementById('tabDevlog');if(tab==='devlog'){ov.style.display='none';dl.style.display='block';tDl.style.background='var(--accent)';tOv.style.background='#1a2333';}else{ov.style.display='block';dl.style.display='none';tOv.style.background='var(--accent)';tDl.style.background='#1a2333';}}
 
-document.addEventListener('click', e=>{
-  if(e.target.id==='tabOverview') showDetailTab('overview');
-  if(e.target.id==='tabDevlog') showDetailTab('devlog');
-});
+document.getElementById('tabOverview').addEventListener('click',()=>showDetailTab('overview'));
+document.getElementById('tabDevlog').addEventListener('click',()=>showDetailTab('devlog'));
+document.getElementById('backToProjects').addEventListener('click',()=>showSection('projects'));
 
-document.getElementById('backToProjects').addEventListener('click', ()=>showSection('projects'));
-
-// --- Blog (ideas y comentarios generales)
-const POSTS = [
-  { id:'idea-1', title:'Ideas generales', date:'2025-01-01', md:`Ideas, notas y pensamientos sobre futuros proyectos y conceptos.` }
-];
-const postsEl = document.getElementById('posts');
-postsEl.innerHTML = '';
-POSTS.forEach(p=>{
-  const c=document.createElement('div'); c.className='card';
-  c.innerHTML=`<div class="meta"><h4>${p.title}</h4><small style="color:var(--muted)">${p.date}</small><p style="color:var(--muted)">${p.md}</p></div>`;
-  postsEl.appendChild(c);
-});
-
-// --- Donations logic (static, GitHub Pages compatible)
-const DONATION_LINKS = {
-  paypal: '#',      // reemplazar por https://paypal.me/tuusuario o donate link
-  payoneer: '#',    // link público Payoneer
-  binance: '#',     // Binance Pay o perfil
-  mercado: '#'      // Link de pago Mercado Pago
-};
-
-function handleDonationClick(type){
-  const url = DONATION_LINKS[type];
-  if(url && url !== '#'){
-    localStorage.setItem('donationThanks','1');
-    window.open(url,'_blank');
-  } else {
-    alert('Enlace de donación aún no configurado.');
-  }
-}
-
-document.querySelectorAll('[data-donate]').forEach(btn=>{
-  btn.addEventListener('click',e=>{
-    e.preventDefault();
-    handleDonationClick(btn.dataset.donate);
-  });
-});
-
-function checkDonationThanks(){
-  if(localStorage.getItem('donationThanks') === '1'){
-    const box = document.getElementById('donThanks');
-    if(box){ box.style.display = 'block'; }
-    localStorage.removeItem('donationThanks');
-  }
-}
-
-// --- Contact form (functional via mailto, GitHub Pages compatible)
-document.getElementById('cSend').addEventListener('click', ()=>{
-  const name = document.getElementById('cName').value.trim();
-  const email = document.getElementById('cEmail').value.trim();
-  const msg = document.getElementById('cMsg').value.trim();
-
-  if(!name || !email || !msg){
-    alert('Por favor completá nombre, email y mensaje.');
-    return;
-  }
-
-  const subject = encodeURIComponent('Mensaje desde portfolio - ' + name);
-  const body = encodeURIComponent(`Nombre: ${name}
-Email: ${email}
-
-Mensaje:
-${msg}`);
-  window.location.href = `mailto:lexa.nosferatu@gmail.com?subject=${subject}&body=${body}`;
-});
-
-// initial view
 showSection('home');
-applyLang();
-checkDonationThanks();
 </script>
 </body>
 </html>
