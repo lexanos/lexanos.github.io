@@ -1,138 +1,169 @@
-// ----------------------------
-// script.js (reemplazar todo)
-// ----------------------------
+<script>
+/* ===========================
+   Script robusto para index
+   Reemplazar TODO el <script> existente
+   =========================== */
 (function(){
-  // Ejecutar cuando DOM esté listo (seguro)
   document.addEventListener('DOMContentLoaded', () => {
 
-    // ===============================
-    // DATA — mantiene los juegos que ya tenías
-    // ===============================
+    // ---------- DATA (usado tal cual en el HTML adjunto) ----------
     const PROJECTS = [
-      {
-        id: "llamageddon",
-        title: "LLamageddon",
-        year: 2020,
-        desc: {
-          es: "Juego arcade meme de acción rápida.",
-          en: "Fast paced arcade meme game."
-        },
-        longDesc: {
-          es: "LLamageddon es un juego arcade con humor absurdo y partidas cortas.",
-          en: "LLamageddon is an arcade game with absurd humor and short sessions."
-        },
-        media: [
-          { type: "image", src: "images/llamageddon.jpg" }
-        ],
-        links: {
-          itch: "https://lexanos.itch.io/llamageddon"
-        },
-        devlog: [
-          "Prototipo inicial",
-          "Balance de dificultad",
-          "Publicación en itch.io"
-        ],
-        tags: ["Arcade", "Meme"]
-      },
-      {
-        id: "artool",
-        title: "Artool",
-        year: 2019,
-        desc: {
-          es: "Herramienta creativa para brainstorming.",
-          en: "Creative brainstorming tool."
-        },
-        longDesc: {
-          es: "Artool es una herramienta experimental para ideas visuales.",
-          en: "Artool is an experimental visual ideation tool."
-        },
-        media: [],
-        links: {
-          itch: "https://lexanos.itch.io/artool"
-        },
-        devlog: [],
-        tags: ["Tool"]
-      }
+      { id:'piratepenguin', title:'Pirate Penguin / Forja de Almas', year:2024,
+        desc:{ es:'Juego de acción con fuerte foco en combate, estética cartoon y progresión de habilidades.', en:'Action game focused on combat, cartoon aesthetics and skill progression.' },
+        longDesc:{ es:'Proyecto de acción con énfasis en combate fluido, shaders personalizados, UI avanzada y progresión de habilidades.', en:'Action project focused on fluid combat, custom shaders, advanced UI and skill progression.' },
+        links:{ itch:'', download:'' },
+        media:[ { type:'image', src:'images/pirate_thumb.jpg' }, { type:'video', src:'PLACEHOLDER_VIDEO', poster:'images/pirate_poster.jpg' } ], tags:['Action','Unity'], devlog:['Inicio del proyecto','Primer prototipo de combate','Iteraciones de UI y shaders'] },
+
+      { id:'axiebrawl', title:'Pirate Penguin (Axie Brawl)', year:2023,
+        desc:{ es:'MOBA competitivo con énfasis en partidas rápidas y juego en equipo.', en:'Competitive MOBA focused on fast matches and team play.' },
+        longDesc:{ es:'Participación en desarrollo MOBA con foco en C#, gameplay y sistemas multiplayer.', en:'MOBA development with focus on C#, gameplay and multiplayer systems.' },
+        links:{ itch:'', download:'' },
+        media:[ { type:'image', src:'images/axiebrawl_thumb.jpg' }, { type:'video', src:'PLACEHOLDER_VIDEO' } ], tags:['MOBA','Multiplayer'], devlog:['Integración de sistemas multiplayer','Balance inicial de personajes'] },
+
+      { id:'llamageddon', title:'Llamageddon', year:2020,
+        desc:{ es:'Juego arcade meme con humor absurdo.', en:'Arcade meme game with absurd humor.' },
+        longDesc:{ es:'Juego corto de acción arcade desarrollado como experimento creativo.', en:'Short arcade action game developed as a creative experiment.' },
+        links:{ itch:'https://lexanos.itch.io/llamageddon', download:'https://lexanos.itch.io/llamageddon' },
+        media:[ { type:'video', src:'PLACEHOLDER_VIDEO', poster:'images/llamageddon_poster.jpg' }, { type:'image', src:'images/llamageddon_ss1.jpg' } ], tags:['Arcade'], devlog:['Concepto inicial','Publicación en itch.io'] },
+
+      { id:'artool', title:'Artool', year:2019,
+        desc:{ es:'Herramienta creativa para lluvia de ideas.', en:'Creative brainstorming tool.' },
+        longDesc:{ es:'Herramienta experimental para procesos creativos y concept art.', en:'Experimental tool for creative processes and concept art.' },
+        links:{ itch:'https://lexanos.itch.io/artool', download:'https://lexanos.itch.io/artool' },
+        media:[ { type:'image', src:'images/artool_thumb.jpg' } ], tags:['Tool'], devlog:['Diseño de herramienta','Release público'] },
+
+      { id:'agentrabbit', title:'Agent Rabbit - Climber Ninja', year:2018,
+        desc:{ es:'Juego mobile casual de reflejos.', en:'Casual reflex-based mobile game.' },
+        longDesc:{ es:'Juego mobile enfocado en escalada, timing y reflejos rápidos.', en:'Mobile game focused on climbing, timing and fast reflexes.' },
+        links:{ itch:'https://lexanos.itch.io/agent-rabbit-climber-ninja', download:'https://lexanos.itch.io/agent-rabbit-climber-ninja' },
+        media:[ { type:'image', src:'images/agentrabbit_thumb.jpg' }, { type:'video', src:'PLACEHOLDER_VIDEO' } ], tags:['Mobile'], devlog:['Prototipo','Optimización mobile','Release'] },
+
+      { id:'wildroad', title:'Wild Road', year:2019,
+        desc:{ es:'Beat em up clásico con estética contemporánea.', en:'Classic beat em up with contemporary aesthetics.' },
+        longDesc:{ es:'Wild Road es un beat em up con niveles diseñados para combate fluido y mecánicas acumulativas.', en:'Wild Road is a beat em up with levels designed for fluid combat and cumulative mechanics.' },
+        links:{ itch:'', download:'' },
+        media:[ { type:'image', src:'images/wildroad_thumb.jpg' } ], tags:['BeatEmUp'], devlog:[] },
+
+      { id:'pachis', title:'Pachis', year:2020,
+        desc:{ es:'Juego educativo.', en:'Educational game.' },
+        longDesc:{ es:'Pachis es un juego educativo pensado para enseñar conceptos básicos mediante minijuegos.', en:'Pachis is an educational game designed to teach basic concepts through minigames.' },
+        links:{ itch:'https://lexanos.itch.io/pachis', download:'https://lexanos.itch.io/pachis' },
+        media:[ { type:'image', src:'images/pachis_thumb.jpg' } ], tags:['Educational'], devlog:[] },
+
+      { id:'greenbrush', title:'Green Brush', year:2018,
+        desc:{ es:'Strategy game.', en:'Strategy game.' },
+        longDesc:{ es:'Green Brush es un juego de estrategia con componentes educativos y resolución por turnos.', en:'Green Brush is a strategy game with educational components and turn-based resolution.' },
+        links:{ itch:'', download:'' },
+        media:[ { type:'image', src:'images/greenbrush_thumb.jpg' } ], tags:['Strategy'], devlog:[] },
+
+      { id:'thebeyond', title:'The Beyond', year:2017,
+        desc:{ es:'3D Adventure.', en:'3D Adventure.' },
+        longDesc:{ es:'The Beyond explora mecánicas 3D y narrativa ambiental en un mundo semi abierto.', en:'The Beyond explores 3D mechanics and environmental narrative in a semi-open world.' },
+        links:{ itch:'', download:'' },
+        media:[ { type:'image', src:'images/thebeyond_thumb.jpg' } ], tags:['3D'], devlog:[] },
+
+      { id:'alphabet', title:'Alphabet', year:2015,
+        desc:{ es:'Platform Puzzle.', en:'Platform Puzzle.' },
+        longDesc:{ es:'Alphabet es un puzzle-platform premiado por su diseño intuitivo.', en:'Alphabet is a prize-winning puzzle-platformer known for intuitive design.' },
+        links:{ itch:'', download:'' },
+        media:[ { type:'image', src:'images/alphabet_thumb.jpg' } ], tags:['Puzzle'], devlog:[] },
+
+      { id:'drunkaholic', title:'Drunkaholic', year:2015,
+        desc:{ es:'Casual 3D.', en:'Casual 3D game.' },
+        longDesc:{ es:'Proyecto 3D casual orientado a la diversión y experimentación.', en:'Casual 3D project oriented to fun and experimentation.' },
+        links:{ itch:'', download:'' },
+        media:[ { type:'image', src:'images/drunkaholic_thumb.jpg' } ], tags:['Simulation'], devlog:[] },
+
+      { id:'samuraiblade', title:'Samurai Blade : Rock, Paper & Scissors', year:2024,
+        desc:{ es:'Roguelite arcade basado en piedra-papel-tijera.', en:'Roguelite arcade based on rock-paper-scissors combat.' },
+        longDesc:{ es:'Combate roguelite con mecánicas de piedra-papel-tijera como núcleo.', en:'Roguelite combat with rock-paper-scissors mechanics at its core.' },
+        links:{ itch:'', download:'' },
+        media:[ { type:'image', src:'images/samuraiblade_thumb.jpg' } ], tags:['Action'], devlog:[] },
+
+      { id:'zombieattack', title:'Zombie Attack Nightmare Endurance Apocalyptic Edition', year:2020,
+        desc:{ es:'Shooter apocalíptico.', en:'Apocalyptic shooter.' },
+        longDesc:{ es:'Modo endurance apocalíptico con hordas de enemigos.', en:'Endurance apocalyptic mode with hordes of enemies.' },
+        links:{ itch:'', download:'' },
+        media:[ { type:'image', src:'images/zombieattack_thumb.jpg' } ], tags:['Action'], devlog:[] }
     ];
 
-    // ===============================
-    // ELEMENTS & HELPERS
-    // ===============================
-    const navLinks = document.querySelectorAll("nav a[data-target]");
-    const sections = document.querySelectorAll(".section");
-    const projectsGrid = document.getElementById("projectsGrid");
-    const homeProjectsBtn = document.getElementById("homeProjectsBtn");
-    const detailSection = document.getElementById("detail");
-    const projectsSection = document.getElementById("projects");
+    // ---------- i18n mínimo ----------
+    const I18N = {
+      es:{ homeTitle:'Desarrollador de Juegos · Unity · C#', homeDesc:'Programador y artista de videojuegos. Experiencia en Unity, C#, shaders, UI/UX, diseño y arte 2D/3D.' },
+      en:{ homeTitle:'Game Developer · Unity · C#', homeDesc:'Programmer and game artist. Experience in Unity, C#, shaders, UI/UX, design and 2D/3D art.' }
+    };
+    let LANG = 'es';
 
-    // detail elements
-    const detailTitle = document.getElementById("detailTitle");
-    const detailMedia = document.getElementById("detailMedia");
-    const detailThumbs = document.getElementById("detailThumbs");
-    const detailDesc = document.getElementById("detailDesc");
-    const detailLinks = document.getElementById("detailLinks");
-    const detailDevlog = document.getElementById("detailDevlog");
+    // ---------- elementos DOM que usaremos ----------
+    const navLinks = document.querySelectorAll('header nav a[data-target]');
+    const sections = document.querySelectorAll('main .section');
+    const projectsGrid = document.getElementById('projectsGrid');
+    const homeProjectsBtn = document.getElementById('homeProjectsBtn');
+    const importBtn = document.getElementById('importItchBtn');
 
-    const tabOverview = document.getElementById("tabOverview");
-    const tabDevlog = document.getElementById("tabDevlog");
-    const overviewWrap = document.getElementById("detailOverview");
-    const devlogWrap = document.getElementById("detailDevlogWrap");
+    const detailTitle = document.getElementById('detailTitle');
+    const detailMedia = document.getElementById('detailMedia');
+    const detailThumbs = document.getElementById('detailThumbs');
+    const detailDesc = document.getElementById('detailDesc');
+    const detailLinks = document.getElementById('detailLinks');
+    const detailDevlog = document.getElementById('detailDevlog');
 
-    // safe placeholder helpers
-    function safeGet(arr, idx, def){ return (arr && arr[idx]) ? arr[idx] : def; }
-    function createTextEl(tag, txt, cls){ const e = document.createElement(tag); e.textContent = txt || ''; if(cls) e.className = cls; return e; }
+    const tabOverview = document.getElementById('tabOverview');
+    const tabDevlog = document.getElementById('tabDevlog');
+    const overviewWrap = document.getElementById('detailOverview');
+    const devlogWrap = document.getElementById('detailDevlogWrap');
 
-    // ===============================
-    // NAV: showSection
-    // ===============================
+    // ---------- helpers ----------
     function showSection(id){
       sections.forEach(s => s.classList.toggle('active', s.id === id));
-      navLinks.forEach(l => l.classList.toggle('active', l.dataset.target === id));
+      navLinks.forEach(a => a.classList.toggle('active', a.dataset.target === id));
       window.scrollTo(0,0);
     }
 
-    // attach nav handlers (idempotent)
-    navLinks.forEach(link => {
-      // remove previous same handler if any (defensive)
-      link.replaceWith(link.cloneNode(true));
-    });
-    // re-query after clones
-    const navLinks2 = document.querySelectorAll("nav a[data-target]");
-    navLinks2.forEach(link => {
-      link.addEventListener('click', e => {
+    function applyLang(){
+      const d = I18N[LANG] || I18N['es'];
+      const ht = document.getElementById('homeTitle');
+      const hd = document.getElementById('homeDesc');
+      if(ht) ht.innerText = d.homeTitle;
+      if(hd) hd.innerText = d.homeDesc;
+    }
+    applyLang();
+
+    // attach nav handlers
+    navLinks.forEach(link=>{
+      link.removeEventListener && link.removeEventListener('click', ()=>{}); // defensive no-op
+      link.addEventListener('click', (e)=>{
         e.preventDefault();
-        const target = link.dataset.target;
-        if(target) showSection(target);
+        const t = link.dataset.target;
+        if(t) showSection(t);
       });
     });
 
-    // Home "Ver Juegos"
     if(homeProjectsBtn){
-      homeProjectsBtn.addEventListener('click', e => {
+      homeProjectsBtn.addEventListener('click', e=>{
         e.preventDefault();
         showSection('projects');
       });
     }
 
-    // ===============================
-    // RENDER: projects grid (cards)
-    // ===============================
+    // ---------- render projects (cards) ----------
     function renderProjects(){
       if(!projectsGrid) return;
       projectsGrid.innerHTML = '';
-      PROJECTS.forEach(p => {
+      PROJECTS.forEach(p=>{
         const card = document.createElement('div');
         card.className = 'card';
 
+        // thumb
         const thumb = document.createElement('div');
         thumb.className = 'thumb';
+        thumb.style.position = 'relative';
 
-        // image (use poster or first image if available; else placeholder)
+        const imageMedia = (p.media||[]).find(m=>m.type==='image');
+        const videoMedia = (p.media||[]).find(m=>m.type==='video');
+
         let imgSrc = 'images/placeholder_thumb.jpg';
-        const imageMedia = p.media && p.media.find(m => m.type === 'image');
-        const videoMedia = p.media && p.media.find(m => m.type === 'video');
         if(imageMedia && imageMedia.src) imgSrc = imageMedia.src;
-        // if video has poster, use it as thumb
         if(videoMedia && videoMedia.poster) imgSrc = videoMedia.poster;
 
         const img = document.createElement('img');
@@ -140,32 +171,23 @@
         img.alt = p.title;
         thumb.appendChild(img);
 
-        // if there's a video and real src, prepare hover play
         if(videoMedia){
           const vid = document.createElement('video');
           if(videoMedia.src && videoMedia.src !== 'PLACEHOLDER_VIDEO') vid.src = videoMedia.src;
-          vid.muted = true;
-          vid.loop = true;
-          vid.preload = 'metadata';
-          vid.style.position = 'absolute';
-          vid.style.top = '0';
-          vid.style.left = '0';
-          vid.style.width = '100%';
-          vid.style.height = '100%';
-          vid.style.objectFit = 'cover';
+          vid.muted = true; vid.loop = true; vid.preload = 'metadata';
+          vid.style.position = 'absolute'; vid.style.top='0'; vid.style.left='0'; vid.style.width='100%'; vid.style.height='100%'; vid.style.objectFit='cover';
           vid.style.display = 'none';
           thumb.appendChild(vid);
 
-          // hover play (desktop)
-          thumb.addEventListener('mouseenter', () => {
-            if(vid.src){ img.style.display = 'none'; vid.style.display = 'block'; vid.play().catch(()=>{}); }
+          thumb.addEventListener('mouseenter', ()=>{
+            if(vid.src){ img.style.display='none'; vid.style.display='block'; vid.play().catch(()=>{}); }
           });
-          thumb.addEventListener('mouseleave', () => {
-            if(vid.src){ vid.pause(); vid.style.display = 'none'; img.style.display = 'block'; }
+          thumb.addEventListener('mouseleave', ()=>{
+            if(vid.src){ vid.pause(); vid.style.display='none'; img.style.display='block'; }
           });
 
-          // click on thumb toggles play (mobile-friendly)
-          thumb.addEventListener('click', ev => {
+          // click toggles play on touch devices
+          thumb.addEventListener('click', (ev)=>{
             ev.stopPropagation();
             if(!vid.src) return;
             if(vid.paused){ vid.play().catch(()=>{}); vid.style.display='block'; img.style.display='none'; }
@@ -173,180 +195,163 @@
           });
         }
 
+        // meta
         const meta = document.createElement('div');
         meta.className = 'meta';
-        meta.innerHTML = `<h4>${p.title} <span style="font-weight:600;color:var(--muted);font-size:13px">(${p.year})</span></h4>
-                          <p>${p.desc?.es || ''}</p>
+        meta.innerHTML = `<h4>${p.title} <span style="color:var(--muted);font-size:13px">(${p.year})</span></h4>
+                          <p>${(p.desc && p.desc[LANG])?p.desc[LANG]:''}</p>
                           <div class="tags">${(p.tags||[]).map(t=>`<span>${t}</span>`).join('')}</div>`;
 
-        // make title and image clickable to open detail
-        meta.querySelector('h4').style.cursor = 'pointer';
-        meta.querySelector('h4').addEventListener('click', ev => { ev.stopPropagation(); openDetail(p.id); });
-
+        // clickable handlers
+        const titleEl = meta.querySelector('h4');
+        if(titleEl){ titleEl.style.cursor='pointer'; titleEl.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); }); }
         img.style.cursor = 'pointer';
-        img.addEventListener('click', ev => { ev.stopPropagation(); openDetail(p.id); });
+        img.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); });
 
-        // click card opens detail
-        card.addEventListener('click', () => openDetail(p.id));
-
+        card.addEventListener('click', ()=>openDetail(p.id));
         card.appendChild(thumb);
         card.appendChild(meta);
         projectsGrid.appendChild(card);
       });
     }
 
-    // ===============================
-    // DETAIL: openDetail / populate overview & devlog
-    // ===============================
+    // ---------- openDetail (overview + thumbs + devlog) ----------
     function openDetail(id){
-      const p = PROJECTS.find(x => x.id === id);
+      const p = PROJECTS.find(x=>x.id===id);
       if(!p) return;
 
-      // switch visible section
-      showSection('detail');
-
-      // set title & long desc
+      // title & description
       if(detailTitle) detailTitle.textContent = p.title || '';
-      if(detailDesc) detailDesc.textContent = (p.longDesc && p.longDesc.es) ? p.longDesc.es : (p.desc && p.desc.es) ? p.desc.es : '';
+      if(detailDesc) detailDesc.textContent = (p.longDesc && p.longDesc[LANG]) ? p.longDesc[LANG] : (p.desc && p.desc[LANG]) ? p.desc[LANG] : '';
 
-      // media area
-      if(detailMedia) detailMedia.innerHTML = '';
-      if(detailThumbs) detailThumbs.innerHTML = '';
-      if(detailLinks) detailLinks.innerHTML = '';
-      if(detailDevlog) detailDevlog.innerHTML = '';
+      // clear
+      if(detailMedia) detailMedia.innerHTML='';
+      if(detailThumbs) detailThumbs.innerHTML='';
+      if(detailLinks) detailLinks.innerHTML='';
+      if(detailDevlog) detailDevlog.innerHTML='';
 
       // main preview
-      const mainMedia = (p.media && p.media.length) ? p.media[0] : null;
-      if(mainMedia){
-        if(mainMedia.type === 'video' && mainMedia.src && mainMedia.src !== 'PLACEHOLDER_VIDEO'){
-          const mv = document.createElement('video');
-          mv.src = mainMedia.src;
-          mv.controls = true;
-          mv.style.width = '100%';
-          mv.style.height = '400px';
-          mv.preload = 'metadata';
-          detailMedia.appendChild(mv);
-        } else if(mainMedia.type === 'image' && mainMedia.src){
-          const im = document.createElement('img');
-          im.src = mainMedia.src;
-          im.style.width = '100%';
-          im.style.borderRadius = '8px';
+      const main = (p.media && p.media.length) ? (p.media.find(m=>m.type==='video') || p.media[0]) : null;
+      if(main){
+        if(main.type==='video' && main.src && main.src!=='PLACEHOLDER_VIDEO'){
+          const v = document.createElement('video');
+          v.controls = true; v.src = main.src; v.style.width='100%'; v.style.height='400px'; v.preload='metadata';
+          detailMedia.appendChild(v);
+        } else if(main.type==='image' && main.src){
+          const im = document.createElement('img'); im.src = main.src; im.style.width='100%'; im.style.borderRadius='8px';
           detailMedia.appendChild(im);
         } else {
-          const ph = document.createElement('div');
-          ph.style.height = '320px';
-          ph.style.display = 'flex';
-          ph.style.alignItems = 'center';
-          ph.style.justifyContent = 'center';
-          ph.style.background = '#0b0d12';
-          ph.style.color = 'var(--muted)';
-          ph.textContent = 'Preview placeholder';
+          const ph = document.createElement('div'); ph.style.height='320px'; ph.style.display='flex'; ph.style.alignItems='center'; ph.style.justifyContent='center'; ph.style.background='#0b0d12'; ph.style.color='var(--muted)'; ph.textContent='Preview placeholder';
           detailMedia.appendChild(ph);
         }
       } else if(p.links && p.links.itch){
-        const iframe = document.createElement('iframe');
-        iframe.src = p.links.itch;
-        iframe.style.width = '100%';
-        iframe.style.height = '400px';
-        iframe.style.border = '0';
+        const iframe = document.createElement('iframe'); iframe.src = p.links.itch; iframe.style.width='100%'; iframe.style.height='400px'; iframe.style.border='0';
         detailMedia.appendChild(iframe);
       } else {
-        const ph = document.createElement('div');
-        ph.style.height = '320px';
-        ph.style.display = 'flex';
-        ph.style.alignItems = 'center';
-        ph.style.justifyContent = 'center';
-        ph.style.background = '#0b0d12';
-        ph.style.color = 'var(--muted)';
-        ph.textContent = 'Preview disponible';
+        const ph = document.createElement('div'); ph.style.height='320px'; ph.style.display='flex'; ph.style.alignItems='center'; ph.style.justifyContent='center'; ph.style.background='#0b0d12'; ph.style.color='var(--muted)'; ph.textContent='Preview disponible';
         detailMedia.appendChild(ph);
       }
 
-      // thumbnails row
-      (p.media || []).forEach(m => {
+      // thumbnails (if any)
+      (p.media||[]).forEach(m=>{
         const t = document.createElement('div');
-        t.style.width = '120px';
-        t.style.height = '68px';
-        t.style.overflow = 'hidden';
-        t.style.borderRadius = '8px';
-        t.style.cursor = 'pointer';
-        t.style.background = '#000';
-        t.style.marginRight = '8px';
-        if(m.type === 'video'){
-          const mv = document.createElement('video');
-          if(m.src && m.src !== 'PLACEHOLDER_VIDEO') mv.src = m.src;
-          mv.muted = true; mv.preload = 'metadata';
-          mv.style.width = '100%'; mv.style.height = '100%'; mv.style.objectFit = 'cover';
+        t.style.width='120px'; t.style.height='68px'; t.style.overflow='hidden'; t.style.borderRadius='8px'; t.style.cursor='pointer'; t.style.background='#000'; t.style.marginRight='8px';
+        if(m.type==='video'){
+          const mv = document.createElement('video'); if(m.src && m.src!=='PLACEHOLDER_VIDEO') mv.src=m.src; mv.muted=true; mv.preload='metadata'; mv.style.width='100%'; mv.style.height='100%'; mv.style.objectFit='cover';
           t.appendChild(mv);
-          t.addEventListener('click', () => {
-            detailMedia.innerHTML = '';
-            if(mv.src){ const v = document.createElement('video'); v.controls = true; v.src = mv.src; v.style.width='100%'; v.style.height='400px'; detailMedia.appendChild(v); }
-          });
+          t.addEventListener('click', ()=>{ detailMedia.innerHTML=''; if(mv.src){ const v=document.createElement('video'); v.controls=true; v.src=mv.src; v.style.width='100%'; v.style.height='400px'; detailMedia.appendChild(v); } });
         } else {
-          const mi = document.createElement('img');
-          mi.src = m.src || 'images/placeholder_thumb.jpg';
-          mi.style.width = '100%'; mi.style.height = '100%'; mi.style.objectFit = 'cover';
+          const mi = document.createElement('img'); mi.src = m.src || 'images/placeholder_thumb.jpg'; mi.style.width='100%'; mi.style.height='100%'; mi.style.objectFit='cover';
           t.appendChild(mi);
-          t.addEventListener('click', () => {
-            detailMedia.innerHTML = '';
-            const im = document.createElement('img'); im.src = m.src || 'images/placeholder_thumb.jpg'; im.style.width='100%'; im.style.borderRadius='8px';
-            detailMedia.appendChild(im);
-          });
+          t.addEventListener('click', ()=>{ detailMedia.innerHTML=''; const im=document.createElement('img'); im.src = m.src || 'images/placeholder_thumb.jpg'; im.style.width='100%'; im.style.borderRadius='8px'; detailMedia.appendChild(im); });
         }
         detailThumbs.appendChild(t);
       });
 
       // links
-      if(p.links){
-        if(p.links.download){
-          const a = document.createElement('a'); a.href = p.links.download; a.target = '_blank'; a.className = 'cta'; a.textContent = 'Download / Play'; detailLinks.appendChild(a);
-        } else if(p.links.itch){
-          const a = document.createElement('a'); a.href = p.links.itch; a.target = '_blank'; a.className = 'cta'; a.textContent = 'View on itch.io'; detailLinks.appendChild(a);
-        } else {
-          const span = document.createElement('div'); span.style.color = 'var(--muted)'; span.innerText = 'No download link available yet.'; detailLinks.appendChild(span);
-        }
-      } else {
-        const span = document.createElement('div'); span.style.color = 'var(--muted)'; span.innerText = 'No download link available yet.'; detailLinks.appendChild(span);
-      }
+      if(p.links && p.links.download){ const a=document.createElement('a'); a.className='cta'; a.href=p.links.download; a.target='_blank'; a.textContent='Download / Play'; detailLinks.appendChild(a); }
+      else if(p.links && p.links.itch){ const a=document.createElement('a'); a.className='cta'; a.href=p.links.itch; a.target='_blank'; a.textContent='View on itch.io'; detailLinks.appendChild(a); }
+      else { const sp = document.createElement('div'); sp.style.color='var(--muted)'; sp.textContent='No download link available yet.'; detailLinks.appendChild(sp); }
 
       // devlog
-      (p.devlog || []).forEach(entry => {
-        const li = document.createElement('li'); li.innerText = entry; detailDevlog.appendChild(li);
-      });
+      (p.devlog||[]).forEach(d => { const li = document.createElement('li'); li.innerText = d; detailDevlog.appendChild(li); });
 
-      // ensure overview tab is shown
+      // show overview tab by default
       if(overviewWrap && devlogWrap){
-        overviewWrap.style.display = 'block';
-        devlogWrap.style.display = 'none';
-        tabOverview.style.background = '';
-        tabDevlog.style.background = '#1a2333';
+        overviewWrap.style.display='block';
+        devlogWrap.style.display='none';
+        if(tabOverview) tabOverview.style.background='';
+        if(tabDevlog) tabDevlog.style.background='var(--accent)';
       }
+
+      // show detail section
+      showSection('detail');
     }
 
-    // expose openDetail globally (some parts expect it)
-    window.openDetail = openDetail;
-
-    // ===============================
-    // TABS Overview / Devlog (attach safely)
-    // ===============================
-    if(tabOverview && tabDevlog && overviewWrap && devlogWrap){
-      tabOverview.addEventListener('click', (e) => { e.preventDefault(); overviewWrap.style.display='block'; devlogWrap.style.display='none'; tabOverview.style.background = ''; tabDevlog.style.background = '#1a2333'; });
-      tabDevlog.addEventListener('click', (e) => { e.preventDefault(); overviewWrap.style.display='none'; devlogWrap.style.display='block'; tabDevlog.style.background = ''; tabOverview.style.background = '#1a2333'; });
+    // showDetailTab (public)
+    function showDetailTab(tab){
+      if(!overviewWrap || !devlogWrap) return;
+      if(tab === 'devlog'){ overviewWrap.style.display='none'; devlogWrap.style.display='block'; if(tabDevlog) tabDevlog.style.background='var(--accent)'; if(tabOverview) tabOverview.style.background='#1a2333'; }
+      else { overviewWrap.style.display='block'; devlogWrap.style.display='none'; if(tabOverview) tabOverview.style.background='var(--accent)'; if(tabDevlog) tabDevlog.style.background='#1a2333'; }
     }
 
-    // Back button
+    // attach tab listeners defensively
+    if(tabOverview) tabOverview.addEventListener('click', (e)=>{ e.preventDefault(); showDetailTab('overview'); });
+    if(tabDevlog) tabDevlog.addEventListener('click', (e)=>{ e.preventDefault(); showDetailTab('devlog'); });
+
+    // back to projects button
     const backBtn = document.getElementById('backToProjects');
-    if(backBtn){
-      backBtn.addEventListener('click', (e) => { e.preventDefault(); showSection('projects'); });
+    if(backBtn) backBtn.addEventListener('click', (e)=>{ e.preventDefault(); showSection('projects'); });
+
+    // expose openDetail for compatibility with any inline calls
+    window.openDetail = openDetail;
+    window.showDetailTab = showDetailTab;
+
+    // optional: import from itch.io (kept, same behavior)
+    if(importBtn){
+      importBtn.addEventListener('click', ()=>{
+        const user = prompt('Nombre de usuario de itch.io (ej: lexanos):','lexanos');
+        if(user) importFromItch(user.trim()).catch(err=>alert('Import failed: '+err.message));
+      });
     }
 
-    // initial render + initial view
+    // importFromItch kept but defensive (may fail due to CORS)
+    async function importFromItch(username){
+      if(!username) return;
+      const proxy = 'https://r.jina.ai/http://' + username + '.itch.io/';
+      const res = await fetch(proxy);
+      if(!res.ok) throw new Error('Failed to fetch: '+res.status);
+      const text = await res.text();
+      const doc = new DOMParser().parseFromString(text,'text/html');
+      const anchors = Array.from(doc.querySelectorAll('a'));
+      const games = [];
+      anchors.forEach(a=>{
+        const href = a.getAttribute('href') || a.href || '';
+        const title = (a.textContent||'').trim();
+        if(title && title.length<60 && (href.includes(username+'.itch.io') || href.startsWith('/'))){
+          if(!games.find(g=>g.title===title)) games.push({title, href});
+        }
+      });
+      let added = 0;
+      games.forEach(g=>{
+        if(!PROJECTS.find(p=>p.title===g.title)){
+          const id = g.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+          PROJECTS.push({ id:id, title:g.title, year:'', desc:{es:'',en:''}, longDesc:{es:'',en:''}, links:{itch: g.href.startsWith('http')?g.href:'https://'+username+'.itch.io'+g.href}, media:[{type:'image',src:'images/placeholder_thumb.jpg'}], tags:[], devlog:[] });
+          added++;
+        }
+      });
+      if(added>0){ renderProjects(); alert('Importados '+added+' juegos desde '+username); }
+      else alert('No se importaron juegos nuevos desde '+username);
+    }
+
+    // ---------- initial render ----------
     renderProjects();
     showSection('home');
 
-    // debug: if grid is empty, log
-    if(!projectsGrid || projectsGrid.children.length === 0){
-      console.warn('projectsGrid is empty — check PROJECTS array or assets. PROJECTS length=', PROJECTS.length);
+    // quick debug: if no cards rendered, warn once
+    if(projectsGrid && projectsGrid.children.length === 0){
+      console.warn('AVISO: projectsGrid quedó vacío. PROJECTS.length=', PROJECTS.length);
     }
   });
 })();
+</script>
