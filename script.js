@@ -279,21 +279,45 @@ document.getElementById('tabDevlog').onclick = ()=>{
 // Contact form submit (real)
 // ===============================
 const contactForm = document.getElementById('contactForm');
+const contactStatus = document.getElementById('contactStatus');
 
 if (contactForm) {
   contactForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
+    contactStatus.innerText = '';
+    contactStatus.style.color = '';
+
     const name = document.getElementById('cName').value.trim();
     const email = document.getElementById('cEmail').value.trim();
     const msg = document.getElementById('cMsg').value.trim();
 
+    // Validación básica
     if (!name || !email || !msg) {
-      alert('Por favor completá todos los campos.');
+      contactStatus.innerText = 'Por favor completá todos los campos.';
+      contactStatus.style.color = '#ff6b6b';
+      return;
+    }
+
+    // Validación email real
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      contactStatus.innerText = 'El email no es válido.';
+      contactStatus.style.color = '#ff6b6b';
+      return;
+    }
+
+    // Verificar action
+    if (!contactForm.action) {
+      contactStatus.innerText = 'Error: formulario sin destino de envío.';
+      contactStatus.style.color = '#ff6b6b';
       return;
     }
 
     try {
+      contactStatus.innerText = 'Enviando mensaje...';
+      contactStatus.style.color = 'var(--muted)';
+
       const res = await fetch(contactForm.action, {
         method: 'POST',
         headers: {
@@ -308,13 +332,16 @@ if (contactForm) {
       });
 
       if (res.ok) {
-        alert('Mensaje enviado correctamente. ¡Gracias!');
+        contactStatus.innerText = 'Mensaje enviado correctamente. ¡Gracias!';
+        contactStatus.style.color = '#4ade80';
         contactForm.reset();
       } else {
-        alert('Error al enviar el mensaje. Intentá más tarde.');
+        contactStatus.innerText = 'Error al enviar el mensaje. Intentá más tarde.';
+        contactStatus.style.color = '#ff6b6b';
       }
     } catch (err) {
-      alert('Error de conexión. Intentá nuevamente.');
+      contactStatus.innerText = 'Error de conexión. Revisá tu internet.';
+      contactStatus.style.color = '#ff6b6b';
     }
   });
 }
