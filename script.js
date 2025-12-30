@@ -1,12 +1,12 @@
-<script>
-/* ===========================
-   Script robusto para index
-   Reemplazar TODO el <script> existente
-   =========================== */
+// ----------------------------
+// script.js (reemplazar todo)
+// ----------------------------
 (function(){
   document.addEventListener('DOMContentLoaded', () => {
 
-    // ---------- DATA (usado tal cual en el HTML adjunto) ----------
+    // ===============================
+    // DATA — mantiene los juegos
+    // ===============================
     const PROJECTS = [
       { id:'piratepenguin', title:'Pirate Penguin / Forja de Almas', year:2024,
         desc:{ es:'Juego de acción con fuerte foco en combate, estética cartoon y progresión de habilidades.', en:'Action game focused on combat, cartoon aesthetics and skill progression.' },
@@ -87,19 +87,11 @@
         media:[ { type:'image', src:'images/zombieattack_thumb.jpg' } ], tags:['Action'], devlog:[] }
     ];
 
-    // ---------- i18n mínimo ----------
-    const I18N = {
-      es:{ homeTitle:'Desarrollador de Juegos · Unity · C#', homeDesc:'Programador y artista de videojuegos. Experiencia en Unity, C#, shaders, UI/UX, diseño y arte 2D/3D.' },
-      en:{ homeTitle:'Game Developer · Unity · C#', homeDesc:'Programmer and game artist. Experience in Unity, C#, shaders, UI/UX, design and 2D/3D art.' }
-    };
-    let LANG = 'es';
-
-    // ---------- elementos DOM que usaremos ----------
+    // ---------- variables / elements ----------
     const navLinks = document.querySelectorAll('header nav a[data-target]');
     const sections = document.querySelectorAll('main .section');
     const projectsGrid = document.getElementById('projectsGrid');
     const homeProjectsBtn = document.getElementById('homeProjectsBtn');
-    const importBtn = document.getElementById('importItchBtn');
 
     const detailTitle = document.getElementById('detailTitle');
     const detailMedia = document.getElementById('detailMedia');
@@ -113,6 +105,12 @@
     const overviewWrap = document.getElementById('detailOverview');
     const devlogWrap = document.getElementById('detailDevlogWrap');
 
+    let LANG = 'es';
+    const I18N = {
+      es:{ homeTitle:'Desarrollador de Juegos · Unity · C#', homeDesc:'Programador y artista de videojuegos. Experiencia en Unity, C#, shaders, UI/UX, diseño y arte 2D/3D.' },
+      en:{ homeTitle:'Game Developer · Unity · C#', homeDesc:'Programmer and game artist. Experience in Unity, C#, shaders, UI/UX, design and 2D/3D art.' }
+    };
+
     // ---------- helpers ----------
     function showSection(id){
       sections.forEach(s => s.classList.toggle('active', s.id === id));
@@ -121,7 +119,7 @@
     }
 
     function applyLang(){
-      const d = I18N[LANG] || I18N['es'];
+      const d = I18N[LANG] || I18N.es;
       const ht = document.getElementById('homeTitle');
       const hd = document.getElementById('homeDesc');
       if(ht) ht.innerText = d.homeTitle;
@@ -129,229 +127,222 @@
     }
     applyLang();
 
-    // attach nav handlers
-    navLinks.forEach(link=>{
-      link.removeEventListener && link.removeEventListener('click', ()=>{}); // defensive no-op
-      link.addEventListener('click', (e)=>{
-        e.preventDefault();
-        const t = link.dataset.target;
-        if(t) showSection(t);
+    // attach nav handlers (defensive)
+    (function attachNav(){
+      const links = document.querySelectorAll('header nav a[data-target]');
+      links.forEach(l=>{
+        l.removeEventListener && l.removeEventListener('click', ()=>{});
+        l.addEventListener('click', (e)=>{ e.preventDefault(); const t = l.dataset.target; if(t) showSection(t); });
       });
-    });
+    })();
 
     if(homeProjectsBtn){
-      homeProjectsBtn.addEventListener('click', e=>{
-        e.preventDefault();
-        showSection('projects');
-      });
+      homeProjectsBtn.addEventListener('click', (e)=>{ e.preventDefault(); showSection('projects'); });
     }
 
-    // ---------- render projects (cards) ----------
+    // ===============================
+    // RENDER projects (robusto)
+    // ===============================
     function renderProjects(){
-      if(!projectsGrid) return;
+      if(!projectsGrid) {
+        console.warn('projectsGrid not found');
+        return;
+      }
       projectsGrid.innerHTML = '';
-      PROJECTS.forEach(p=>{
-        const card = document.createElement('div');
-        card.className = 'card';
 
-        // thumb
-        const thumb = document.createElement('div');
-        thumb.className = 'thumb';
-        thumb.style.position = 'relative';
+      // use plain for loop to avoid silent interruption
+      for(let i=0;i<PROJECTS.length;i++){
+        const p = PROJECTS[i];
+        try{
+          // create card
+          const card = document.createElement('div');
+          card.className = 'card';
 
-        const imageMedia = (p.media||[]).find(m=>m.type==='image');
-        const videoMedia = (p.media||[]).find(m=>m.type==='video');
+          // thumb
+          const thumb = document.createElement('div');
+          thumb.className = 'thumb';
+          thumb.style.position = 'relative';
 
-        let imgSrc = 'images/placeholder_thumb.jpg';
-        if(imageMedia && imageMedia.src) imgSrc = imageMedia.src;
-        if(videoMedia && videoMedia.poster) imgSrc = videoMedia.poster;
+          const imageMedia = (p.media||[]).find(m=>m.type==='image');
+          const videoMedia = (p.media||[]).find(m=>m.type==='video');
 
-        const img = document.createElement('img');
-        img.src = imgSrc;
-        img.alt = p.title;
-        thumb.appendChild(img);
+          let imgSrc = 'images/placeholder_thumb.jpg';
+          if(imageMedia && imageMedia.src) imgSrc = imageMedia.src;
+          if(videoMedia && videoMedia.poster) imgSrc = videoMedia.poster;
 
-        if(videoMedia){
-          const vid = document.createElement('video');
-          if(videoMedia.src && videoMedia.src !== 'PLACEHOLDER_VIDEO') vid.src = videoMedia.src;
-          vid.muted = true; vid.loop = true; vid.preload = 'metadata';
-          vid.style.position = 'absolute'; vid.style.top='0'; vid.style.left='0'; vid.style.width='100%'; vid.style.height='100%'; vid.style.objectFit='cover';
-          vid.style.display = 'none';
-          thumb.appendChild(vid);
+          const img = document.createElement('img');
+          img.src = imgSrc;
+          img.alt = p.title || '';
+          thumb.appendChild(img);
 
-          thumb.addEventListener('mouseenter', ()=>{
-            if(vid.src){ img.style.display='none'; vid.style.display='block'; vid.play().catch(()=>{}); }
-          });
-          thumb.addEventListener('mouseleave', ()=>{
-            if(vid.src){ vid.pause(); vid.style.display='none'; img.style.display='block'; }
-          });
+          // video hover if exists
+          if(videoMedia){
+            const vid = document.createElement('video');
+            if(videoMedia.src && videoMedia.src !== 'PLACEHOLDER_VIDEO') vid.src = videoMedia.src;
+            vid.muted = true; vid.loop = true; vid.preload = 'metadata';
+            vid.style.position = 'absolute'; vid.style.top='0'; vid.style.left='0';
+            vid.style.width='100%'; vid.style.height='100%'; vid.style.objectFit='cover';
+            vid.style.display = 'none';
+            thumb.appendChild(vid);
 
-          // click toggles play on touch devices
-          thumb.addEventListener('click', (ev)=>{
-            ev.stopPropagation();
-            if(!vid.src) return;
-            if(vid.paused){ vid.play().catch(()=>{}); vid.style.display='block'; img.style.display='none'; }
-            else { vid.pause(); vid.style.display='none'; img.style.display='block'; }
-          });
+            thumb.addEventListener('mouseenter', ()=>{
+              if(vid.src){ img.style.display='none'; vid.style.display='block'; vid.play().catch(()=>{}); }
+            });
+            thumb.addEventListener('mouseleave', ()=>{
+              if(vid.src){ vid.pause(); vid.style.display='none'; img.style.display='block'; }
+            });
+
+            thumb.addEventListener('click', (ev)=>{
+              ev.stopPropagation();
+              if(!vid.src) return;
+              if(vid.paused){ vid.play().catch(()=>{}); vid.style.display='block'; img.style.display='none'; }
+              else { vid.pause(); vid.style.display='none'; img.style.display='block'; }
+            });
+          }
+
+          // meta
+          const meta = document.createElement('div');
+          meta.className = 'meta';
+          const titleText = p.title || 'Untitled';
+          const yearText = p.year || '';
+          const descText = (p.desc && p.desc[LANG]) ? p.desc[LANG] : ((p.desc && p.desc.es) ? p.desc.es : '');
+          meta.innerHTML = `<h4>${titleText} <span style="font-weight:600;color:var(--muted);font-size:13px">(${yearText})</span></h4>
+                            <p>${descText}</p>
+                            <div class="tags">${(p.tags||[]).map(t=>`<span>${t}</span>`).join('')}</div>`;
+
+          // clickable handlers
+          const titleEl = meta.querySelector('h4');
+          if(titleEl){ titleEl.style.cursor='pointer'; titleEl.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); }); }
+          img.style.cursor = 'pointer';
+          img.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); });
+
+          card.addEventListener('click', ()=>openDetail(p.id));
+
+          // append
+          card.appendChild(thumb);
+          card.appendChild(meta);
+          projectsGrid.appendChild(card);
+
+        } catch(err){
+          console.error('Error rendering project at index', i, 'id/title:', (p && (p.id || p.title)), err);
+          // continue with next project
         }
-
-        // meta
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        meta.innerHTML = `<h4>${p.title} <span style="color:var(--muted);font-size:13px">(${p.year})</span></h4>
-                          <p>${(p.desc && p.desc[LANG])?p.desc[LANG]:''}</p>
-                          <div class="tags">${(p.tags||[]).map(t=>`<span>${t}</span>`).join('')}</div>`;
-
-        // clickable handlers
-        const titleEl = meta.querySelector('h4');
-        if(titleEl){ titleEl.style.cursor='pointer'; titleEl.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); }); }
-        img.style.cursor = 'pointer';
-        img.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); });
-
-        card.addEventListener('click', ()=>openDetail(p.id));
-        card.appendChild(thumb);
-        card.appendChild(meta);
-        projectsGrid.appendChild(card);
-      });
+      } // end for
     }
 
-    // ---------- openDetail (overview + thumbs + devlog) ----------
+    // ===============================
+    // DETAIL / OPEN
+    // ===============================
     function openDetail(id){
-      const p = PROJECTS.find(x=>x.id===id);
-      if(!p) return;
+      try{
+        const p = PROJECTS.find(x=>x.id===id);
+        if(!p) return;
 
-      // title & description
-      if(detailTitle) detailTitle.textContent = p.title || '';
-      if(detailDesc) detailDesc.textContent = (p.longDesc && p.longDesc[LANG]) ? p.longDesc[LANG] : (p.desc && p.desc[LANG]) ? p.desc[LANG] : '';
+        // title & desc
+        if(detailTitle) detailTitle.textContent = p.title || '';
+        if(detailDesc) detailDesc.textContent = (p.longDesc && p.longDesc[LANG]) ? p.longDesc[LANG] : (p.desc && p.desc[LANG]) ? p.desc[LANG] : '';
 
-      // clear
-      if(detailMedia) detailMedia.innerHTML='';
-      if(detailThumbs) detailThumbs.innerHTML='';
-      if(detailLinks) detailLinks.innerHTML='';
-      if(detailDevlog) detailDevlog.innerHTML='';
+        // clear sections
+        if(detailMedia) detailMedia.innerHTML='';
+        if(detailThumbs) detailThumbs.innerHTML='';
+        if(detailLinks) detailLinks.innerHTML='';
+        if(detailDevlog) detailDevlog.innerHTML='';
 
-      // main preview
-      const main = (p.media && p.media.length) ? (p.media.find(m=>m.type==='video') || p.media[0]) : null;
-      if(main){
-        if(main.type==='video' && main.src && main.src!=='PLACEHOLDER_VIDEO'){
-          const v = document.createElement('video');
-          v.controls = true; v.src = main.src; v.style.width='100%'; v.style.height='400px'; v.preload='metadata';
-          detailMedia.appendChild(v);
-        } else if(main.type==='image' && main.src){
-          const im = document.createElement('img'); im.src = main.src; im.style.width='100%'; im.style.borderRadius='8px';
-          detailMedia.appendChild(im);
+        // main preview logic
+        const main = (p.media && p.media.length) ? (p.media.find(m=>m.type==='video') || p.media[0]) : null;
+        if(main){
+          if(main.type === 'video' && main.src && main.src !== 'PLACEHOLDER_VIDEO'){
+            const v = document.createElement('video');
+            v.controls = true; v.src = main.src; v.style.width='100%'; v.style.height='400px'; v.preload='metadata';
+            detailMedia.appendChild(v);
+          } else if(main.type === 'image' && main.src){
+            const im = document.createElement('img'); im.src = main.src; im.style.width='100%'; im.style.borderRadius='8px';
+            detailMedia.appendChild(im);
+          } else {
+            const ph = document.createElement('div'); ph.style.height='320px'; ph.style.display='flex'; ph.style.alignItems='center'; ph.style.justifyContent='center'; ph.style.background='#0b0d12'; ph.style.color='var(--muted)'; ph.textContent='Preview placeholder';
+            detailMedia.appendChild(ph);
+          }
+        } else if(p.links && p.links.itch){
+          const iframe = document.createElement('iframe'); iframe.src = p.links.itch; iframe.style.width='100%'; iframe.style.height='400px'; iframe.style.border='0';
+          detailMedia.appendChild(iframe);
         } else {
-          const ph = document.createElement('div'); ph.style.height='320px'; ph.style.display='flex'; ph.style.alignItems='center'; ph.style.justifyContent='center'; ph.style.background='#0b0d12'; ph.style.color='var(--muted)'; ph.textContent='Preview placeholder';
+          const ph = document.createElement('div'); ph.style.height='320px'; ph.style.display='flex'; ph.style.alignItems='center'; ph.style.justifyContent='center'; ph.style.background='#0b0d12'; ph.style.color='var(--muted)'; ph.textContent='Preview disponible';
           detailMedia.appendChild(ph);
         }
-      } else if(p.links && p.links.itch){
-        const iframe = document.createElement('iframe'); iframe.src = p.links.itch; iframe.style.width='100%'; iframe.style.height='400px'; iframe.style.border='0';
-        detailMedia.appendChild(iframe);
-      } else {
-        const ph = document.createElement('div'); ph.style.height='320px'; ph.style.display='flex'; ph.style.alignItems='center'; ph.style.justifyContent='center'; ph.style.background='#0b0d12'; ph.style.color='var(--muted)'; ph.textContent='Preview disponible';
-        detailMedia.appendChild(ph);
-      }
 
-      // thumbnails (if any)
-      (p.media||[]).forEach(m=>{
-        const t = document.createElement('div');
-        t.style.width='120px'; t.style.height='68px'; t.style.overflow='hidden'; t.style.borderRadius='8px'; t.style.cursor='pointer'; t.style.background='#000'; t.style.marginRight='8px';
-        if(m.type==='video'){
-          const mv = document.createElement('video'); if(m.src && m.src!=='PLACEHOLDER_VIDEO') mv.src=m.src; mv.muted=true; mv.preload='metadata'; mv.style.width='100%'; mv.style.height='100%'; mv.style.objectFit='cover';
-          t.appendChild(mv);
-          t.addEventListener('click', ()=>{ detailMedia.innerHTML=''; if(mv.src){ const v=document.createElement('video'); v.controls=true; v.src=mv.src; v.style.width='100%'; v.style.height='400px'; detailMedia.appendChild(v); } });
-        } else {
-          const mi = document.createElement('img'); mi.src = m.src || 'images/placeholder_thumb.jpg'; mi.style.width='100%'; mi.style.height='100%'; mi.style.objectFit='cover';
-          t.appendChild(mi);
-          t.addEventListener('click', ()=>{ detailMedia.innerHTML=''; const im=document.createElement('img'); im.src = m.src || 'images/placeholder_thumb.jpg'; im.style.width='100%'; im.style.borderRadius='8px'; detailMedia.appendChild(im); });
+        // thumbnails
+        (p.media||[]).forEach(m=>{
+          try{
+            const t = document.createElement('div');
+            t.style.width='120px'; t.style.height='68px'; t.style.overflow='hidden'; t.style.borderRadius='8px'; t.style.cursor='pointer'; t.style.background='#000'; t.style.marginRight='8px';
+
+            if(m.type === 'video'){
+              const mv = document.createElement('video');
+              if(m.src && m.src !== 'PLACEHOLDER_VIDEO') mv.src = m.src;
+              mv.muted = true; mv.preload = 'metadata'; mv.style.width='100%'; mv.style.height='100%'; mv.style.objectFit='cover';
+              t.appendChild(mv);
+              t.addEventListener('click', ()=>{ detailMedia.innerHTML=''; if(mv.src){ const v=document.createElement('video'); v.controls=true; v.src=mv.src; v.style.width='100%'; v.style.height='400px'; detailMedia.appendChild(v); } });
+            } else {
+              const mi = document.createElement('img');
+              mi.src = m.src || 'images/placeholder_thumb.jpg';
+              mi.style.width='100%'; mi.style.height='100%'; mi.style.objectFit='cover';
+              t.appendChild(mi);
+              t.addEventListener('click', ()=>{ detailMedia.innerHTML=''; const im=document.createElement('img'); im.src = m.src || 'images/placeholder_thumb.jpg'; im.style.width='100%'; im.style.borderRadius='8px'; detailMedia.appendChild(im); });
+            }
+            detailThumbs.appendChild(t);
+          }catch(thumbErr){
+            console.error('thumb render error for project', id, thumbErr);
+          }
+        });
+
+        // links
+        if(p.links && p.links.download){ const a=document.createElement('a'); a.className='cta'; a.href=p.links.download; a.target='_blank'; a.textContent='Download / Play'; detailLinks.appendChild(a); }
+        else if(p.links && p.links.itch){ const a=document.createElement('a'); a.className='cta'; a.href=p.links.itch; a.target='_blank'; a.textContent='View on itch.io'; detailLinks.appendChild(a); }
+        else { const sp = document.createElement('div'); sp.style.color='var(--muted)'; sp.textContent='No download link available yet.'; detailLinks.appendChild(sp); }
+
+        // devlog
+        (p.devlog||[]).forEach(d => { const li = document.createElement('li'); li.innerText = d; detailDevlog.appendChild(li); });
+
+        // show overview tab by default
+        if(overviewWrap && devlogWrap){
+          overviewWrap.style.display='block';
+          devlogWrap.style.display='none';
+          if(tabOverview) tabOverview.style.background='';
+          if(tabDevlog) tabDevlog.style.background='var(--accent)';
         }
-        detailThumbs.appendChild(t);
-      });
 
-      // links
-      if(p.links && p.links.download){ const a=document.createElement('a'); a.className='cta'; a.href=p.links.download; a.target='_blank'; a.textContent='Download / Play'; detailLinks.appendChild(a); }
-      else if(p.links && p.links.itch){ const a=document.createElement('a'); a.className='cta'; a.href=p.links.itch; a.target='_blank'; a.textContent='View on itch.io'; detailLinks.appendChild(a); }
-      else { const sp = document.createElement('div'); sp.style.color='var(--muted)'; sp.textContent='No download link available yet.'; detailLinks.appendChild(sp); }
+        // finally show detail
+        showSection('detail');
 
-      // devlog
-      (p.devlog||[]).forEach(d => { const li = document.createElement('li'); li.innerText = d; detailDevlog.appendChild(li); });
-
-      // show overview tab by default
-      if(overviewWrap && devlogWrap){
-        overviewWrap.style.display='block';
-        devlogWrap.style.display='none';
-        if(tabOverview) tabOverview.style.background='';
-        if(tabDevlog) tabDevlog.style.background='var(--accent)';
+      }catch(err){
+        console.error('openDetail error for id', id, err);
       }
-
-      // show detail section
-      showSection('detail');
     }
 
-    // showDetailTab (public)
-    function showDetailTab(tab){
-      if(!overviewWrap || !devlogWrap) return;
-      if(tab === 'devlog'){ overviewWrap.style.display='none'; devlogWrap.style.display='block'; if(tabDevlog) tabDevlog.style.background='var(--accent)'; if(tabOverview) tabOverview.style.background='#1a2333'; }
-      else { overviewWrap.style.display='block'; devlogWrap.style.display='none'; if(tabOverview) tabOverview.style.background='var(--accent)'; if(tabDevlog) tabDevlog.style.background='#1a2333'; }
-    }
+    // expose openDetail
+    window.openDetail = openDetail;
 
-    // attach tab listeners defensively
-    if(tabOverview) tabOverview.addEventListener('click', (e)=>{ e.preventDefault(); showDetailTab('overview'); });
-    if(tabDevlog) tabDevlog.addEventListener('click', (e)=>{ e.preventDefault(); showDetailTab('devlog'); });
+    // tabs
+    if(tabOverview) tabOverview.addEventListener('click', (e)=>{ e.preventDefault(); if(overviewWrap) overviewWrap.style.display='block'; if(devlogWrap) devlogWrap.style.display='none'; if(tabOverview) tabOverview.style.background=''; if(tabDevlog) tabDevlog.style.background='var(--accent)'; });
+    if(tabDevlog) tabDevlog.addEventListener('click', (e)=>{ e.preventDefault(); if(overviewWrap) overviewWrap.style.display='none'; if(devlogWrap) devlogWrap.style.display='block'; if(tabDevlog) tabDevlog.style.background=''; if(tabOverview) tabOverview.style.background='var(--accent)'; });
 
-    // back to projects button
+    // back button
     const backBtn = document.getElementById('backToProjects');
     if(backBtn) backBtn.addEventListener('click', (e)=>{ e.preventDefault(); showSection('projects'); });
 
-    // expose openDetail for compatibility with any inline calls
-    window.openDetail = openDetail;
-    window.showDetailTab = showDetailTab;
-
-    // optional: import from itch.io (kept, same behavior)
-    if(importBtn){
-      importBtn.addEventListener('click', ()=>{
-        const user = prompt('Nombre de usuario de itch.io (ej: lexanos):','lexanos');
-        if(user) importFromItch(user.trim()).catch(err=>alert('Import failed: '+err.message));
-      });
+    // initial render + view
+    try{
+      renderProjects();
+      showSection('home');
+    }catch(e){
+      console.error('initial render error', e);
     }
 
-    // importFromItch kept but defensive (may fail due to CORS)
-    async function importFromItch(username){
-      if(!username) return;
-      const proxy = 'https://r.jina.ai/http://' + username + '.itch.io/';
-      const res = await fetch(proxy);
-      if(!res.ok) throw new Error('Failed to fetch: '+res.status);
-      const text = await res.text();
-      const doc = new DOMParser().parseFromString(text,'text/html');
-      const anchors = Array.from(doc.querySelectorAll('a'));
-      const games = [];
-      anchors.forEach(a=>{
-        const href = a.getAttribute('href') || a.href || '';
-        const title = (a.textContent||'').trim();
-        if(title && title.length<60 && (href.includes(username+'.itch.io') || href.startsWith('/'))){
-          if(!games.find(g=>g.title===title)) games.push({title, href});
-        }
-      });
-      let added = 0;
-      games.forEach(g=>{
-        if(!PROJECTS.find(p=>p.title===g.title)){
-          const id = g.title.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
-          PROJECTS.push({ id:id, title:g.title, year:'', desc:{es:'',en:''}, longDesc:{es:'',en:''}, links:{itch: g.href.startsWith('http')?g.href:'https://'+username+'.itch.io'+g.href}, media:[{type:'image',src:'images/placeholder_thumb.jpg'}], tags:[], devlog:[] });
-          added++;
-        }
-      });
-      if(added>0){ renderProjects(); alert('Importados '+added+' juegos desde '+username); }
-      else alert('No se importaron juegos nuevos desde '+username);
-    }
-
-    // ---------- initial render ----------
-    renderProjects();
-    showSection('home');
-
-    // quick debug: if no cards rendered, warn once
-    if(projectsGrid && projectsGrid.children.length === 0){
-      console.warn('AVISO: projectsGrid quedó vacío. PROJECTS.length=', PROJECTS.length);
-    }
+    // final debug info (non-intrusive)
+    setTimeout(()=>{
+      try{
+        if(projectsGrid) console.info('rendered projects count:', projectsGrid.children.length, 'PROJECTS total:', PROJECTS.length);
+      }catch(e){}
+    }, 300);
   });
 })();
-</script>
