@@ -147,73 +147,77 @@
     }
 
     // ---------- render projects (cards) ----------
-    function renderProjects(){
-      if(!projectsGrid) return;
-      projectsGrid.innerHTML = '';
-      PROJECTS.forEach(p=>{
-        const card = document.createElement('div');
-        card.className = 'card';
+   function renderProjects(){
+  if(!projectsGrid) return;
+  projectsGrid.innerHTML = '';
 
-        // thumb
-        const thumb = document.createElement('div');
-        thumb.className = 'thumb';
-        thumb.style.position = 'relative';
+  PROJECTS.forEach(p => {
+    try {
+      const card = document.createElement('div');
+      card.className = 'card';
 
-        const imageMedia = (p.media||[]).find(m=>m.type==='image');
-        const videoMedia = (p.media||[]).find(m=>m.type==='video');
+      const thumb = document.createElement('div');
+      thumb.className = 'thumb';
+      thumb.style.position = 'relative';
 
-        let imgSrc = 'images/placeholder_thumb.jpg';
-        if(imageMedia && imageMedia.src) imgSrc = imageMedia.src;
-        if(videoMedia && videoMedia.poster) imgSrc = videoMedia.poster;
+      const imageMedia = (p.media||[]).find(m=>m.type==='image');
+      const videoMedia = (p.media||[]).find(m=>m.type==='video');
 
-        const img = document.createElement('img');
-        img.src = imgSrc;
-        img.alt = p.title;
-        thumb.appendChild(img);
+      let imgSrc = 'images/placeholder_thumb.jpg';
+      if(imageMedia && imageMedia.src) imgSrc = imageMedia.src;
+      if(videoMedia && videoMedia.poster) imgSrc = videoMedia.poster;
 
-        if(videoMedia){
-          const vid = document.createElement('video');
-          if(videoMedia.src && videoMedia.src !== 'PLACEHOLDER_VIDEO') vid.src = videoMedia.src;
-          vid.muted = true; vid.loop = true; vid.preload = 'metadata';
-          vid.style.position = 'absolute'; vid.style.top='0'; vid.style.left='0'; vid.style.width='100%'; vid.style.height='100%'; vid.style.objectFit='cover';
-          vid.style.display = 'none';
-          thumb.appendChild(vid);
+      const img = document.createElement('img');
+      img.src = imgSrc;
+      img.alt = p.title || '';
+      thumb.appendChild(img);
 
-          thumb.addEventListener('mouseenter', ()=>{
-            if(vid.src){ img.style.display='none'; vid.style.display='block'; vid.play().catch(()=>{}); }
-          });
-          thumb.addEventListener('mouseleave', ()=>{
-            if(vid.src){ vid.pause(); vid.style.display='none'; img.style.display='block'; }
-          });
+      if(videoMedia){
+        const vid = document.createElement('video');
+        if(videoMedia.src && videoMedia.src !== 'PLACEHOLDER_VIDEO') vid.src = videoMedia.src;
+        vid.muted = true; vid.loop = true; vid.preload = 'metadata';
+        vid.style.position = 'absolute'; vid.style.top='0'; vid.style.left='0';
+        vid.style.width='100%'; vid.style.height='100%'; vid.style.objectFit='cover';
+        vid.style.display = 'none';
+        thumb.appendChild(vid);
 
-          // click toggles play on touch devices
-          thumb.addEventListener('click', (ev)=>{
-            ev.stopPropagation();
-            if(!vid.src) return;
-            if(vid.paused){ vid.play().catch(()=>{}); vid.style.display='block'; img.style.display='none'; }
-            else { vid.pause(); vid.style.display='none'; img.style.display='block'; }
-          });
-        }
+        thumb.addEventListener('mouseenter', ()=>{
+          if(vid.src){ img.style.display='none'; vid.style.display='block'; vid.play().catch(()=>{}); }
+        });
+        thumb.addEventListener('mouseleave', ()=>{
+          if(vid.src){ vid.pause(); vid.style.display='none'; img.style.display='block'; }
+        });
 
-        // meta
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        meta.innerHTML = `<h4>${p.title} <span style="color:var(--muted);font-size:13px">(${p.year})</span></h4>
-                          <p>${(p.desc && p.desc[LANG])?p.desc[LANG]:''}</p>
-                          <div class="tags">${(p.tags||[]).map(t=>`<span>${t}</span>`).join('')}</div>`;
+        thumb.addEventListener('click', (ev)=>{
+          ev.stopPropagation();
+          if(!vid.src) return;
+          if(vid.paused){ vid.play().catch(()=>{}); vid.style.display='block'; img.style.display='none'; }
+          else { vid.pause(); vid.style.display='none'; img.style.display='block'; }
+        });
+      }
 
-        // clickable handlers
-        const titleEl = meta.querySelector('h4');
-        if(titleEl){ titleEl.style.cursor='pointer'; titleEl.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); }); }
-        img.style.cursor = 'pointer';
-        img.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); });
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      meta.innerHTML = `<h4>${p.title || 'Untitled'} <span style="color:var(--muted);font-size:13px">(${p.year || ''})</span></h4>
+                        <p>${(p.desc && p.desc[LANG])?p.desc[LANG]:''}</p>
+                        <div class="tags">${(p.tags||[]).map(t=>`<span>${t}</span>`).join('')}</div>`;
 
-        card.addEventListener('click', ()=>openDetail(p.id));
-        card.appendChild(thumb);
-        card.appendChild(meta);
-        projectsGrid.appendChild(card);
-      });
+      const titleEl = meta.querySelector('h4');
+      if(titleEl){ titleEl.style.cursor='pointer'; titleEl.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); }); }
+      img.style.cursor = 'pointer';
+      img.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); });
+
+      card.addEventListener('click', ()=>openDetail(p.id));
+      card.appendChild(thumb);
+      card.appendChild(meta);
+      projectsGrid.appendChild(card);
+    } catch(err) {
+      console.error('Error rendering project:', p && (p.id || p.title), err);
+      // If a project errors, still continue with the rest.
     }
+  });
+}
+
 
     // ---------- openDetail (overview + thumbs + devlog) ----------
     function openDetail(id){
