@@ -1,102 +1,82 @@
-// ---------- DATA ----------
-const PROJECTS = [...]; // ⚠️ ES EXACTAMENTE EL MISMO ARRAY QUE YA TENÍAS
-// (no lo modifico para no romper nada)
+// ===============================
+// Navegación de secciones
+// ===============================
+const navLinks = document.querySelectorAll("nav a[data-target]");
+const sections = document.querySelectorAll(".section");
 
-// ---------- I18N ----------
-const I18N = {
-  es:{ homeTitle:'Desarrollador de Juegos · Unity · C#', homeDesc:'Programador y artista de videojuegos. Experiencia en Unity, C#, shaders, UI/UX, diseño y arte 2D/3D.' },
-  en:{ homeTitle:'Game Developer · Unity · C#', homeDesc:'Programmer and game artist. Experience in Unity, C#, shaders, UI/UX, design and 2D/3D art.' }
-};
-let LANG='es';
+function showSection(id) {
+  sections.forEach(sec => {
+    sec.classList.toggle("active", sec.id === id);
+  });
 
-// ---------- NAV ----------
-const navLinks=document.querySelectorAll('header nav a');
-const sections=document.querySelectorAll('main .section');
-
-function showSection(id){
-  sections.forEach(s=>s.classList.remove('active'));
-  const el=document.getElementById(id);
-  if(el) el.classList.add('active');
-  navLinks.forEach(a=>a.classList.toggle('active',a.dataset.target===id));
-  window.scrollTo(0,0);
+  navLinks.forEach(link => {
+    link.classList.toggle("active", link.dataset.target === id);
+  });
 }
 
-navLinks.forEach(a=>a.addEventListener('click',e=>{
-  e.preventDefault();
-  showSection(a.dataset.target);
-}));
-
-document.getElementById('homeProjectsBtn')
-  .addEventListener('click',e=>{
+// Header navigation
+navLinks.forEach(link => {
+  link.addEventListener("click", e => {
     e.preventDefault();
-    showSection('projects');
+    const target = link.dataset.target;
+    if (target) showSection(target);
   });
+});
 
-// ---------- LANG ----------
-function applyLang(){
-  const d=I18N[LANG];
-  homeTitle.innerText=d.homeTitle;
-  homeDesc.innerText=d.homeDesc;
-}
-applyLang();
-
-// ---------- PROJECT CARDS ----------
-function renderProjects(){
-  const grid=document.getElementById('projectsGrid');
-  grid.innerHTML='';
-  PROJECTS.forEach(p=>{
-    const card=document.createElement('div');
-    card.className='card';
-    card.innerHTML=`
-      <div class="thumb">
-        <img src="${p.media?.[0]?.src||'images/placeholder_thumb.jpg'}">
-      </div>
-      <div class="meta">
-        <h4>${p.title} <span style="color:var(--muted)">(${p.year})</span></h4>
-        <p>${p.desc[LANG]}</p>
-      </div>
-    `;
-    card.onclick=()=>openDetail(p.id);
-    grid.appendChild(card);
-  });
-}
-renderProjects();
-
-// ---------- DETAIL ----------
-function openDetail(id){
-  const p=PROJECTS.find(x=>x.id===id);
-  if(!p) return;
-
-  showSection('detail');
-  detailTitle.innerText=p.title;
-  detailDesc.innerText=p.longDesc[LANG]||'';
-
-  detailMedia.innerHTML='';
-  detailThumbs.innerHTML='';
-  detailLinks.innerHTML='';
-
-  if(p.links?.itch){
-    detailLinks.innerHTML+=`<a class="cta" target="_blank" href="${p.links.itch}">Jugar</a>`;
-  }
-
-  detailDevlog.innerHTML='';
-  (p.devlog||[]).forEach(d=>{
-    const li=document.createElement('li');
-    li.innerText=d;
-    detailDevlog.appendChild(li);
+// Botón "Ver Juegos" (Home)
+const homeProjectsBtn = document.getElementById("homeProjectsBtn");
+if (homeProjectsBtn) {
+  homeProjectsBtn.addEventListener("click", e => {
+    e.preventDefault();
+    showSection("projects");
   });
 }
 
-// ---------- DETAIL BUTTONS ----------
-tabOverview.onclick=()=>{
-  detailOverview.style.display='block';
-  detailDevlogWrap.style.display='none';
-};
-tabDevlog.onclick=()=>{
-  detailOverview.style.display='none';
-  detailDevlogWrap.style.display='block';
-};
-backToProjects.onclick=()=>showSection('projects');
+// ===============================
+// Detalle de proyecto
+// ===============================
+const projectsSection = document.getElementById("projects");
+const detailSection = document.getElementById("detail");
 
-// ---------- INIT ----------
-showSection('home');
+function openDetail() {
+  if (projectsSection) projectsSection.classList.remove("active");
+  if (detailSection) detailSection.classList.add("active");
+}
+
+// volver a proyectos
+const backBtn = document.getElementById("backToProjects");
+if (backBtn) {
+  backBtn.addEventListener("click", () => {
+    detailSection.classList.remove("active");
+    projectsSection.classList.add("active");
+  });
+}
+
+// ===============================
+// Tabs Overview / Devlog
+// ===============================
+const tabOverview = document.getElementById("tabOverview");
+const tabDevlog = document.getElementById("tabDevlog");
+const overview = document.getElementById("detailOverview");
+const devlog = document.getElementById("detailDevlogWrap");
+
+if (tabOverview && tabDevlog) {
+  tabOverview.addEventListener("click", () => {
+    overview.style.display = "block";
+    devlog.style.display = "none";
+    tabOverview.style.background = "";
+    tabDevlog.style.background = "#1a2333";
+  });
+
+  tabDevlog.addEventListener("click", () => {
+    overview.style.display = "none";
+    devlog.style.display = "block";
+    tabDevlog.style.background = "";
+    tabOverview.style.background = "#1a2333";
+  });
+}
+
+// ===============================
+// Exponer funciones si algún card las usa
+// ===============================
+window.openDetail = openDetail;
