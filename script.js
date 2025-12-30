@@ -254,15 +254,22 @@ document.addEventListener('DOMContentLoaded', () => {
     showSection('detail');
   }
 
-  document.getElementById('tabOverview').onclick = ()=>{
-    document.getElementById('detailOverview').style.display='block';
-    document.getElementById('detailDevlogWrap').style.display='none';
-  };
+document.getElementById('tabOverview').onclick = ()=>{
+  document.getElementById('detailOverview').style.display = 'block';
+  document.getElementById('detailDevlogWrap').style.display = 'none';
 
-  document.getElementById('tabDevlog').onclick = ()=>{
-    document.getElementById('detailOverview').style.display='none';
-    document.getElementById('detailDevlogWrap').style.display='block';
-  };
+  document.getElementById('tabOverview').style.background = 'var(--accent)';
+  document.getElementById('tabDevlog').style.background = '#1a2333';
+};
+
+document.getElementById('tabDevlog').onclick = ()=>{
+  document.getElementById('detailOverview').style.display = 'none';
+  document.getElementById('detailDevlogWrap').style.display = 'block';
+
+  document.getElementById('tabDevlog').style.background = 'var(--accent)';
+  document.getElementById('tabOverview').style.background = '#1a2333';
+};
+
 
   document.getElementById('backToProjects').onclick = ()=>showSection('projects');
 
