@@ -39,16 +39,16 @@ const projectsSection = document.getElementById("projects");
 const detailSection = document.getElementById("detail");
 
 function openDetail() {
-  if (projectsSection) projectsSection.classList.remove("active");
+  sections.forEach(sec => sec.classList.remove("active"));
   if (detailSection) detailSection.classList.add("active");
 }
 
 // volver a proyectos
 const backBtn = document.getElementById("backToProjects");
 if (backBtn) {
-  backBtn.addEventListener("click", () => {
-    detailSection.classList.remove("active");
-    projectsSection.classList.add("active");
+  backBtn.addEventListener("click", e => {
+    e.preventDefault();
+    showSection("projects");
   });
 }
 
@@ -61,14 +61,16 @@ const overview = document.getElementById("detailOverview");
 const devlog = document.getElementById("detailDevlogWrap");
 
 if (tabOverview && tabDevlog) {
-  tabOverview.addEventListener("click", () => {
+  tabOverview.addEventListener("click", e => {
+    e.preventDefault();
     overview.style.display = "block";
     devlog.style.display = "none";
     tabOverview.style.background = "";
     tabDevlog.style.background = "#1a2333";
   });
 
-  tabDevlog.addEventListener("click", () => {
+  tabDevlog.addEventListener("click", e => {
+    e.preventDefault();
     overview.style.display = "none";
     devlog.style.display = "block";
     tabDevlog.style.background = "";
@@ -77,6 +79,6 @@ if (tabOverview && tabDevlog) {
 }
 
 // ===============================
-// Exponer funciones si algún card las usa
+// Exponer funciones para cards
 // ===============================
 window.openDetail = openDetail;
