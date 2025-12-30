@@ -254,94 +254,90 @@ document.addEventListener('DOMContentLoaded', () => {
     showSection('detail');
   }
 
-document.getElementById('tabOverview').onclick = ()=>{
-  document.getElementById('detailOverview').style.display = 'block';
-  document.getElementById('detailDevlogWrap').style.display = 'none';
+  document.getElementById('tabOverview').onclick = ()=>{
+    document.getElementById('detailOverview').style.display = 'block';
+    document.getElementById('detailDevlogWrap').style.display = 'none';
+    document.getElementById('tabOverview').style.background = 'var(--accent)';
+    document.getElementById('tabDevlog').style.background = '#1a2333';
+  };
 
-  document.getElementById('tabOverview').style.background = 'var(--accent)';
-  document.getElementById('tabDevlog').style.background = '#1a2333';
-};
-
-document.getElementById('tabDevlog').onclick = ()=>{
-  document.getElementById('detailOverview').style.display = 'none';
-  document.getElementById('detailDevlogWrap').style.display = 'block';
-
-  document.getElementById('tabDevlog').style.background = 'var(--accent)';
-  document.getElementById('tabOverview').style.background = '#1a2333';
-};
-
+  document.getElementById('tabDevlog').onclick = ()=>{
+    document.getElementById('detailOverview').style.display = 'none';
+    document.getElementById('detailDevlogWrap').style.display = 'block';
+    document.getElementById('tabDevlog').style.background = 'var(--accent)';
+    document.getElementById('tabOverview').style.background = '#1a2333';
+  };
 
   document.getElementById('backToProjects').onclick = ()=>showSection('projects');
 
   showSection('home');
-});
-// ===============================
-// Contact form submit (real)
-// ===============================
-const contactForm = document.getElementById('contactForm');
-const contactStatus = document.getElementById('contactStatus');
 
-if (contactForm) {
-  contactForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
+  // ===============================
+  // Contact form submit (FIX REAL)
+  // ===============================
+  const contactForm = document.getElementById('contactForm');
+  const contactStatus = document.getElementById('contactStatus');
 
-    contactStatus.innerText = '';
-    contactStatus.style.color = '';
+  if (contactForm) {
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    const name = document.getElementById('cName').value.trim();
-    const email = document.getElementById('cEmail').value.trim();
-    const msg = document.getElementById('cMsg').value.trim();
+      contactStatus.innerText = '';
+      contactStatus.style.color = '';
 
-    // Validación básica
-    if (!name || !email || !msg) {
-      contactStatus.innerText = 'Por favor completá todos los campos.';
-      contactStatus.style.color = '#ff6b6b';
-      return;
-    }
+      const name = document.getElementById('cName').value.trim();
+      const email = document.getElementById('cEmail').value.trim();
+      const msg = document.getElementById('cMsg').value.trim();
 
-    // Validación email real
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      contactStatus.innerText = 'El email no es válido.';
-      contactStatus.style.color = '#ff6b6b';
-      return;
-    }
+      if (!name || !email || !msg) {
+        contactStatus.innerText = 'Por favor completá todos los campos.';
+        contactStatus.style.color = '#ff6b6b';
+        return;
+      }
 
-    // Verificar action
-    if (!contactForm.action) {
-      contactStatus.innerText = 'Error: formulario sin destino de envío.';
-      contactStatus.style.color = '#ff6b6b';
-      return;
-    }
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        contactStatus.innerText = 'El email no es válido.';
+        contactStatus.style.color = '#ff6b6b';
+        return;
+      }
 
-    try {
-      contactStatus.innerText = 'Enviando mensaje...';
-      contactStatus.style.color = 'var(--muted)';
+      if (!contactForm.action) {
+        contactStatus.innerText = 'Error: formulario sin destino de envío.';
+        contactStatus.style.color = '#ff6b6b';
+        return;
+      }
 
-      const res = await fetch(contactForm.action, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          name: name,
-          email: email,
-          message: msg
-        })
-      });
+      try {
+        contactStatus.innerText = 'Enviando mensaje...';
+        contactStatus.style.color = 'var(--muted)';
 
-      if (res.ok) {
-        contactStatus.innerText = 'Mensaje enviado correctamente. ¡Gracias!';
-        contactStatus.style.color = '#4ade80';
-        contactForm.reset();
-      } else {
-        contactStatus.innerText = 'Error al enviar el mensaje. Intentá más tarde.';
+        const res = await fetch(contactForm.action, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name,
+            email,
+            message: msg
+          })
+        });
+
+        if (res.ok) {
+          contactStatus.innerText = 'Mensaje enviado correctamente. ¡Gracias!';
+          contactStatus.style.color = '#4ade80';
+          contactForm.reset();
+        } else {
+          contactStatus.innerText = 'Error al enviar el mensaje.';
+          contactStatus.style.color = '#ff6b6b';
+        }
+      } catch {
+        contactStatus.innerText = 'Error de conexión.';
         contactStatus.style.color = '#ff6b6b';
       }
-    } catch (err) {
-      contactStatus.innerText = 'Error de conexión. Revisá tu internet.';
-      contactStatus.style.color = '#ff6b6b';
-    }
-  });
-}
+    });
+  }
+
+});
