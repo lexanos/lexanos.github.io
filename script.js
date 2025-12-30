@@ -276,11 +276,21 @@ document.addEventListener('DOMContentLoaded', () => {
   // Contact form submit (FIX REAL)
   // ===============================
   const contactForm = document.getElementById('contactForm');
-  const contactStatus = document.getElementById('contactStatus');
+
+  // create or reuse contactStatus element (non-destructive; doesn't change HTML file)
+  let contactStatus = document.getElementById('contactStatus');
+  if (!contactStatus && contactForm) {
+    contactStatus = document.createElement('div');
+    contactStatus.id = 'contactStatus';
+    contactStatus.style.marginTop = '10px';
+    contactForm.appendChild(contactStatus);
+  }
 
   if (contactForm) {
     contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
+
+      if (!contactStatus) return; // defensive
 
       contactStatus.innerText = '';
       contactStatus.style.color = '';
@@ -338,6 +348,26 @@ document.addEventListener('DOMContentLoaded', () => {
         contactStatus.style.color = '#ff6b6b';
       }
     });
+
+    // Support for existing button type="button" with id="cSend"
+    const cSendBtn = document.getElementById('cSend');
+    if (cSendBtn) {
+      cSendBtn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        // prefer requestSubmit when available (triggers submit event and validation)
+        if (typeof contactForm.requestSubmit === 'function') {
+          contactForm.requestSubmit();
+        } else {
+          // fallback: create temporary submit button and click it
+          const tmp = document.createElement('button');
+          tmp.type = 'submit';
+          tmp.style.display = 'none';
+          contactForm.appendChild(tmp);
+          tmp.click();
+          tmp.remove();
+        }
+      });
+    }
   }
 
 });
