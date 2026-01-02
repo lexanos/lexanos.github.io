@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
       don_crypto_title: "Direcciones de Depósito",
       about_exp_title: "Experiencia destacada", contact_send_msg: "Enviar mensaje", btn_send: "Enviar Mensaje",
       msg_sending: "Enviando...", msg_success: "¡Mensaje enviado con éxito!", msg_error: "Hubo un error al enviar.",
-      copy_ok: "¡Copiado!", copy_btn: "Copiar"
+      copy_ok: "¡Copiado!"
     },
     en: {
       nav_home: "Home", nav_games: "Games", nav_blog: "Blog", nav_donations: "Donations", nav_about: "About", nav_contact: "Contact",
@@ -26,12 +26,12 @@ document.addEventListener('DOMContentLoaded', () => {
       don_crypto_title: "Deposit Addresses",
       about_exp_title: "Professional Experience", contact_send_msg: "Send a message", btn_send: "Send Message",
       msg_sending: "Sending...", msg_success: "Message sent successfully!", msg_error: "An error occurred.",
-      copy_ok: "Copied!", copy_btn: "Copy"
+      copy_ok: "Copied!"
     }
   };
 
   const PROJECTS =,
-      tags:, devlog:['Mecánicas de combate terminadas']
+      tags:['Action','Unity'], devlog:['Mecánicas de combate terminadas']
     },
     { id:'llamageddon', title:'Llamageddon', year:2020,
       desc:{ es:'Juego arcade con humor absurdo sobre Argentina.', en:'Arcade game with absurd humor about Argentina.' },
@@ -53,20 +53,14 @@ document.addEventListener('DOMContentLoaded', () => {
       links:{ itch:'https://lexanos.itch.io/los-xtars' },
       media:[ { type:'image', src:'images/losxtars_thumb.jpg' } ],
       tags:['Platformer'], devlog:
-    },
-    { id:'piratepenguin', title:'Pirate Penguin / Forja de Almas', year:2024,
-      desc:{ es:'Acción cartoon y combate fluido.', en:'Cartoon action and fluid combat.' },
-      longDesc:{ es:'Desarrollo de GUI y sistemas de combate fluido en Unity.', en:'GUI development and fluid combat systems in Unity.' },
-      links:{ itch:'' },
-      media:[ { type:'image', src:'images/pirate_thumb.jpg' } ],
-      tags:['Action','Unity'], devlog:
     }
   ];
 
   let LANG = 'es';
 
+  // SELECTORES CORREGIDOS
   const navLinks = document.querySelectorAll('header nav a[data-target]');
-  const sections = document.querySelectorAll('main.section');
+  const sections = document.querySelectorAll('.section'); // Selecciona todas las secciones correctamente
   const grid = document.getElementById('projectsGrid');
   const langSelect = document.getElementById('lang');
 
@@ -75,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const key = el.getAttribute('data-i18n');
       if (UI_TEXTS[LANG][key]) el.innerText = UI_TEXTS[LANG][key];
     });
-    // Form placeholders
+    // Actualizar placeholders del formulario
     document.getElementById('cName').placeholder = (LANG === 'es'? 'Nombre' : 'Name');
     document.getElementById('cEmail').placeholder = (LANG === 'es'? 'Email' : 'Email');
     document.getElementById('cMsg').placeholder = (LANG === 'es'? 'Mensaje' : 'Message');
@@ -88,6 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo(0,0);
   }
 
+  // EVENTOS DE NAVEGACIÓN
   navLinks.forEach(a=>{
     a.addEventListener('click', e=>{
       e.preventDefault();
@@ -100,7 +95,13 @@ document.addEventListener('DOMContentLoaded', () => {
     updateUI();
   });
 
+  document.getElementById('homeProjectsBtn')?.addEventListener('click', e=>{
+    e.preventDefault();
+    showSection('projects');
+  });
+
   function renderProjects(){
+    if(!grid) return;
     grid.innerHTML = '';
     PROJECTS.forEach(p=>{
       const card = document.createElement('div');
@@ -156,7 +157,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const binanceBtn = document.getElementById('binanceBtn');
   const cryptoModule = document.getElementById('cryptoModule');
   
-  binanceBtn.onclick = (e) => { e.preventDefault(); cryptoModule.style.display = 'block'; };
+  if(binanceBtn) {
+    binanceBtn.onclick = (e) => { e.preventDefault(); cryptoModule.style.display = 'block'; };
+  }
+  
   document.getElementById('closeCrypto').onclick = () => cryptoModule.style.display = 'none';
 
   document.querySelectorAll('.copy-btn').forEach(btn => {
@@ -179,31 +183,33 @@ document.addEventListener('DOMContentLoaded', () => {
   const contactForm = document.getElementById('contactForm');
   const contactStatus = document.getElementById('contactStatus');
 
-  contactForm.onsubmit = async (e) => {
-    e.preventDefault();
-    contactStatus.innerText = UI_TEXTS[LANG].msg_sending;
-    contactStatus.style.color = "var(--muted)";
+  if(contactForm) {
+    contactForm.onsubmit = async (e) => {
+      e.preventDefault();
+      contactStatus.innerText = UI_TEXTS[LANG].msg_sending;
+      contactStatus.style.color = "var(--muted)";
 
-    const data = new FormData(contactForm);
-    try {
-      const response = await fetch(contactForm.action, {
-        method: 'POST',
-        body: data,
-        headers: { 'Accept': 'application/json' }
-      });
-      if (response.ok) {
-        contactStatus.innerText = UI_TEXTS[LANG].msg_success;
-        contactStatus.style.color = "#4ade80";
-        contactForm.reset();
-      } else {
+      const data = new FormData(contactForm);
+      try {
+        const response = await fetch(contactForm.action, {
+          method: 'POST',
+          body: data,
+          headers: { 'Accept': 'application/json' }
+        });
+        if (response.ok) {
+          contactStatus.innerText = UI_TEXTS[LANG].msg_success;
+          contactStatus.style.color = "#4ade80";
+          contactForm.reset();
+        } else {
+          contactStatus.innerText = UI_TEXTS[LANG].msg_error;
+          contactStatus.style.color = "#ff6b6b";
+        }
+      } catch {
         contactStatus.innerText = UI_TEXTS[LANG].msg_error;
         contactStatus.style.color = "#ff6b6b";
       }
-    } catch {
-      contactStatus.innerText = UI_TEXTS[LANG].msg_error;
-      contactStatus.style.color = "#ff6b6b";
-    }
-  };
+    };
+  }
 
   document.getElementById('backToProjects').onclick = ()=>showSection('projects');
   document.getElementById('tabOverview').onclick = () => {
@@ -215,5 +221,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('detailDevlogWrap').style.display='block';
   };
 
-  updateUI();
+  updateUI(); // Inicializa la interfaz y renderiza proyectos
 });
