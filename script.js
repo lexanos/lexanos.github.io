@@ -1,129 +1,100 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-  const PROJECTS = [
-    { id:'piratepenguin', title:'Pirate Penguin / Forja de Almas', year:2024,
-      desc:{ es:'Juego de acción con fuerte foco en combate, estética cartoon y progresión de habilidades.', en:'Action game focused on combat, cartoon aesthetics and skill progression.' },
-      longDesc:{ es:'Proyecto de acción con énfasis en combate fluido, shaders personalizados, UI avanzada y progresión de habilidades.', en:'Action project focused on fluid combat, custom shaders, advanced UI and skill progression.' },
-      links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/pirate_thumb.jpg' }, { type:'video', src:'PLACEHOLDER_VIDEO', poster:'images/pirate_poster.jpg' } ],
+  // CONFIGURACIÓN DE DONACIONES (Sustituye con tus links reales)
+  const DONATION_CONFIG = {
+    paypal: 'https://paypal.me/tu_usuario',
+    mercado: 'https://link.mercadopago.com.ar/tu_usuario',
+    payoneer: 'tu_email_payoneer@gmail.com', // Payoneer no tiene link directo fácil, a veces se usa email
+    binance: 'TU_BINANCE_PAY_ID_O_LINK'
+  };
+
+  // DICCIONARIO DE TRADUCCIONES UI
+  const UI_TEXTS = {
+    es: {
+      nav_home: "Home", nav_games: "Games", nav_blog: "Blog", nav_donations: "Donations", nav_about: "About", nav_contact: "Contact",
+      home_title: "Desarrollador de Juegos · Unity · C#",
+      home_desc: "Programador y artista de videojuegos. Experiencia en Unity, C#, shaders, UI/UX, diseño y arte 2D/3D.",
+      btn_view_games: "Ver Juegos", title_projects: "Proyectos", btn_back: "← Volver a proyectos",
+      tab_overview: "Overview", tab_devlog: "Devlog", blog_desc: "Espacio personal para ideas, notas y comentarios generales...",
+      don_desc: "Si querés apoyar el desarrollo de futuros proyectos podés hacerlo a través de las siguientes plataformas:",
+      don_thanks: "Gracias por apoyar el desarrollo de mis juegos. Tu aporte ayuda a seguir creando nuevos proyectos.",
+      about_exp_title: "Experiencia destacada", contact_send_msg: "Enviar mensaje", btn_send: "Enviar",
+      msg_sending: "Enviando mensaje...", msg_success: "¡Mensaje enviado correctamente!", msg_error: "Error al enviar el mensaje.",
+      msg_fill_fields: "Por favor completá todos los campos.", msg_invalid_email: "El email no es válido."
+    },
+    en: {
+      nav_home: "Home", nav_games: "Games", nav_blog: "Blog", nav_donations: "Donations", nav_about: "About", nav_contact: "Contact",
+      home_title: "Game Developer · Unity · C#",
+      home_desc: "Video game programmer and artist. Experience in Unity, C#, shaders, UI/UX, design and 2D/3D art.",
+      btn_view_games: "View Games", title_projects: "Projects", btn_back: "← Back to Projects",
+      tab_overview: "Overview", tab_devlog: "Devlog", blog_desc: "Personal space for ideas and notes. Devlogs are inside each project.",
+      don_desc: "If you want to support future developments, you can do so through the following platforms:",
+      don_thanks: "Thank you for supporting my game development. Your contribution helps keep projects going.",
+      about_exp_title: "Featured Experience", contact_send_msg: "Send message", btn_send: "Send",
+      msg_sending: "Sending message...", msg_success: "Message sent successfully!", msg_error: "Error sending message.",
+      msg_fill_fields: "Please fill in all fields.", msg_invalid_email: "Invalid email address."
+    }
+  };
+
+  const PROJECTS =,
       tags:['Action','Unity'],
-      devlog:['Inicio del proyecto','Primer prototipo de combate','Iteraciones de UI y shaders']
+      devlog:['Prototipo inicial']
     },
-
-    { id:'axiebrawl', title:'Pirate Penguin (Axie Brawl)', year:2023,
-      desc:{ es:'MOBA competitivo con énfasis en partidas rápidas y juego en equipo.', en:'Competitive MOBA focused on fast matches and team play.' },
-      longDesc:{ es:'Participación en desarrollo MOBA con foco en C#, gameplay y sistemas multiplayer.', en:'MOBA development with focus on C#, gameplay and multiplayer systems.' },
-      links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/axiebrawl_thumb.jpg' }, { type:'video', src:'PLACEHOLDER_VIDEO' } ],
-      tags:['MOBA','Multiplayer'],
-      devlog:['Integración de sistemas multiplayer','Balance inicial de personajes']
-    },
-
     { id:'llamageddon', title:'Llamageddon', year:2020,
-      desc:{ es:'Juego arcade meme con humor absurdo.', en:'Arcade meme game with absurd humor.' },
-      longDesc:{ es:'Juego corto de acción arcade desarrollado como experimento creativo.', en:'Short arcade action game developed as a creative experiment.' },
+      desc:{ es:'Juego arcade con humor absurdo sobre Argentina.', en:'Arcade game with absurd humor about Argentina.' },
+      longDesc:{ es:'Juego corto de acción arcade desarrollado en 2020.', en:'Short arcade action game developed in 2020.' },
       links:{ itch:'https://lexanos.itch.io/llamageddon', download:'https://lexanos.itch.io/llamageddon' },
-      media:[ { type:'video', src:'PLACEHOLDER_VIDEO', poster:'images/llamageddon_poster.jpg' }, { type:'image', src:'images/llamageddon_ss1.jpg' } ],
+      media:,
       tags:['Arcade'],
-      devlog:['Concepto inicial','Publicación en itch.io']
+      devlog:['Publicado en itch.io']
     },
-
-    { id:'artool', title:'Artool', year:2019,
-      desc:{ es:'Herramienta creativa para lluvia de ideas.', en:'Creative brainstorming tool.' },
-      longDesc:{ es:'Herramienta experimental para procesos creativos y concept art.', en:'Experimental tool for creative processes and concept art.' },
-      links:{ itch:'https://lexanos.itch.io/artool', download:'https://lexanos.itch.io/artool' },
-      media:[ { type:'image', src:'images/artool_thumb.jpg' } ],
-      tags:['Tool'],
-      devlog:['Diseño de herramienta','Release público']
-    },
-
-    { id:'agentrabbit', title:'Agent Rabbit - Climber Ninja', year:2018,
-      desc:{ es:'Juego mobile casual de reflejos.', en:'Casual reflex-based mobile game.' },
-      longDesc:{ es:'Juego mobile enfocado en escalada, timing y reflejos rápidos.', en:'Mobile game focused on climbing, timing and fast reflexes.' },
-      links:{ itch:'https://lexanos.itch.io/agent-rabbit-climber-ninja', download:'https://lexanos.itch.io/agent-rabbit-climber-ninja' },
-      media:[ { type:'image', src:'images/agentrabbit_thumb.jpg' }, { type:'video', src:'PLACEHOLDER_VIDEO' } ],
-      tags:['Mobile'],
-      devlog:['Prototipo','Optimización mobile','Release']
-    },
-
-    { id:'wildroad', title:'Wild Road', year:2019,
-      desc:{ es:'Beat em up clásico con estética contemporánea.', en:'Classic beat em up with contemporary aesthetics.' },
-      longDesc:{ es:'Wild Road es un beat em up con niveles diseñados para combate fluido y mecánicas acumulativas.', en:'Wild Road is a beat em up with levels designed for fluid combat and cumulative mechanics.' },
-      links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/wildroad_thumb.jpg' } ],
-      tags:['BeatEmUp'],
-      devlog:[]
-    },
-
-    { id:'pachis', title:'Pachis', year:2020,
-      desc:{ es:'Juego educativo.', en:'Educational game.' },
-      longDesc:{ es:'Pachis es un juego educativo pensado para enseñar conceptos básicos mediante minijuegos.', en:'Pachis is an educational game designed to teach basic concepts through minigames.' },
-      links:{ itch:'https://lexanos.itch.io/pachis', download:'https://lexanos.itch.io/pachis' },
-      media:[ { type:'image', src:'images/pachis_thumb.jpg' } ],
-      tags:['Educational'],
-      devlog:[]
-    },
-
-    { id:'greenbrush', title:'Green Brush', year:2018,
-      desc:{ es:'Strategy game.', en:'Strategy game.' },
-      longDesc:{ es:'Green Brush es un juego de estrategia con componentes educativos y resolución por turnos.', en:'Green Brush is a strategy game with educational components and turn-based resolution.' },
-      links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/greenbrush_thumb.jpg' } ],
-      tags:['Strategy'],
-      devlog:[]
-    },
-
-    { id:'thebeyond', title:'The Beyond', year:2017,
-      desc:{ es:'3D Adventure.', en:'3D Adventure.' },
-      longDesc:{ es:'The Beyond explora mecánicas 3D y narrativa ambiental en un mundo semi abierto.', en:'The Beyond explores 3D mechanics and environmental narrative in a semi-open world.' },
-      links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/thebeyond_thumb.jpg' } ],
-      tags:['3D'],
-      devlog:[]
-    },
-
     { id:'alphabet', title:'Alphabet', year:2015,
-      desc:{ es:'Platform Puzzle.', en:'Platform Puzzle.' },
-      longDesc:{ es:'Alphabet es un puzzle-platform premiado por su diseño intuitivo.', en:'Alphabet is a prize-winning puzzle-platformer known for intuitive design.' },
-      links:{ itch:'', download:'' },
+      desc:{ es:'Puzzles y plataformas premiado.', en:'Award-winning puzzle platformer.' },
+      longDesc:{ es:'Alphabet es un puzzle-platformer premiado por su diseño.', en:'Alphabet is a prize-winning puzzle-platformer.' },
+      links:{ itch:'https://lexanos.itch.io/alphabet', download:'' },
       media:[ { type:'image', src:'images/alphabet_thumb.jpg' } ],
       tags:['Puzzle'],
-      devlog:[]
+      devlog:
     },
-
-    { id:'drunkaholic', title:'Drunkaholic', year:2015,
-      desc:{ es:'Casual 3D.', en:'Casual 3D game.' },
-      longDesc:{ es:'Proyecto 3D casual orientado a la diversión y experimentación.', en:'Casual 3D project oriented to fun and experimentation.' },
+    { id:'piratepenguin', title:'Pirate Penguin / Forja de Almas', year:2024,
+      desc:{ es:'Acción cartoon y combate fluido.', en:'Cartoon action with fluid combat.' },
+      longDesc:{ es:'Proyecto de acción con shaders personalizados y UI avanzada.', en:'Action project with custom shaders and advanced UI.' },
       links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/drunkaholic_thumb.jpg' } ],
-      tags:['Simulation'],
-      devlog:[]
-    },
-
-    { id:'samuraiblade', title:'Samurai Blade : Rock, Paper & Scissors', year:2024,
-      desc:{ es:'Roguelite arcade basado en piedra-papel-tijera.', en:'Roguelite arcade based on rock-paper-scissors combat.' },
-      longDesc:{ es:'Combate roguelite con mecánicas de piedra-papel-tijera como núcleo.', en:'Roguelite combat with rock-paper-scissors mechanics at its core.' },
-      links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/samuraiblade_thumb.jpg' } ],
-      tags:['Action'],
-      devlog:[]
-    },
-
-    { id:'zombieattack', title:'Zombie Attack Nightmare Endurance Apocalyptic Edition', year:2020,
-      desc:{ es:'Shooter apocalíptico.', en:'Apocalyptic shooter.' },
-      longDesc:{ es:'Modo endurance apocalíptico con hordas de enemigos.', en:'Endurance apocalyptic mode with hordes of enemies.' },
-      links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/zombieattack_thumb.jpg' } ],
-      tags:['Action'],
-      devlog:[]
+      media:[ { type:'image', src:'images/pirate_thumb.jpg' } ],
+      tags:['Action','Unity'],
+      devlog:['Combate iterado']
     }
+    //... puedes seguir agregando el resto de proyectos aquí
   ];
 
   let LANG = 'es';
 
   const navLinks = document.querySelectorAll('header nav a[data-target]');
-  const sections = document.querySelectorAll('main .section');
+  const sections = document.querySelectorAll('main.section');
   const grid = document.getElementById('projectsGrid');
+  const langSelect = document.getElementById('lang');
+
+  // FUNCION CAMBIO IDIOMA UI
+  function updateUI() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (UI_TEXTS[LANG][key]) {
+        if (el.tagName === 'INPUT' |
+
+| el.tagName === 'TEXTAREA') {
+          el.placeholder = UI_TEXTS[LANG][key];
+        } else {
+          el.innerText = UI_TEXTS[LANG][key];
+        }
+      }
+    });
+    renderProjects();
+  }
+
+  langSelect.addEventListener('change', (e) => {
+    LANG = e.target.value;
+    updateUI();
+  });
 
   function showSection(id){
     sections.forEach(s => s.classList.toggle('active', s.id === id));
@@ -148,41 +119,24 @@ document.addEventListener('DOMContentLoaded', () => {
     PROJECTS.forEach(p=>{
       const card = document.createElement('div');
       card.className = 'card';
-
       const thumb = document.createElement('div');
       thumb.className = 'thumb';
-      thumb.style.position = 'relative';
-
-      const imgItem = (p.media||[]).find(m=>m.type==='image');
-      const vidItem = (p.media||[]).find(m=>m.type==='video');
-
+      
+      const imgItem = (p.media||).find(m=>m.type==='image');
+      const vidItem = (p.media||).find(m=>m.type==='video');
       const img = document.createElement('img');
-      img.src = imgItem?.src || vidItem?.poster || 'images/placeholder_thumb.jpg';
+      img.src = imgItem?.src |
+
+| vidItem?.poster |
+| 'images/placeholder_thumb.jpg';
       thumb.appendChild(img);
-
-      if(vidItem){
-        const v = document.createElement('video');
-        if(vidItem.src !== 'PLACEHOLDER_VIDEO') v.src = vidItem.src;
-        v.muted = true;
-        v.loop = true;
-        v.preload = 'metadata';
-        v.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:none';
-        thumb.appendChild(v);
-
-        thumb.addEventListener('mouseenter',()=>{
-          if(v.src){ img.style.display='none'; v.style.display='block'; v.play().catch(()=>{}); }
-        });
-        thumb.addEventListener('mouseleave',()=>{
-          if(v.src){ v.pause(); v.style.display='none'; img.style.display='block'; }
-        });
-      }
 
       const meta = document.createElement('div');
       meta.className = 'meta';
       meta.innerHTML = `
         <h4>${p.title} <span style="color:var(--muted);font-size:13px">(${p.year})</span></h4>
         <p>${p.desc[LANG]}</p>
-        <div class="tags">${(p.tags||[]).map(t=>`<span>${t}</span>`).join('')}</div>
+        <div class="tags">${(p.tags||).map(t=>`<span>${t}</span>`).join('')}</div>
       `;
 
       card.appendChild(thumb);
@@ -192,182 +146,88 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  renderProjects();
-
   function openDetail(id){
     const p = PROJECTS.find(x=>x.id===id);
     if(!p) return;
-
     document.getElementById('detailTitle').innerText = p.title;
-    document.getElementById('detailDesc').innerText = p.longDesc[LANG] || p.desc[LANG];
+    document.getElementById('detailDesc').innerText = p.longDesc[LANG] |
 
+| p.desc[LANG];
     const media = document.getElementById('detailMedia');
     media.innerHTML = '';
+    const main = p.media.find(m=>m.type==='video' && m.src!=='PLACEHOLDER_VIDEO') |
 
-    const main = p.media.find(m=>m.type==='video' && m.src!=='PLACEHOLDER_VIDEO') || p.media[0];
-    if(main?.type==='video' && main.src!=='PLACEHOLDER_VIDEO'){
-      const v = document.createElement('video');
-      v.controls = true;
-      v.src = main.src;
-      v.style.width = '100%';
-      v.style.height = '400px';
-      media.appendChild(v);
-    } else if(main?.type==='image'){
-      const i = document.createElement('img');
-      i.src = main.src;
-      i.style.width = '100%';
-      media.appendChild(i);
+| p.media;
+    if(main?.type==='image'){
+      const i = document.createElement('img'); i.src = main.src; i.style.width = '100%'; media.appendChild(i);
     }
-
-    const thumbs = document.getElementById('detailThumbs');
-    thumbs.innerHTML = '';
-    p.media.forEach(m=>{
-      const t = document.createElement('div');
-      t.style.cssText = 'width:120px;height:68px;border-radius:8px;overflow:hidden;cursor:pointer;margin-right:8px;background:#000';
-      if(m.type==='image'){
-        const i = document.createElement('img');
-        i.src = m.src;
-        i.style.width='100%';
-        i.style.height='100%';
-        i.style.objectFit='cover';
-        t.appendChild(i);
-        t.onclick = ()=>{ media.innerHTML=''; const im=document.createElement('img'); im.src=m.src; im.style.width='100%'; media.appendChild(im); };
-      }
-      thumbs.appendChild(t);
-    });
-
     const links = document.getElementById('detailLinks');
     links.innerHTML='';
-    if(p.links.download){
-      const a=document.createElement('a'); a.className='cta'; a.href=p.links.download; a.target='_blank'; a.innerText='Download / Play'; links.appendChild(a);
-    } else if(p.links.itch){
-      const a=document.createElement('a'); a.className='cta'; a.href=p.links.itch; a.target='_blank'; a.innerText='View on itch.io'; links.appendChild(a);
+    if(p.links.itch){
+      const a=document.createElement('a'); a.className='cta'; a.href=p.links.itch; a.target='_blank'; a.innerText='Itch.io'; links.appendChild(a);
     }
-
     const devlog = document.getElementById('detailDevlog');
     devlog.innerHTML='';
     p.devlog.forEach(d=>{ const li=document.createElement('li'); li.innerText=d; devlog.appendChild(li); });
-
-    document.getElementById('detailOverview').style.display='block';
-    document.getElementById('detailDevlogWrap').style.display='none';
-
     showSection('detail');
   }
 
-  document.getElementById('tabOverview').onclick = ()=>{
-    document.getElementById('detailOverview').style.display = 'block';
-    document.getElementById('detailDevlogWrap').style.display = 'none';
-    document.getElementById('tabOverview').style.background = 'var(--accent)';
-    document.getElementById('tabDevlog').style.background = '#1a2333';
-  };
-
-  document.getElementById('tabDevlog').onclick = ()=>{
-    document.getElementById('detailOverview').style.display = 'none';
-    document.getElementById('detailDevlogWrap').style.display = 'block';
-    document.getElementById('tabDevlog').style.background = 'var(--accent)';
-    document.getElementById('tabOverview').style.background = '#1a2333';
-  };
-
   document.getElementById('backToProjects').onclick = ()=>showSection('projects');
+  document.getElementById('tabOverview').onclick = ()=> {
+    document.getElementById('detailOverview').style.display='block';
+    document.getElementById('detailDevlogWrap').style.display='none';
+  };
+  document.getElementById('tabDevlog').onclick = ()=> {
+    document.getElementById('detailOverview').style.display='none';
+    document.getElementById('detailDevlogWrap').style.display='block';
+  };
 
-  showSection('home');
-
-  // ===============================
-  // Contact form submit (FIX REAL)
-  // ===============================
-  const contactForm = document.getElementById('contactForm');
-
-  // create or reuse contactStatus element (non-destructive; doesn't change HTML file)
-  let contactStatus = document.getElementById('contactStatus');
-  if (!contactStatus && contactForm) {
-    contactStatus = document.createElement('div');
-    contactStatus.id = 'contactStatus';
-    contactStatus.style.marginTop = '10px';
-    contactForm.appendChild(contactStatus);
-  }
-
-  if (contactForm) {
-    contactForm.addEventListener('submit', async (e) => {
+  // LOGICA DONACIONES
+  document.querySelectorAll('[data-donate]').forEach(btn => {
+    btn.onclick = (e) => {
       e.preventDefault();
-
-      if (!contactStatus) return; // defensive
-
-      contactStatus.innerText = '';
-      contactStatus.style.color = '';
-
-      const name = document.getElementById('cName').value.trim();
-      const email = document.getElementById('cEmail').value.trim();
-      const msg = document.getElementById('cMsg').value.trim();
-
-      if (!name || !email || !msg) {
-        contactStatus.innerText = 'Por favor completá todos los campos.';
-        contactStatus.style.color = '#ff6b6b';
-        return;
+      const type = btn.getAttribute('data-donate');
+      const url = DONATION_CONFIG[type];
+      
+      if(type === 'binance') {
+          navigator.clipboard.writeText(url);
+          alert('Binance ID copiado al portapapeles');
+      } else {
+          window.open(url, '_blank');
       }
+      document.getElementById('donThanks').style.display = 'block';
+    };
+  });
 
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        contactStatus.innerText = 'El email no es válido.';
-        contactStatus.style.color = '#ff6b6b';
-        return;
-      }
+  // FORMULARIO DE CONTACTO (Formspree)
+  const contactForm = document.getElementById('contactForm');
+  let contactStatus = document.getElementById('contactStatus') |
 
-      if (!contactForm.action) {
-        contactStatus.innerText = 'Error: formulario sin destino de envío.';
-        contactStatus.style.color = '#ff6b6b';
-        return;
-      }
+| document.createElement('div');
+  contactStatus.id = 'contactStatus';
+  contactForm.appendChild(contactStatus);
 
-      try {
-        contactStatus.innerText = 'Enviando mensaje...';
-        contactStatus.style.color = 'var(--muted)';
-
-        const res = await fetch(contactForm.action, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name,
-            email,
-            message: msg
-          })
-        });
-
-        if (res.ok) {
-          contactStatus.innerText = 'Mensaje enviado correctamente. ¡Gracias!';
-          contactStatus.style.color = '#4ade80';
-          contactForm.reset();
-        } else {
-          contactStatus.innerText = 'Error al enviar el mensaje.';
-          contactStatus.style.color = '#ff6b6b';
-        }
-      } catch {
-        contactStatus.innerText = 'Error de conexión.';
-        contactStatus.style.color = '#ff6b6b';
-      }
+  contactForm.onsubmit = async (e) => {
+    e.preventDefault();
+    contactStatus.innerText = UI_TEXTS[LANG].msg_sending;
+    
+    const formData = new FormData(contactForm);
+    const response = await fetch(contactForm.action, {
+      method: 'POST',
+      body: formData,
+      headers: { 'Accept': 'application/json' }
     });
 
-    // Support for existing button type="button" with id="cSend"
-    const cSendBtn = document.getElementById('cSend');
-    if (cSendBtn) {
-      cSendBtn.addEventListener('click', (ev) => {
-        ev.preventDefault();
-        // prefer requestSubmit when available (triggers submit event and validation)
-        if (typeof contactForm.requestSubmit === 'function') {
-          contactForm.requestSubmit();
-        } else {
-          // fallback: create temporary submit button and click it
-          const tmp = document.createElement('button');
-          tmp.type = 'submit';
-          tmp.style.display = 'none';
-          contactForm.appendChild(tmp);
-          tmp.click();
-          tmp.remove();
-        }
-      });
+    if (response.ok) {
+      contactStatus.innerText = UI_TEXTS[LANG].msg_success;
+      contactStatus.style.color = '#4ade80';
+      contactForm.reset();
+    } else {
+      contactStatus.innerText = UI_TEXTS[LANG].msg_error;
+      contactStatus.style.color = '#ff6b6b';
     }
-  }
+  };
 
+  renderProjects();
+  updateUI();
 });
