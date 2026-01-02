@@ -1,70 +1,66 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-  // CONFIGURACIÓN DE DONACIONES (Sustituye con tus links reales)
-  const DONATION_CONFIG = {
-    paypal: 'https://paypal.me/tu_usuario',
-    mercado: 'https://link.mercadopago.com.ar/tu_usuario',
-    payoneer: 'tu_email_payoneer@gmail.com', // Payoneer no tiene link directo fácil, a veces se usa email
-    binance: 'TU_BINANCE_PAY_ID_O_LINK'
-  };
-
-  // DICCIONARIO DE TRADUCCIONES UI
+  // DICCIONARIO DE TRADUCCIONES
   const UI_TEXTS = {
     es: {
-      nav_home: "Home", nav_games: "Games", nav_blog: "Blog", nav_donations: "Donations", nav_about: "About", nav_contact: "Contact",
+      nav_home: "Inicio", nav_games: "Juegos", nav_blog: "Blog", nav_donations: "Donaciones", nav_about: "Sobre Mí", nav_contact: "Contacto",
       home_title: "Desarrollador de Juegos · Unity · C#",
       home_desc: "Programador y artista de videojuegos. Experiencia en Unity, C#, shaders, UI/UX, diseño y arte 2D/3D.",
-      btn_view_games: "Ver Juegos", title_projects: "Proyectos", btn_back: "← Volver a proyectos",
-      tab_overview: "Overview", tab_devlog: "Devlog", blog_desc: "Espacio personal para ideas, notas y comentarios generales...",
+      btn_view_games: "Ver Juegos", title_projects: "Mis Proyectos", btn_back: "← Volver a proyectos",
+      tab_overview: "Resumen", tab_devlog: "Bitácora (Devlog)", blog_desc: "Espacio personal para ideas y notas generales.",
       don_desc: "Si querés apoyar el desarrollo de futuros proyectos podés hacerlo a través de las siguientes plataformas:",
-      don_thanks: "Gracias por apoyar el desarrollo de mis juegos. Tu aporte ayuda a seguir creando nuevos proyectos.",
-      about_exp_title: "Experiencia destacada", contact_send_msg: "Enviar mensaje", btn_send: "Enviar",
-      msg_sending: "Enviando mensaje...", msg_success: "¡Mensaje enviado correctamente!", msg_error: "Error al enviar el mensaje.",
-      msg_fill_fields: "Por favor completá todos los campos.", msg_invalid_email: "El email no es válido."
+      don_thanks: "¡Gracias por apoyar el desarrollo de mis juegos!",
+      don_crypto_title: "Direcciones de Depósito",
+      about_exp_title: "Experiencia destacada", contact_send_msg: "Enviar mensaje", btn_send: "Enviar Mensaje",
+      msg_sending: "Enviando...", msg_success: "¡Mensaje enviado con éxito!", msg_error: "Hubo un error al enviar.",
+      copy_ok: "¡Copiado!", copy_btn: "Copiar"
     },
     en: {
       nav_home: "Home", nav_games: "Games", nav_blog: "Blog", nav_donations: "Donations", nav_about: "About", nav_contact: "Contact",
       home_title: "Game Developer · Unity · C#",
       home_desc: "Video game programmer and artist. Experience in Unity, C#, shaders, UI/UX, design and 2D/3D art.",
-      btn_view_games: "View Games", title_projects: "Projects", btn_back: "← Back to Projects",
-      tab_overview: "Overview", tab_devlog: "Devlog", blog_desc: "Personal space for ideas and notes. Devlogs are inside each project.",
+      btn_view_games: "View Games", title_projects: "My Projects", btn_back: "← Back to projects",
+      tab_overview: "Overview", tab_devlog: "Devlog", blog_desc: "Personal space for ideas and general notes.",
       don_desc: "If you want to support future developments, you can do so through the following platforms:",
-      don_thanks: "Thank you for supporting my game development. Your contribution helps keep projects going.",
-      about_exp_title: "Featured Experience", contact_send_msg: "Send message", btn_send: "Send",
-      msg_sending: "Sending message...", msg_success: "Message sent successfully!", msg_error: "Error sending message.",
-      msg_fill_fields: "Please fill in all fields.", msg_invalid_email: "Invalid email address."
+      don_thanks: "Thanks for supporting my game development!",
+      don_crypto_title: "Deposit Addresses",
+      about_exp_title: "Professional Experience", contact_send_msg: "Send a message", btn_send: "Send Message",
+      msg_sending: "Sending...", msg_success: "Message sent successfully!", msg_error: "An error occurred.",
+      copy_ok: "Copied!", copy_btn: "Copy"
     }
   };
 
   const PROJECTS =,
-      tags:['Action','Unity'],
-      devlog:['Prototipo inicial']
+      tags:, devlog:['Mecánicas de combate terminadas']
     },
     { id:'llamageddon', title:'Llamageddon', year:2020,
       desc:{ es:'Juego arcade con humor absurdo sobre Argentina.', en:'Arcade game with absurd humor about Argentina.' },
-      longDesc:{ es:'Juego corto de acción arcade desarrollado en 2020.', en:'Short arcade action game developed in 2020.' },
-      links:{ itch:'https://lexanos.itch.io/llamageddon', download:'https://lexanos.itch.io/llamageddon' },
-      media:,
-      tags:['Arcade'],
-      devlog:['Publicado en itch.io']
+      longDesc:{ es:'El año 2020 tiene nuevas y catastróficas sorpresas, pero la Argentina está preparada.', en:'The year 2020 has new and catastrophic surprises, but Argentina is ready.' },
+      links:{ itch:'https://lexanos.itch.io/llamageddon' },
+      media:[ { type:'image', src:'images/llamageddon_thumb.jpg' } ],
+      tags:['Action','Arcade'], devlog:['Lanzamiento en itch.io']
     },
     { id:'alphabet', title:'Alphabet', year:2015,
-      desc:{ es:'Puzzles y plataformas premiado.', en:'Award-winning puzzle platformer.' },
-      longDesc:{ es:'Alphabet es un puzzle-platformer premiado por su diseño.', en:'Alphabet is a prize-winning puzzle-platformer.' },
-      links:{ itch:'https://lexanos.itch.io/alphabet', download:'' },
+      desc:{ es:'Platform Puzzle premiado.', en:'Award-winning Platform Puzzle.' },
+      longDesc:{ es:'"Y" es liberado de una misteriosa instalación y debe averiguar su pasado.', en:'"Y" is released from a mysterious facility and must find out about his past.' },
+      links:{ itch:'https://lexanos.itch.io/alphabet' },
       media:[ { type:'image', src:'images/alphabet_thumb.jpg' } ],
-      tags:['Puzzle'],
-      devlog:
+      tags:['Puzzle','Platformer'], devlog:['Premio al mejor diseño']
+    },
+    { id:'losxtars', title:'Los Xtar\'s', year:2018,
+      desc:{ es:'Plataformas y conspiración.', en:'Platformer about a conspiracy.' },
+      longDesc:{ es:'Únete a los Xtar\'s y ayuda a descubrir quién está detrás de esta conspiración.', en:'Join the Xtar\'s and help discover who is behind this conspiracy.' },
+      links:{ itch:'https://lexanos.itch.io/los-xtars' },
+      media:[ { type:'image', src:'images/losxtars_thumb.jpg' } ],
+      tags:['Platformer'], devlog:
     },
     { id:'piratepenguin', title:'Pirate Penguin / Forja de Almas', year:2024,
-      desc:{ es:'Acción cartoon y combate fluido.', en:'Cartoon action with fluid combat.' },
-      longDesc:{ es:'Proyecto de acción con shaders personalizados y UI avanzada.', en:'Action project with custom shaders and advanced UI.' },
-      links:{ itch:'', download:'' },
+      desc:{ es:'Acción cartoon y combate fluido.', en:'Cartoon action and fluid combat.' },
+      longDesc:{ es:'Desarrollo de GUI y sistemas de combate fluido en Unity.', en:'GUI development and fluid combat systems in Unity.' },
+      links:{ itch:'' },
       media:[ { type:'image', src:'images/pirate_thumb.jpg' } ],
-      tags:['Action','Unity'],
-      devlog:['Combate iterado']
+      tags:['Action','Unity'], devlog:
     }
-    //... puedes seguir agregando el resto de proyectos aquí
   ];
 
   let LANG = 'es';
@@ -74,27 +70,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const grid = document.getElementById('projectsGrid');
   const langSelect = document.getElementById('lang');
 
-  // FUNCION CAMBIO IDIOMA UI
   function updateUI() {
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const key = el.getAttribute('data-i18n');
-      if (UI_TEXTS[LANG][key]) {
-        if (el.tagName === 'INPUT' |
-
-| el.tagName === 'TEXTAREA') {
-          el.placeholder = UI_TEXTS[LANG][key];
-        } else {
-          el.innerText = UI_TEXTS[LANG][key];
-        }
-      }
+      if (UI_TEXTS[LANG][key]) el.innerText = UI_TEXTS[LANG][key];
     });
+    // Form placeholders
+    document.getElementById('cName').placeholder = (LANG === 'es'? 'Nombre' : 'Name');
+    document.getElementById('cEmail').placeholder = (LANG === 'es'? 'Email' : 'Email');
+    document.getElementById('cMsg').placeholder = (LANG === 'es'? 'Mensaje' : 'Message');
     renderProjects();
   }
-
-  langSelect.addEventListener('change', (e) => {
-    LANG = e.target.value;
-    updateUI();
-  });
 
   function showSection(id){
     sections.forEach(s => s.classList.toggle('active', s.id === id));
@@ -109,9 +95,9 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  document.getElementById('homeProjectsBtn')?.addEventListener('click', e=>{
-    e.preventDefault();
-    showSection('projects');
+  langSelect.addEventListener('change', (e) => {
+    LANG = e.target.value;
+    updateUI();
   });
 
   function renderProjects(){
@@ -121,13 +107,10 @@ document.addEventListener('DOMContentLoaded', () => {
       card.className = 'card';
       const thumb = document.createElement('div');
       thumb.className = 'thumb';
-      
       const imgItem = (p.media||).find(m=>m.type==='image');
-      const vidItem = (p.media||).find(m=>m.type==='video');
       const img = document.createElement('img');
       img.src = imgItem?.src |
 
-| vidItem?.poster |
 | 'images/placeholder_thumb.jpg';
       thumb.appendChild(img);
 
@@ -138,7 +121,6 @@ document.addEventListener('DOMContentLoaded', () => {
         <p>${p.desc[LANG]}</p>
         <div class="tags">${(p.tags||).map(t=>`<span>${t}</span>`).join('')}</div>
       `;
-
       card.appendChild(thumb);
       card.appendChild(meta);
       card.addEventListener('click',()=>openDetail(p.id));
@@ -155,11 +137,9 @@ document.addEventListener('DOMContentLoaded', () => {
 | p.desc[LANG];
     const media = document.getElementById('detailMedia');
     media.innerHTML = '';
-    const main = p.media.find(m=>m.type==='video' && m.src!=='PLACEHOLDER_VIDEO') |
-
-| p.media;
+    const main = p.media;
     if(main?.type==='image'){
-      const i = document.createElement('img'); i.src = main.src; i.style.width = '100%'; media.appendChild(i);
+      const i = document.createElement('img'); i.src = main.src; i.style.width = '100%'; i.style.borderRadius = '8px'; media.appendChild(i);
     }
     const links = document.getElementById('detailLinks');
     links.innerHTML='';
@@ -172,62 +152,68 @@ document.addEventListener('DOMContentLoaded', () => {
     showSection('detail');
   }
 
-  document.getElementById('backToProjects').onclick = ()=>showSection('projects');
-  document.getElementById('tabOverview').onclick = ()=> {
-    document.getElementById('detailOverview').style.display='block';
-    document.getElementById('detailDevlogWrap').style.display='none';
-  };
-  document.getElementById('tabDevlog').onclick = ()=> {
-    document.getElementById('detailOverview').style.display='none';
-    document.getElementById('detailDevlogWrap').style.display='block';
-  };
+  // LÓGICA DE DONACIONES & CRYPTO
+  const binanceBtn = document.getElementById('binanceBtn');
+  const cryptoModule = document.getElementById('cryptoModule');
+  
+  binanceBtn.onclick = (e) => { e.preventDefault(); cryptoModule.style.display = 'block'; };
+  document.getElementById('closeCrypto').onclick = () => cryptoModule.style.display = 'none';
 
-  // LOGICA DONACIONES
-  document.querySelectorAll('[data-donate]').forEach(btn => {
-    btn.onclick = (e) => {
-      e.preventDefault();
-      const type = btn.getAttribute('data-donate');
-      const url = DONATION_CONFIG[type];
-      
-      if(type === 'binance') {
-          navigator.clipboard.writeText(url);
-          alert('Binance ID copiado al portapapeles');
-      } else {
-          window.open(url, '_blank');
-      }
+  document.querySelectorAll('.copy-btn').forEach(btn => {
+    btn.onclick = () => {
+      const text = btn.getAttribute('data-copy');
+      navigator.clipboard.writeText(text).then(() => {
+        const originalText = btn.innerText;
+        btn.innerText = UI_TEXTS[LANG].copy_ok;
+        btn.style.background = '#4ade80';
+        setTimeout(() => { 
+          btn.innerText = originalText; 
+          btn.style.background = '';
+        }, 2000);
+      });
       document.getElementById('donThanks').style.display = 'block';
     };
   });
 
-  // FORMULARIO DE CONTACTO (Formspree)
+  // CONTACTO (Formspree)
   const contactForm = document.getElementById('contactForm');
-  let contactStatus = document.getElementById('contactStatus') |
-
-| document.createElement('div');
-  contactStatus.id = 'contactStatus';
-  contactForm.appendChild(contactStatus);
+  const contactStatus = document.getElementById('contactStatus');
 
   contactForm.onsubmit = async (e) => {
     e.preventDefault();
     contactStatus.innerText = UI_TEXTS[LANG].msg_sending;
-    
-    const formData = new FormData(contactForm);
-    const response = await fetch(contactForm.action, {
-      method: 'POST',
-      body: formData,
-      headers: { 'Accept': 'application/json' }
-    });
+    contactStatus.style.color = "var(--muted)";
 
-    if (response.ok) {
-      contactStatus.innerText = UI_TEXTS[LANG].msg_success;
-      contactStatus.style.color = '#4ade80';
-      contactForm.reset();
-    } else {
+    const data = new FormData(contactForm);
+    try {
+      const response = await fetch(contactForm.action, {
+        method: 'POST',
+        body: data,
+        headers: { 'Accept': 'application/json' }
+      });
+      if (response.ok) {
+        contactStatus.innerText = UI_TEXTS[LANG].msg_success;
+        contactStatus.style.color = "#4ade80";
+        contactForm.reset();
+      } else {
+        contactStatus.innerText = UI_TEXTS[LANG].msg_error;
+        contactStatus.style.color = "#ff6b6b";
+      }
+    } catch {
       contactStatus.innerText = UI_TEXTS[LANG].msg_error;
-      contactStatus.style.color = '#ff6b6b';
+      contactStatus.style.color = "#ff6b6b";
     }
   };
 
-  renderProjects();
+  document.getElementById('backToProjects').onclick = ()=>showSection('projects');
+  document.getElementById('tabOverview').onclick = () => {
+    document.getElementById('detailOverview').style.display='block';
+    document.getElementById('detailDevlogWrap').style.display='none';
+  };
+  document.getElementById('tabDevlog').onclick = () => {
+    document.getElementById('detailOverview').style.display='none';
+    document.getElementById('detailDevlogWrap').style.display='block';
+  };
+
   updateUI();
 });
