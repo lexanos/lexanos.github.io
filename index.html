@@ -66,21 +66,23 @@
 
   <section id="blog" class="section">
     <h3>Blog</h3>
+    <p style="color:var(--muted)">Espacio personal para ideas, notas y comentarios generales.</p>
     <div id="posts"></div>
   </section>
 
   <section id="donations" class="section">
     <h3>Donaciones</h3>
-    <p>Si querés apoyar el desarrollo de futuros proyectos podés hacerlo a través de las siguientes plataformas:</p>
+    <p id="donText">Si querés apoyar el desarrollo de futuros proyectos podés hacerlo a través de las siguientes plataformas:</p>
 
     <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:16px">
       <a class="cta" href="https://link.mercadopago.com.ar/lexanos" target="_blank" style="background:#009ee3">Mercado Pago</a>
-      <a class="cta" href="#" id="binanceBsc" style="background:#f3ba2f;color:#000">Binance BSC (BEP20)</a>
-      <a class="cta" href="#" id="binanceTrx" style="background:#f3ba2f;color:#000">Binance TRON (TRC20)</a>
+      <a class="cta" href="#" id="binanceBsc" style="background:#f3ba2f;color:#000">Binance (Red BSC)</a>
+      <a class="cta" href="#" id="binanceTrx" style="background:#f3ba2f;color:#000">Binance (Red TRC20)</a>
+      <a class="cta" href="#" style="background:#555;cursor:not-allowed" title="Próximamente">PayPal</a>
     </div>
 
     <div id="donThanks" style="display:none;margin-top:20px;padding:16px;border-radius:12px;background:#0f1720;color:var(--text)">
-      💙 <span id="donThanksText">Gracias por apoyar el desarrollo de mis juegos. La dirección ha sido copiada o el link abierto.</span>
+      💙 <span id="donThanksText">¡Gracias! La dirección ha sido copiada al portapapeles. Tu aporte ayuda a seguir creando nuevos proyectos.</span>
     </div>
   </section>
 
@@ -106,7 +108,7 @@
       <input id="cName" name="name" placeholder="Nombre" required />
       <input id="cEmail" name="email" type="email" placeholder="Email" required />
       <textarea id="cMsg" name="message" placeholder="Mensaje" rows="5" required></textarea>
-      <div id="contactStatus" style="margin-bottom:10px"></div>
+      <div id="contactStatus" style="margin-bottom:10px; font-size:14px;"></div>
       <button type="submit" id="cSend">Enviar</button>
     </form>
   </section>
