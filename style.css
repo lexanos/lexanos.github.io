@@ -33,3 +33,4 @@ button{background:var(--accent);color:#fff;padding:10px 14px;border-radius:8px;b
 .tags{margin-top:8px}
 .tags span{display:inline-block;background:#0f1720;padding:5px 8px;border-radius:6px;margin-right:6px;color:var(--muted);font-size:12px}
 @media(max-width:700px){.hero{flex-direction:column;align-items:flex-start}.hero h2{font-size:28px}}
+@media(max-width:700px){.hero{flex-direction:column;align-items:flex-start}.hero h2{font-size:28px}}
