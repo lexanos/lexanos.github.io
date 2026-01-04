@@ -1,143 +1,197 @@
 document.addEventListener('DOMContentLoaded', () => {
 
   // -------------------------
-  // 1. DATOS Y ESTADO GLOBAL (RESTAURADO COMPLETO)
+  // 1. DATOS Y ESTADO GLOBAL
   // -------------------------
+  
+  // Lista completa de proyectos (Fallback)
   const PROJECTS_FALLBACK = [
-    { id:'piratepenguin', title:'Pirate Penguin / Forja de Almas', year:2024,
-      desc:{ es:'Juego de acción con fuerte foco en combate, estética cartoon y progresión de habilidades.', en:'Action game focused on combat, cartoon aesthetics and skill progression.' },
-      longDesc:{ es:'Proyecto de acción con énfasis en combate fluido, shaders personalizados, UI avanzada y progresión de habilidades.', en:'Action project focused on fluid combat, custom shaders, advanced UI and skill progression.' },
-      links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/pirate_thumb.jpg' }, { type:'video', src:'PLACEHOLDER_VIDEO', poster:'images/pirate_poster.jpg' } ],
-      tags:['Action','Unity'],
-      platform: 'PC', engine: 'Unity', // Campos explícitos si se desean
-      devlog:['Inicio del proyecto','Primer prototipo de combate','Iteraciones de UI y shaders']
+    { 
+      id: 'piratepenguin', 
+      title: 'Pirate Penguin / Forja de Almas', 
+      year: 2024,
+      desc: { es: 'Juego de acción con fuerte foco en combate.', en: 'Action game focused on combat.' },
+      longDesc: { es: 'Proyecto de acción con énfasis en combate fluido, shaders personalizados, UI avanzada y progresión de habilidades.', en: 'Action project focused on fluid combat, custom shaders, advanced UI and skill progression.' },
+      links: { itch: '#', download: '#' },
+      media: [ { type: 'image', src: 'images/pirate_thumb.jpg' }, { type: 'video', src: 'PLACEHOLDER_VIDEO', poster: 'images/pirate_poster.jpg' } ],
+      tags: ['Action', 'Unity'],
+      platform: 'PC', 
+      engine: 'Unity',
+      devlog: ['Inicio del proyecto', 'Primer prototipo de combate', 'Iteraciones de UI y shaders']
     },
-    { id:'axiebrawl', title:'Pirate Penguin (Axie Brawl)', year:2023,
-      desc:{ es:'MOBA competitivo con énfasis en partidas rápidas y juego en equipo.', en:'Competitive MOBA focused on fast matches and team play.' },
-      longDesc:{ es:'Participación en desarrollo MOBA con foco en C#, gameplay y sistemas multiplayer.', en:'MOBA development with focus on C#, gameplay and multiplayer systems.' },
-      links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/axiebrawl_thumb.jpg' }, { type:'video', src:'PLACEHOLDER_VIDEO' } ],
-      tags:['MOBA','Multiplayer'],
-      devlog:['Integración de sistemas multiplayer','Balance inicial de personajes']
+    { 
+      id: 'axiebrawl', 
+      title: 'Pirate Penguin (Axie Brawl)', 
+      year: 2023,
+      desc: { es: 'MOBA competitivo con énfasis en partidas rápidas.', en: 'Competitive MOBA focused on fast matches.' },
+      longDesc: { es: 'Participación en desarrollo MOBA con foco en C#, gameplay y sistemas multiplayer.', en: 'MOBA development with focus on C#, gameplay and multiplayer systems.' },
+      links: { itch: '#', download: '#' },
+      media: [ { type: 'image', src: 'images/axie_thumb.jpg' } ],
+      tags: ['MOBA', 'Multiplayer'],
+      platform: 'PC', engine: 'Unity',
+      devlog: []
     },
-    { id:'llamageddon', title:'Llamageddon', year:2020,
-      desc:{ es:'Juego arcade meme con humor absurdo.', en:'Arcade meme game with absurd humor.' },
-      longDesc:{ es:'Juego corto de acción arcade desarrollado como experimento creativo.', en:'Short arcade action game developed as a creative experiment.' },
-      links:{ itch:'https://lexanos.itch.io/llamageddon', download:'https://lexanos.itch.io/llamageddon' },
-      media:[ { type:'video', src:'PLACEHOLDER_VIDEO', poster:'images/llamageddon_poster.jpg' }, { type:'image', src:'images/llamageddon_ss1.jpg' } ],
-      tags:['Arcade'],
-      devlog:['Concepto inicial','Publicación en itch.io']
+    { 
+      id: 'llamageddon', 
+      title: 'Llamageddon', 
+      year: 2020,
+      desc: { es: 'Juego arcade meme con humor absurdo.', en: 'Arcade meme game with absurd humor.' },
+      longDesc: { es: 'Juego corto de acción arcade desarrollado como experimento creativo.', en: 'Short arcade action game developed as a creative experiment.' },
+      links: { itch: 'https://lexanos.itch.io/llamageddon', download: 'https://lexanos.itch.io/llamageddon' },
+      media: [ { type: 'video', src: 'PLACEHOLDER_VIDEO', poster: 'images/llamageddon_poster.jpg' }, { type: 'image', src: 'images/llamageddon_ss1.jpg' } ],
+      tags: ['Arcade'],
+      platform: 'PC', engine: 'Unity',
+      devlog: ['Concepto inicial', 'Publicación en itch.io']
     },
-    { id:'artool', title:'Artool', year:2019,
-      desc:{ es:'Herramienta creativa para lluvia de ideas.', en:'Creative brainstorming tool.' },
-      longDesc:{ es:'Herramienta experimental para procesos creativos y concept art.', en:'Experimental tool for creative processes and concept art.' },
-      links:{ itch:'https://lexanos.itch.io/artool', download:'https://lexanos.itch.io/artool' },
-      media:[ { type:'image', src:'images/artool_thumb.jpg' } ],
-      tags:['Tool'],
-      devlog:['Diseño de herramienta','Release público']
+    { 
+      id: 'artool', 
+      title: 'Artool', 
+      year: 2019,
+      desc: { es: 'Herramienta creativa para lluvia de ideas.', en: 'Creative brainstorming tool.' },
+      longDesc: { es: 'Herramienta experimental para procesos creativos y concept art.', en: 'Experimental tool for creative processes and concept art.' },
+      links: { itch: 'https://lexanos.itch.io/artool', download: 'https://lexanos.itch.io/artool' },
+      media: [ { type: 'image', src: 'images/artool_thumb.jpg' } ],
+      tags: ['Tool'],
+      platform: 'PC', engine: 'Unity',
+      devlog: ['Diseño de herramienta', 'Release público']
     },
-    { id:'agentrabbit', title:'Agent Rabbit - Climber Ninja', year:2018,
-      desc:{ es:'Juego mobile casual de reflejos.', en:'Casual reflex-based mobile game.' },
-      longDesc:{ es:'Juego mobile enfocado en escalada, timing y reflejos rápidos.', en:'Mobile game focused on climbing, timing and fast reflexes.' },
-      links:{ itch:'https://lexanos.itch.io/agent-rabbit-climber-ninja', download:'https://lexanos.itch.io/agent-rabbit-climber-ninja' },
-      media:[ { type:'image', src:'images/agentrabbit_thumb.jpg' }, { type:'video', src:'PLACEHOLDER_VIDEO' } ],
-      tags:['Mobile'],
-      devlog:['Prototipo','Optimización mobile','Release']
+    { 
+      id: 'agentrabbit', 
+      title: 'Agent Rabbit - Climber Ninja', 
+      year: 2018,
+      desc: { es: 'Juego mobile casual de reflejos.', en: 'Casual reflex-based mobile game.' },
+      longDesc: { es: 'Juego mobile enfocado en escalada, timing y reflejos rápidos.', en: 'Mobile game focused on climbing, timing and fast reflexes.' },
+      links: { itch: 'https://lexanos.itch.io/agent-rabbit-climber-ninja', download: 'https://lexanos.itch.io/agent-rabbit-climber-ninja' },
+      media: [ { type: 'image', src: 'images/agentrabbit_thumb.jpg' }, { type: 'video', src: 'PLACEHOLDER_VIDEO' } ],
+      tags: ['Mobile'],
+      platform: 'Android', engine: 'Unity',
+      devlog: ['Prototipo', 'Optimización mobile', 'Release']
     },
-    { id:'wildroad', title:'Wild Road', year:2019,
-      desc:{ es:'Beat em up clásico con estética contemporánea.', en:'Classic beat em up with contemporary aesthetics.' },
-      longDesc:{ es:'Wild Road es un beat em up con niveles diseñados para combate fluido y mecánicas acumulativas.', en:'Wild Road is a beat em up with levels designed for fluid combat and cumulative mechanics.' },
-      links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/wildroad_thumb.jpg' } ],
-      tags:['BeatEmUp'],
-      devlog:[]
+    { 
+      id: 'wildroad', 
+      title: 'Wild Road', 
+      year: 2019,
+      desc: { es: 'Beat em up clásico con estética contemporánea.', en: 'Classic beat em up with contemporary aesthetics.' },
+      longDesc: { es: 'Wild Road es un beat em up con niveles diseñados para combate fluido y mecánicas acumulativas.', en: 'Wild Road is a beat em up with levels designed for fluid combat and cumulative mechanics.' },
+      links: { itch: '', download: '' },
+      media: [ { type: 'image', src: 'images/wildroad_thumb.jpg' } ],
+      tags: ['BeatEmUp'],
+      platform: 'PC', engine: 'Unity',
+      devlog: []
     },
-    { id:'pachis', title:'Pachis', year:2020,
-      desc:{ es:'Juego educativo.', en:'Educational game.' },
-      longDesc:{ es:'Pachis es un juego educativo pensado para enseñar conceptos básicos mediante minijuegos.', en:'Pachis is an educational game designed to teach basic concepts through minigames.' },
-      links:{ itch:'https://lexanos.itch.io/pachis', download:'https://lexanos.itch.io/pachis' },
-      media:[ { type:'image', src:'images/pachis_thumb.jpg' } ],
-      tags:['Educational'],
-      devlog:[]
+    { 
+      id: 'pachis', 
+      title: 'Pachis', 
+      year: 2020,
+      desc: { es: 'Juego educativo.', en: 'Educational game.' },
+      longDesc: { es: 'Pachis es un juego educativo pensado para enseñar conceptos básicos mediante minijuegos.', en: 'Pachis is an educational game designed to teach basic concepts through minigames.' },
+      links: { itch: 'https://lexanos.itch.io/pachis', download: 'https://lexanos.itch.io/pachis' },
+      media: [ { type: 'image', src: 'images/pachis_thumb.jpg' } ],
+      tags: ['Educational'],
+      platform: 'Web/PC', engine: 'Unity',
+      devlog: []
     },
-    { id:'greenbrush', title:'Green Brush', year:2018,
-      desc:{ es:'Strategy game.', en:'Strategy game.' },
-      longDesc:{ es:'Green Brush es un juego de estrategia con componentes educativos y resolución por turnos.', en:'Green Brush is a strategy game with educational components and turn-based resolution.' },
-      links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/greenbrush_thumb.jpg' } ],
-      tags:['Strategy'],
-      devlog:[]
+    { 
+      id: 'greenbrush', 
+      title: 'Green Brush', 
+      year: 2018,
+      desc: { es: 'Strategy game.', en: 'Strategy game.' },
+      longDesc: { es: 'Green Brush es un juego de estrategia con componentes educativos y resolución por turnos.', en: 'Green Brush is a strategy game with educational components and turn-based resolution.' },
+      links: { itch: '', download: '' },
+      media: [ { type: 'image', src: 'images/greenbrush_thumb.jpg' } ],
+      tags: ['Strategy'],
+      platform: 'PC', engine: 'Unity',
+      devlog: []
     },
-    { id:'thebeyond', title:'The Beyond', year:2017,
-      desc:{ es:'3D Adventure.', en:'3D Adventure.' },
-      longDesc:{ es:'The Beyond explora mecánicas 3D y narrativa ambiental en un mundo semi abierto.', en:'The Beyond explores 3D mechanics and environmental narrative in a semi-open world.' },
-      links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/thebeyond_thumb.jpg' } ],
-      tags:['3D'],
-      devlog:[]
+    { 
+      id: 'thebeyond', 
+      title: 'The Beyond', 
+      year: 2017,
+      desc: { es: '3D Adventure.', en: '3D Adventure.' },
+      longDesc: { es: 'The Beyond explora mecánicas 3D y narrativa ambiental en un mundo semi abierto.', en: 'The Beyond explores 3D mechanics and environmental narrative in a semi-open world.' },
+      links: { itch: '', download: '' },
+      media: [ { type: 'image', src: 'images/thebeyond_thumb.jpg' } ],
+      tags: ['3D'],
+      platform: 'PC', engine: 'Unity',
+      devlog: []
     },
-    { id:'alphabet', title:'Alphabet', year:2015,
-      desc:{ es:'Platform Puzzle.', en:'Platform Puzzle.' },
-      longDesc:{ es:'Alphabet es un puzzle-platform premiado por su diseño intuitivo.', en:'Alphabet is a prize-winning puzzle-platformer known for intuitive design.' },
-      links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/alphabet_thumb.jpg' } ],
-      tags:['Puzzle'],
-      devlog:[]
+    { 
+      id: 'alphabet', 
+      title: 'Alphabet', 
+      year: 2015,
+      desc: { es: 'Platform Puzzle.', en: 'Platform Puzzle.' },
+      longDesc: { es: 'Alphabet es un puzzle-platform premiado por su diseño intuitivo.', en: 'Alphabet is a prize-winning puzzle-platformer known for intuitive design.' },
+      links: { itch: '', download: '' },
+      media: [ { type: 'image', src: 'images/alphabet_thumb.jpg' } ],
+      tags: ['Puzzle'],
+      platform: 'PC', engine: 'Construct 2',
+      devlog: []
     },
-    { id:'drunkaholic', title:'Drunkaholic', year:2015,
-      desc:{ es:'Casual 3D.', en:'Casual 3D game.' },
-      longDesc:{ es:'Proyecto 3D casual orientado a la diversión y experimentación.', en:'Casual 3D project oriented to fun and experimentation.' },
-      links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/drunkaholic_thumb.jpg' } ],
-      tags:['Simulation'],
-      devlog:[]
+    { 
+      id: 'drunkaholic', 
+      title: 'Drunkaholic', 
+      year: 2015,
+      desc: { es: 'Casual 3D.', en: 'Casual 3D game.' },
+      longDesc: { es: 'Proyecto 3D casual orientado a la diversión y experimentación.', en: 'Casual 3D project oriented to fun and experimentation.' },
+      links: { itch: '', download: '' },
+      media: [ { type: 'image', src: 'images/drunkaholic_thumb.jpg' } ],
+      tags: ['Simulation'],
+      platform: 'PC', engine: 'Unity',
+      devlog: []
     },
-    { id:'samuraiblade', title:'Samurai Blade : Rock, Paper & Scissors', year:2024,
-      desc:{ es:'Roguelite arcade basado en piedra-papel-tijera.', en:'Roguelite arcade based on rock-paper-scissors combat.' },
-      longDesc:{ es:'Combate roguelite con mecánicas de piedra-papel-tijera como núcleo.', en:'Roguelite combat with rock-paper-scissors mechanics at its core.' },
-      links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/samuraiblade_thumb.jpg' } ],
-      tags:['Action'],
-      devlog:[]
+    { 
+      id: 'samuraiblade', 
+      title: 'Samurai Blade', 
+      year: 2024,
+      desc: { es: 'Roguelite arcade basado en piedra-papel-tijera.', en: 'Roguelite arcade based on rock-paper-scissors combat.' },
+      longDesc: { es: 'Combate roguelite con mecánicas de piedra-papel-tijera como núcleo.', en: 'Roguelite combat with rock-paper-scissors mechanics at its core.' },
+      links: { itch: '', download: '' },
+      media: [ { type: 'image', src: 'images/samuraiblade_thumb.jpg' } ],
+      tags: ['Action'],
+      platform: 'PC', engine: 'Unity',
+      devlog: []
     },
-    { id:'zombieattack', title:'Zombie Attack Nightmare Endurance Apocalyptic Edition', year:2020,
-      desc:{ es:'Shooter apocalíptico.', en:'Apocalyptic shooter.' },
-      longDesc:{ es:'Modo endurance apocalíptico con hordas de enemigos.', en:'Endurance apocalyptic mode with hordes of enemies.' },
-      links:{ itch:'', download:'' },
-      media:[ { type:'image', src:'images/zombieattack_thumb.jpg' } ],
-      tags:['Action'],
-      devlog:[]
+    { 
+      id: 'zombieattack', 
+      title: 'Zombie Attack', 
+      year: 2020,
+      desc: { es: 'Shooter apocalíptico.', en: 'Apocalyptic shooter.' },
+      longDesc: { es: 'Modo endurance apocalíptico con hordas de enemigos.', en: 'Endurance apocalyptic mode with hordes of enemies.' },
+      links: { itch: '', download: '' },
+      media: [ { type: 'image', src: 'images/zombieattack_thumb.jpg' } ],
+      tags: ['Action'],
+      platform: 'PC', engine: 'Unity',
+      devlog: []
     }
   ];
 
-  // Variables de estado
   let PROJECTS = PROJECTS_FALLBACK.slice();
   let LANG = 'es';
 
   // -------------------------
-  // 2. ELEMENTOS DOM
+  // 2. ELEMENTOS DEL DOM
   // -------------------------
-  const projectsGrid = document.getElementById('projectsGrid'); // Asegúrate que tu HTML tenga un div con id="projects" o "projectsGrid"
+  const projectsGrid = document.getElementById('projectsGrid') || document.getElementById('projects');
   
-  // Elementos del Modal/Detalle
+  // Elementos Detail
   const detailTitle = document.getElementById('detailTitle');
   const detailMedia = document.getElementById('detailMedia');
   const detailThumbs = document.getElementById('detailThumbs');
   const detailDesc = document.getElementById('detailDesc');
   const detailLinks = document.getElementById('detailLinks');
   const detailDevlog = document.getElementById('detailDevlog');
+  
   const tabOverview = document.getElementById('tabOverview');
   const tabDevlog = document.getElementById('tabDevlog');
   const overviewWrap = document.getElementById('detailOverview');
   const devlogWrap = document.getElementById('detailDevlogWrap');
 
-  // Constantes
-  const PLACEHOLDER_DATA = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+  // Utils
+  const PLACEHOLDER_DATA = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=='; // Pixel transparente
   const LAZY_ROOT_MARGIN = '300px';
 
   // -------------------------
-  // 3. UTILS & CARGA DE DATOS (FUNCIONALIDAD ORIGINAL)
+  // 3. UTILS & CARGA (No tocar lógica de carpetas)
   // -------------------------
   async function fetchJsonSafe(url){
     try{ const r = await fetch(url, {cache:'no-store'}); if(!r.ok) return null; return await r.json(); } catch(e){ return null; }
@@ -146,7 +200,6 @@ document.addEventListener('DOMContentLoaded', () => {
     try{ const r = await fetch(url, {cache:'no-store'}); if(!r.ok) return null; return await r.text(); } catch(e){ return null; }
   }
 
-  // Lógica para cargar desde carpetas (Restaurada)
   async function loadProjectsFromFolder(){
     const candidates = ['./projects/', 'projects/', '/projects/'];
     let chosenBase = null;
@@ -185,14 +238,13 @@ document.addEventListener('DOMContentLoaded', () => {
         links: dataInfo?.links || entry.links || {},
         media: [],
         tags: dataInfo?.tags || entry.tags || [],
-        platform: dataInfo?.platform || entry.platform || '', 
+        platform: dataInfo?.platform || entry.platform || '',
         engine: dataInfo?.engine || entry.engine || '',
         devlog: Array.isArray(devlogJson) ? devlogJson.slice() : (Array.isArray(devlogJson?.entries) ? devlogJson.entries.slice() : [])
       };
 
-      // Normalizar rutas de media
+      // Normalizar rutas media
       const rawMedia = (dataInfo?.media && dataInfo.media.length) ? dataInfo.media : (entry.media || []);
-      
       if(rawMedia.length){
         proj.media = rawMedia.map(m => {
           const n = Object.assign({}, m);
@@ -207,323 +259,298 @@ document.addEventListener('DOMContentLoaded', () => {
       } else {
         proj.media.push({ type: 'image', src: base + 'placeholder.png' });
       }
-
       loaded.push(proj);
     }
-
     if(loaded.length > 0) PROJECTS = loaded;
   }
 
   // -------------------------
-  // 4. ESTILO DEL SPINNER (INYECCIÓN CSS)
+  // 4. INYECCION DE ESTILOS (SPINNER)
   // -------------------------
-  if (!document.getElementById('thumb-spinner-style')) {
+  if (!document.getElementById('injected-spinner-style')) {
     const s = document.createElement('style');
-    s.id = 'thumb-spinner-style';
+    s.id = 'injected-spinner-style';
     s.textContent = `
       .thumb-spinner {
         position: absolute;
         top: 50%; left: 50%;
         transform: translate(-50%,-50%);
-        width: 36px; height: 36px;
-        border-radius: 50%;
-        border: 4px solid rgba(255,255,255,0.12);
+        width: 32px; height: 32px;
+        border: 3px solid rgba(255,255,255,0.1);
         border-top-color: var(--accent, #4da3ff);
-        box-sizing: border-box;
-        animation: thumb-spin 1s linear infinite;
-        z-index: 5;
-        display: flex; align-items: center; justify-content: center;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        z-index: 2;
       }
-      @keyframes thumb-spin { from { transform: translate(-50%,-50%) rotate(0deg);} to { transform: translate(-50%,-50%) rotate(360deg);} }
+      @keyframes spin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+      .thumb img { transition: opacity 0.3s ease; }
     `;
     document.head.appendChild(s);
   }
 
   // -------------------------
-  // 5. RENDERIZADO ASÍNCRONO (IntersectionObserver)
+  // 5. OBSERVER (LAZY LOADING)
   // -------------------------
-  const thumbObserver = new IntersectionObserver((entries) => {
+  const lazyObserver = new IntersectionObserver((entries, observer) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
-      const thumb = entry.target;
+      const container = entry.target;
       
-      // Buscar elementos lazy dentro del thumb
-      const img = thumb.querySelector('img[data-src]');
-      const vid = thumb.querySelector('video[data-src]');
+      const img = container.querySelector('img[data-src]');
+      const spinner = container.querySelector('.thumb-spinner');
       
-      if (img && img.dataset.src) {
-        const real = img.dataset.src;
-        const loader = new Image();
-        
-        loader.onload = () => {
-          img.src = real;
-          delete img.dataset.src;
-          // Remover spinner al cargar exitosamente
-          const spinner = thumb.querySelector('.thumb-spinner');
-          if (spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner);
-          img.style.opacity = '1'; // Fade in si se agrega CSS
+      if (img) {
+        const temp = new Image();
+        temp.onload = () => {
+          img.src = img.dataset.src; // Asigna ruta real
+          img.removeAttribute('data-src');
+          img.style.opacity = '1'; // Fade in
+          if(spinner) spinner.remove(); // Quita spinner
         };
-        
-        loader.onerror = () => {
-          // Manejo de error visual en el spinner
-          const spinner = thumb.querySelector('.thumb-spinner');
-          if (spinner) { 
-            spinner.textContent = '⚠'; 
-            spinner.style.border = '4px solid rgba(255,0,0,0.12)';
-          }
+        temp.onerror = () => {
+           if(spinner) spinner.style.borderTopColor = 'red'; // Feedback error
         };
-        
-        loader.src = real;
+        temp.src = img.dataset.src;
       }
-      
-      if (vid && vid.dataset.src) {
-        const ds = vid.dataset.src;
-        if (ds && ds !== 'PLACEHOLDER_VIDEO') {
-          vid.src = ds;
-        }
-        delete vid.dataset.src;
+
+      // Video lógica (si aplica)
+      const vid = container.querySelector('video[data-src]');
+      if (vid) {
+          vid.src = vid.dataset.src;
+          vid.removeAttribute('data-src');
       }
-      
-      thumbObserver.unobserve(thumb);
+
+      observer.unobserve(container);
     });
-  }, { root: null, rootMargin: LAZY_ROOT_MARGIN, threshold: 0.01 });
+  }, { rootMargin: LAZY_ROOT_MARGIN });
 
 
   // -------------------------
-  // 6. RENDERIZADO PRINCIPAL DE CARDS
+  // 6. RENDERIZADO DE CARDS (Espacios + Eventos)
   // -------------------------
   function renderProjects(){
-    // Intentar buscar el contenedor. Si la ID cambió en HTML, usar fallback.
-    const container = projectsGrid || document.getElementById('projects');
-    if(!container){ console.warn('Contenedor de proyectos no encontrado'); return; }
+    if(!projectsGrid){ console.warn('projectsGrid no encontrado'); return; }
+    projectsGrid.innerHTML = '';
     
-    container.innerHTML = '';
-    
-    // Crear la grid si no existe por estilos CSS (opcional, depende de tu CSS)
-    if (!container.classList.contains('grid')) container.classList.add('grid');
+    // Asegurar grid layout
+    if(!projectsGrid.classList.contains('grid')) projectsGrid.classList.add('grid');
 
-    for(let i=0; i<PROJECTS.length; i++){
-      const p = PROJECTS[i];
-      try{
+    PROJECTS.forEach(p => {
+      try {
         const card = document.createElement('div');
         card.className = 'card';
-        card.setAttribute('data-project-id', p.id);
-        
-        // --- SECCIÓN 1: THUMBNAIL + SPINNER ---
+        card.setAttribute('data-id', p.id);
+
+        // --- A. Thumbnail con Spinner ---
         const thumb = document.createElement('div');
-        thumb.className = 'thumb card thumb'; // Combina clases para CSS
-        thumb.style.position = 'relative';
+        thumb.className = 'thumb card thumb'; // Clases originales
+        thumb.style.position = 'relative'; 
+        
+        // Buscar imagen/poster principal
+        const vidRef = (p.media||[]).find(m=>m.type==='video');
+        const imgRef = (p.media||[]).find(m=>m.type==='image');
+        let realSrc = 'images/placeholder.jpg';
+        
+        if(imgRef && imgRef.src) realSrc = imgRef.src;
+        else if(vidRef && vidRef.poster) realSrc = vidRef.poster;
 
-        // Determinar media inicial (Poster o Imagen)
-        const imageMedia = (p.media||[]).find(m => m.type === 'image');
-        const videoMedia = (p.media||[]).find(m => m.type === 'video');
-
-        let intendedImg = 'images/placeholder_thumb.jpg';
-        if (imageMedia && imageMedia.src) intendedImg = imageMedia.src;
-        if (videoMedia && videoMedia.poster) intendedImg = videoMedia.poster;
-
-        // Imagen Placeholder con data-src
-        const img = document.createElement('img');
-        img.src = PLACEHOLDER_DATA; // 1x1 transparente
-        img.alt = p.title || '';
-        img.setAttribute('data-src', intendedImg);
-        img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover'; img.style.display = 'block';
-
-        // Spinner
+        // Elemento Spinner
         const spinner = document.createElement('div');
         spinner.className = 'thumb-spinner';
+
+        // Elemento Imagen (oculta al inicio con opacidad o src falso)
+        const img = document.createElement('img');
+        img.src = PLACEHOLDER_DATA; // 1x1 transparente
+        img.dataset.src = realSrc;   // Ruta real para el observer
+        img.alt = p.title;
+        img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover';
+        img.style.opacity = '0'; // Se pone en 1 al cargar
 
         thumb.appendChild(spinner);
         thumb.appendChild(img);
 
-        // Video Hover (Opcional, lógica original mantenida)
-        if (videoMedia) {
-          const vid = document.createElement('video');
-          if (videoMedia.src) vid.setAttribute('data-src', videoMedia.src);
-          vid.muted = true; vid.loop = true; vid.preload = 'metadata';
-          vid.style.position = 'absolute'; vid.style.top = '0'; vid.style.left = '0';
-          vid.style.width = '100%'; vid.style.height = '100%'; vid.style.objectFit = 'cover'; vid.style.display = 'none';
-          thumb.appendChild(vid);
-
-          // Eventos hover para video
-          thumb.addEventListener('mouseenter', () => {
-             const ds = vid.getAttribute('data-src');
-             if (ds && ds !== 'PLACEHOLDER_VIDEO' && !vid.src) vid.src = ds;
-             if (vid.src) { img.style.display = 'none'; vid.style.display = 'block'; vid.play().catch(()=>{}); }
-          });
-          thumb.addEventListener('mouseleave', () => {
-             if (vid.src) { vid.pause(); vid.style.display = 'none'; img.style.display = 'block'; }
-          });
-        }
-
-        // --- SECCIÓN 2: METADATA (Título, año, desc, tags, platform, engine) ---
+        // --- B. Meta Info (Tags, Platform, Engine) ---
         const meta = document.createElement('div');
         meta.className = 'meta card meta';
+
+        const title = p.title || 'Untitled';
+        const year = p.year || '';
+        const desc = (p.desc && p.desc[LANG]) ? p.desc[LANG] : (p.desc?.es || '');
         
-        const titleText = p.title || 'Untitled';
-        const yearText = p.year || '';
-        const descText = (p.desc && p.desc[LANG]) ? p.desc[LANG] : ((p.desc && p.desc.es) ? p.desc.es : '');
-        
-        // Generar HTML para platform y engine si existen
+        // Construcción de línea técnica (Platform · Engine)
         let techInfo = '';
         if(p.platform || p.engine) {
-            techInfo = `<div style="font-size:11px; color:var(--accent); margin-bottom:4px;">
-                ${p.platform ? `<span>${p.platform}</span>` : ''} 
-                ${p.platform && p.engine ? ' · ' : ''} 
-                ${p.engine ? `<span>${p.engine}</span>` : ''}
-            </div>`;
+            const plat = p.platform ? `<span>${p.platform}</span>` : '';
+            const sep = (p.platform && p.engine) ? ' · ' : '';
+            const eng = p.engine ? `<span>${p.engine}</span>` : '';
+            techInfo = `<div style="font-size:11px; color:var(--accent); margin-bottom:4px; opacity:0.9;">${plat}${sep}${eng}</div>`;
         }
 
         meta.innerHTML = `
-           <h4>${titleText} <span style="font-weight:600;color:var(--muted);font-size:13px">(${yearText})</span></h4>
-           ${techInfo}
-           <p>${descText}</p>
-           <div class="tags" style="margin-top:8px; display:flex; gap:6px; flex-wrap:wrap;">
-              ${(p.tags||[]).map(t=>`<span style="background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px; font-size:11px;">${t}</span>`).join('')}
-           </div>
+          <h4>${title} <span style="font-size:0.8em; opacity:0.6">(${year})</span></h4>
+          ${techInfo}
+          <p>${desc}</p>
+          <div class="tags" style="margin-top:8px; display:flex; flex-wrap:wrap; gap:6px;">
+             ${ (p.tags||[]).map(t => `<span style="background:rgba(255,255,255,0.05); padding:2px 6px; border-radius:4px; font-size:11px;">${t}</span>`).join('') }
+          </div>
         `;
 
         card.appendChild(thumb);
         card.appendChild(meta);
-        
-        // --- INTERACCIÓN GLOBAL: Click para Overview ---
-        // Se añade el evento a toda la card para asegurar accesibilidad
+
+        // --- C. Evento Global Click (Abre Overview) ---
         card.style.cursor = 'pointer';
-        card.addEventListener('click', (ev) => {
-           // Si el click fue en un link o botón específico dentro de la card (si hubiera), prevenimos
-           if(ev.target.tagName === 'A') return;
-           openDetail(p.id);
+        card.addEventListener('click', (e) => {
+            // Evitar que dispare si clickea un link externo dentro de la card (si lo hubiera)
+            if(e.target.tagName === 'A') return;
+            openDetail(p.id);
         });
 
-        // Accesibilidad teclado
+        // Evento Teclado (Accesibilidad)
         card.tabIndex = 0;
-        card.addEventListener('keydown', (ev) => { 
-            if(ev.key === 'Enter' || ev.key === ' ') { 
-                ev.preventDefault(); openDetail(p.id); 
-            } 
+        card.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                openDetail(p.id);
+            }
         });
 
-        container.appendChild(card);
-        
-        // Activar observador lazy para este thumb
-        thumbObserver.observe(thumb);
+        projectsGrid.appendChild(card);
 
-      }catch(err){
-        console.error('Error rendering project', p && p.id, err);
+        // Iniciar observación para Lazy Load
+        lazyObserver.observe(thumb);
+
+      } catch(err) {
+        console.error('Error render project:', p.id, err);
       }
-    }
+    });
   }
 
   // -------------------------
-  // 7. DETALLE DEL PROYECTO (MODAL/SECCIÓN)
+  // 7. ABRIR DETALLE (Funcionalidad Clave)
   // -------------------------
   function openDetail(id){
-    try{
-      const p = PROJECTS.find(x=>x.id===id);
-      if(!p) return;
+    const p = PROJECTS.find(x => x.id === id);
+    if(!p) return;
 
-      if(detailTitle) detailTitle.textContent = p.title || '';
-      if(detailDesc) detailDesc.textContent = (p.longDesc && p.longDesc[LANG]) ? p.longDesc[LANG] : (p.desc && p.desc[LANG]) ? p.desc[LANG] : '';
+    console.log('Abriendo detalle:', id); // Debug
 
-      // Limpiar contenedores
-      if(detailMedia) detailMedia.innerHTML = '';
-      if(detailThumbs) detailThumbs.innerHTML = '';
-      if(detailLinks) detailLinks.innerHTML = '';
-      if(detailDevlog) detailDevlog.innerHTML = '';
+    // Llenar datos
+    if(detailTitle) detailTitle.textContent = p.title;
+    if(detailDesc) detailDesc.textContent = (p.longDesc && p.longDesc[LANG]) ? p.longDesc[LANG] : ((p.desc && p.desc[LANG]) ? p.desc[LANG] : '');
+    
+    // Limpiar zonas media
+    if(detailMedia) detailMedia.innerHTML = '';
+    if(detailThumbs) detailThumbs.innerHTML = '';
+    if(detailLinks) detailLinks.innerHTML = '';
+    if(detailDevlog) detailDevlog.innerHTML = '';
 
-      // Media Principal (Primer video o primera imagen)
-      const main = (p.media && p.media.length) ? (p.media.find(m=>m.type==='video' && m.src && m.src!=='PLACEHOLDER_VIDEO') || p.media[0]) : null;
-      
-      if(main){
-        if(main.type === 'video' && main.src && main.src !== 'PLACEHOLDER_VIDEO'){
-          const mv = document.createElement('video');
-          mv.src = main.src; mv.controls = true; mv.style.width = '100%'; mv.style.maxHeight = '450px'; mv.style.background = '#000';
-          detailMedia.appendChild(mv);
-        } else if(main.type === 'image' && main.src){
-          const im = document.createElement('img'); im.src = main.src; im.style.width = '100%'; im.style.borderRadius = '8px';
-          detailMedia.appendChild(im);
-        }
-      }
+    // Media Principal
+    const mainVid = (p.media||[]).find(m => m.type === 'video');
+    const mainImg = (p.media||[]).find(m => m.type === 'image');
 
-      // Miniaturas
-      (p.media || []).forEach(m => {
-        const t = document.createElement('div');
-        t.style.cssText = 'width:100px; height:60px; overflow:hidden; border-radius:6px; cursor:pointer; background:#000; margin-right:8px; opacity:0.7; transition:opacity 0.2s';
-        t.onmouseenter = () => t.style.opacity = '1';
-        t.onmouseleave = () => t.style.opacity = '0.7';
+    // Prioridad: Video > Imagen
+    if(mainVid && mainVid.src !== 'PLACEHOLDER_VIDEO'){
+        const v = document.createElement('video');
+        v.src = mainVid.src; v.controls = true; v.style.width='100%'; v.style.maxHeight='400px'; v.style.background='#000';
+        detailMedia.appendChild(v);
+    } else if(mainImg){
+        const i = document.createElement('img');
+        i.src = mainImg.src; i.style.width='100%'; i.style.borderRadius='8px';
+        detailMedia.appendChild(i);
+    }
 
-        const content = (m.type === 'video') ? document.createElement('video') : document.createElement('img');
-        content.src = m.src || m.poster || '';
+    // Miniaturas (Thumbs)
+    (p.media || []).forEach(m => {
+        const div = document.createElement('div');
+        div.style.cssText = 'width:80px; height:50px; background:#222; margin-right:8px; cursor:pointer; overflow:hidden; border-radius:4px; opacity:0.6; transition:opacity 0.2s;';
+        div.onmouseenter = () => div.style.opacity = '1';
+        div.onmouseleave = () => div.style.opacity = '0.6';
+
+        const content = m.type==='video' ? document.createElement('video') : document.createElement('img');
+        content.src = m.src || m.poster;
         content.style.cssText = 'width:100%; height:100%; object-fit:cover;';
-        t.appendChild(content);
+        div.appendChild(content);
 
-        t.addEventListener('click', () => {
-             detailMedia.innerHTML = '';
-             if(m.type === 'video'){
-                 const v = document.createElement('video'); v.controls = true; v.src = m.src; v.style.width='100%'; detailMedia.appendChild(v); v.play();
-             } else {
-                 const i = document.createElement('img'); i.src = m.src; i.style.width='100%'; detailMedia.appendChild(i);
-             }
+        // Click en miniatura cambia el Main
+        div.addEventListener('click', () => {
+            detailMedia.innerHTML = '';
+            if(m.type === 'video'){
+                const v = document.createElement('video'); v.src = m.src; v.controls = true; v.style.width='100%'; v.autoplay = true;
+                detailMedia.appendChild(v);
+            } else {
+                const i = document.createElement('img'); i.src = m.src; i.style.width='100%';
+                detailMedia.appendChild(i);
+            }
         });
-        detailThumbs.appendChild(t);
-      });
+        detailThumbs.appendChild(div);
+    });
 
-      // Links
-      if(p.links){
+    // Links
+    if(p.links){
         if(p.links.download){
-          const a = document.createElement('a'); a.href = p.links.download; a.target = '_blank'; a.className = 'cta'; a.textContent = 'Download / Play'; 
-          detailLinks.appendChild(a);
-        } 
-        if(p.links.itch){
-          const a = document.createElement('a'); a.href = p.links.itch; a.target = '_blank'; a.className = 'cta'; a.textContent = 'itch.io'; 
-          a.style.marginLeft = '10px'; a.style.background = 'transparent'; a.style.border = '1px solid var(--accent)';
-          detailLinks.appendChild(a);
+            const btn = document.createElement('a');
+            btn.href = p.links.download; btn.target = '_blank'; btn.className = 'cta'; btn.textContent = 'Jugar / Descargar';
+            detailLinks.appendChild(btn);
         }
-      }
+        if(p.links.itch){
+            const btn = document.createElement('a');
+            btn.href = p.links.itch; btn.target = '_blank'; btn.className = 'cta'; btn.textContent = 'Itch.io';
+            btn.style.background = 'transparent'; btn.style.border = '1px solid var(--accent)'; btn.style.marginLeft = '10px';
+            detailLinks.appendChild(btn);
+        }
+    }
 
-      // Devlog
-      (p.devlog || []).forEach(entry => {
-        const li = document.createElement('li'); li.innerText = entry; detailDevlog.appendChild(li);
-      });
+    // Devlog
+    (p.devlog || []).forEach(d => {
+        const li = document.createElement('li'); li.textContent = d;
+        detailDevlog.appendChild(li);
+    });
 
-      // Mostrar sección Detail
-      showSection('detail'); 
-      window.scrollTo(0,0);
-
-    }catch(err){ console.error('Error detail', err); }
+    // Resetear Tabs
+    if(overviewWrap) overviewWrap.style.display = 'block';
+    if(devlogWrap) devlogWrap.style.display = 'none';
+    
+    // Navegar
+    showSection('detail');
+    window.scrollTo(0,0);
   }
 
   // -------------------------
-  // 8. NAVEGACIÓN Y UI GENERAL
+  // 8. NAVEGACIÓN GENERAL
   // -------------------------
   function showSection(id){
     document.querySelectorAll('main .section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('header nav a').forEach(a => a.classList.remove('active'));
-    
+    document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+
     const target = document.getElementById(id);
     if(target) target.classList.add('active');
-    
-    // Si hay un link en el nav que apunta a esta sección, activarlo
-    const link = document.querySelector(`header nav a[data-target="${id}"]`);
+
+    const link = document.querySelector(`nav a[data-target="${id}"]`);
     if(link) link.classList.add('active');
   }
 
-  // Event Listeners Navegación
-  document.querySelectorAll('header nav a[data-target]').forEach(link => {
-    link.addEventListener('click', (e) => {
-      e.preventDefault();
-      showSection(link.dataset.target);
+  // Event Listeners Nav
+  document.querySelectorAll('nav a[data-target]').forEach(a => {
+    a.addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection(a.dataset.target);
     });
   });
 
+  // Botón Volver
   const backBtn = document.getElementById('backToProjects');
-  if(backBtn) backBtn.addEventListener('click', (e) => { e.preventDefault(); showSection('projects'); });
+  if(backBtn) backBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      showSection('projects');
+  });
 
   // Selector Idioma
   const langSel = document.getElementById('lang');
   if(langSel) langSel.addEventListener('change', (e) => {
       LANG = e.target.value;
-      renderProjects(); // Re-renderizar textos de cards
+      renderProjects(); // Re-renderizar textos
+      // Opcional: recargar detalle si está abierto
   });
 
   // -------------------------
@@ -532,46 +559,49 @@ document.addEventListener('DOMContentLoaded', () => {
   const contactForm = document.getElementById('contactForm');
   let contactStatus = document.getElementById('contactStatus');
   if(!contactStatus && contactForm){
-    contactStatus = document.createElement('div');
-    contactStatus.id = 'contactStatus';
-    contactForm.parentNode.insertBefore(contactStatus, contactForm.nextSibling);
+      contactStatus = document.createElement('div');
+      contactStatus.id = 'contactStatus';
+      contactForm.parentNode.insertBefore(contactStatus, contactForm.nextSibling);
   }
 
-  if (contactForm) {
-    contactForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const fd = new FormData(contactForm);
-      const data = Object.fromEntries(fd.entries());
-      
-      contactStatus.innerText = 'Enviando...';
-      contactStatus.style.color = '#999';
+  if(contactForm){
+      contactForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          contactStatus.textContent = 'Enviando...';
+          contactStatus.style.color = '#888';
+          
+          const fd = new FormData(contactForm);
+          const data = Object.fromEntries(fd.entries());
 
-      try {
-        const res = await fetch(contactForm.action, {
-            method: 'POST',
-            headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
-            body: JSON.stringify(data)
-        });
-        if (res.ok) {
-            contactStatus.innerText = '¡Enviado!'; contactStatus.style.color = '#4ade80'; contactForm.reset();
-        } else {
-            contactStatus.innerText = 'Error al enviar.'; contactStatus.style.color = '#ff6b6b';
-        }
-      } catch (err) {
-        contactStatus.innerText = 'Error de conexión.'; contactStatus.style.color = '#ff6b6b';
-      }
-    });
+          try {
+              const r = await fetch(contactForm.action, {
+                  method: 'POST',
+                  headers: {'Accept': 'application/json', 'Content-Type': 'application/json'},
+                  body: JSON.stringify(data)
+              });
+              if(r.ok){
+                  contactStatus.textContent = '¡Mensaje enviado!';
+                  contactStatus.style.color = '#4ade80';
+                  contactForm.reset();
+              } else {
+                  contactStatus.textContent = 'Error al enviar.';
+                  contactStatus.style.color = '#ff6b6b';
+              }
+          } catch(err){
+              contactStatus.textContent = 'Error de conexión.';
+              contactStatus.style.color = '#ff6b6b';
+          }
+      });
   }
 
   // -------------------------
-  // 10. INICIALIZACIÓN
+  // 10. INIT
   // -------------------------
   (async function init(){
-    await loadProjectsFromFolder(); 
-    renderProjects();
-    // Iniciar en Home por defecto
-    showSection('home');
-    console.log('Sistema cargado. Proyectos:', PROJECTS.length);
+      await loadProjectsFromFolder();
+      renderProjects();
+      showSection('home');
+      console.log('Sistema inicializado correctamente.');
   })();
 
 });
