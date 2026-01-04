@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-  let PROJECTS = [
+  const PROJECTS_FALLBACK = [
     { id:'piratepenguin', title:'Pirate Penguin / Forja de Almas', year:2024,
       desc:{ es:'Juego de acción con fuerte foco en combate, estética cartoon y progresión de habilidades.', en:'Action game focused on combat, cartoon aesthetics and skill progression.' },
       longDesc:{ es:'Proyecto de acción con énfasis en combate fluido, shaders personalizados, UI avanzada y progresión de habilidades.', en:'Action project focused on fluid combat, custom shaders, advanced UI and skill progression.' },
@@ -107,6 +107,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ];
 
+  let PROJECTS = PROJECTS_FALLBACK.slice();
+
+  let LANG = 'es';
+
   const navLinks = document.querySelectorAll('header nav a[data-target]');
   const sections = document.querySelectorAll('main .section');
   const projectsGrid = document.getElementById('projectsGrid');
@@ -124,105 +128,119 @@ document.addEventListener('DOMContentLoaded', () => {
   const overviewWrap = document.getElementById('detailOverview');
   const devlogWrap = document.getElementById('detailDevlogWrap');
 
-  let LANG = 'es';
+  // tiny placeholder image data URI so layout is instant
+  const PLACEHOLDER_DATA = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 
-  async function fetchTextSafe(url){
-    try{
-      const r = await fetch(url, {cache: "no-store"});
-      if(!r.ok) return null;
-      return await r.text();
-    }catch(e){
-      return null;
-    }
-  }
+  const LAZY_ROOT_MARGIN = '300px';
+
+  // IntersectionObserver to lazy-load thumb media when thumb enters viewport
+  const thumbObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      const thumb = entry.target;
+      const img = thumb.querySelector('img[data-src]');
+      const vid = thumb.querySelector('video[data-src]');
+      // load image via Image loader to control spinner removal
+      if (img && img.dataset.src) {
+        const realSrc = img.dataset.src;
+        const loader = new Image();
+        loader.onload = () => {
+          img.src = realSrc;
+          delete img.dataset.src;
+          const spinner = thumb.querySelector('.thumb-spinner');
+          if (spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner);
+        };
+        loader.onerror = () => {
+          const spinner = thumb.querySelector('.thumb-spinner');
+          if (spinner) { spinner.textContent = '⚠'; spinner.style.border = '4px solid rgba(255,0,0,0.12)'; setTimeout(()=>{ if(spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner); }, 1200); }
+        };
+        loader.src = realSrc;
+      }
+      // preload video source (don't autoplay) if available
+      if (vid && vid.dataset.src) {
+        const ds = vid.dataset.src;
+        if (ds && ds !== 'PLACEHOLDER_VIDEO') {
+          vid.src = ds; // preload metadata
+        }
+        delete vid.dataset.src;
+      }
+      thumbObserver.unobserve(thumb);
+    });
+  }, { root: null, rootMargin: LAZY_ROOT_MARGIN, threshold: 0.01 });
 
   async function fetchJsonSafe(url){
-    try{
+    try {
       const r = await fetch(url, {cache: "no-store"});
       if(!r.ok) return null;
       return await r.json();
-    }catch(e){
-      return null;
-    }
+    } catch(e){ return null; }
+  }
+  async function fetchTextSafe(url){
+    try {
+      const r = await fetch(url, {cache: "no-store"});
+      if(!r.ok) return null;
+      return await r.text();
+    } catch(e){ return null; }
   }
 
-  async function loadProjectsFromFolder() {
+  async function loadProjectsFromFolder(){
     const candidates = ['./projects/', 'projects/', '/projects/'];
     let chosenBase = null;
     let idx = null;
-
     for(const base of candidates){
-      const idxUrl = base + 'index.json';
+      const url = base + 'index.json';
       try{
-        const res = await fetch(idxUrl, {cache: "no-store"});
-        if(res.ok){
+        const res = await fetch(url, {cache: "no-store"});
+        if(res && res.ok){
           try{
             idx = await res.json();
             chosenBase = base;
             break;
-          }catch(e){
-            idx = null;
-          }
+          }catch(e){ idx = null; }
         }
       }catch(e){}
     }
-
-    if(!chosenBase || !Array.isArray(idx) || idx.length === 0){
-      return; // keep fallback PROJECTS
-    }
-
+    if(!chosenBase || !Array.isArray(idx) || idx.length === 0) return; // fallback to static
     const loaded = [];
     for(const entry of idx){
       if(!entry || !entry.id) continue;
       const id = entry.id;
       const base = chosenBase + encodeURIComponent(id) + '/';
-
       const dataInfo = await fetchJsonSafe(base + 'dataInfo.json');
-      const proj = {
-        id: (dataInfo && dataInfo.id) ? dataInfo.id : id,
-        title: (dataInfo && dataInfo.title) ? dataInfo.title : (entry.title || id),
-        year: (dataInfo && dataInfo.year) ? dataInfo.year : (entry.year || ''),
-        desc: { es: '', en: '' },
-        longDesc: { es: '', en: '' },
-        links: (dataInfo && dataInfo.links) ? dataInfo.links : (entry.links || {}),
-        media: [],
-        tags: (dataInfo && dataInfo.tags) ? dataInfo.tags : (entry.tags || []),
-        devlog: []
-      };
-
       const descEs = await fetchTextSafe(base + 'description_es.txt');
       const descEn = await fetchTextSafe(base + 'description_en.txt');
-      if(descEs) proj.longDesc.es = descEs.trim();
-      if(descEn) proj.longDesc.en = descEn.trim();
-
-      if(dataInfo){
-        if(dataInfo.shortDesc_es) proj.desc.es = dataInfo.shortDesc_es;
-        if(dataInfo.shortDesc_en) proj.desc.en = dataInfo.shortDesc_en;
-        if(Array.isArray(dataInfo.media) && dataInfo.media.length) proj.media = dataInfo.media.map(m => Object.assign({}, m));
-      }
-
       const devlogJson = await fetchJsonSafe(base + 'devlog.json');
-      if(Array.isArray(devlogJson)) proj.devlog = devlogJson.slice();
-      else if(devlogJson && Array.isArray(devlogJson.entries)) proj.devlog = devlogJson.entries.slice();
 
-      if(proj.media.length === 0){
-        const tryImg = await fetchTextSafe(base + 'placeholder.png');
-        if(tryImg !== null){
-          proj.media.push({ type: 'image', src: base + 'placeholder.png' });
-        } else {
-          proj.media.push({ type: 'image', src: 'images/placeholder_thumb.jpg' });
-        }
+      const proj = {
+        id: dataInfo?.id || id,
+        title: dataInfo?.title || entry.title || id,
+        year: dataInfo?.year || entry.year || '',
+        desc: { es: dataInfo?.shortDesc_es || entry.desc_es || '', en: dataInfo?.shortDesc_en || entry.desc_en || '' },
+        longDesc: { es: descEs ? descEs.trim() : (dataInfo?.longDesc_es || ''), en: descEn ? descEn.trim() : (dataInfo?.longDesc_en || '') },
+        links: dataInfo?.links || entry.links || {},
+        media: Array.isArray(dataInfo?.media) && dataInfo.media.length ? dataInfo.media.map(m => Object.assign({}, m)) : [],
+        tags: dataInfo?.tags || entry.tags || [],
+        devlog: Array.isArray(devlogJson) ? devlogJson.slice() : (Array.isArray(devlogJson?.entries) ? devlogJson.entries.slice() : [])
+      };
+
+      // if no media, try to detect placeholder.png; else add default placeholder image path
+      if(proj.media.length === 0) {
+        // we won't fetch binary here; assume file exists or fallback
+        proj.media.push({ type: 'image', src: base + 'placeholder.png' });
+      } else {
+        // if media items are relative, prefix base
+        proj.media = proj.media.map(m => {
+          const n = Object.assign({}, m);
+          if(n.src && !n.src.startsWith('http') && !n.src.startsWith('/')) n.src = base + n.src;
+          if(n.poster && !n.poster.startsWith('http') && !n.poster.startsWith('/')) n.poster = base + n.poster;
+          return n;
+        });
       }
-
-      if(!proj.desc.es) proj.desc.es = (dataInfo && dataInfo.desc_es) ? dataInfo.desc_es : (entry.desc_es || '');
-      if(!proj.desc.en) proj.desc.en = (dataInfo && dataInfo.desc_en) ? dataInfo.desc_en : (entry.desc_en || '');
 
       loaded.push(proj);
     }
 
-    if(loaded.length > 0){
-      PROJECTS = loaded;
-    }
+    if(loaded.length > 0) PROJECTS = loaded;
   }
 
   function showSection(id){
@@ -249,64 +267,44 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-// --- Lazy helpers (pegarlos justo antes de renderProjects) ---
-const LAZY_BATCH_SIZE = 4; // cuantas cards crear por frame
-const LAZY_ROOT_MARGIN = '300px'; // cuanto antes cargar (prefetch)
-
-// IntersectionObserver para thumbs (miniaturas) en el grid.
-// Cuando el thumb entra en pantalla se cargan la img y el video (si aplica).
-const thumbObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (!entry.isIntersecting) return;
-    const thumb = entry.target;
-    const img = thumb.querySelector('img[data-src]');
-    const vid = thumb.querySelector('video[data-src]');
-    if (img && img.dataset.src) {
-      img.src = img.dataset.src;
-      delete img.dataset.src;
-    }
-    if (vid && vid.dataset.src) {
-      const ds = vid.dataset.src;
-      // don't set real src if it's explicit PLACEHOLDER_VIDEO
-      if (ds && ds !== 'PLACEHOLDER_VIDEO') {
-        vid.src = ds;
+  // spinner style insertion (only once)
+  if (!document.getElementById('thumb-spinner-style')) {
+    const s = document.createElement('style');
+    s.id = 'thumb-spinner-style';
+    s.textContent = `
+      .thumb-spinner {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 4px solid rgba(255,255,255,0.12);
+        border-top-color: var(--accent);
+        box-sizing: border-box;
+        animation: thumb-spin 1s linear infinite;
+        z-index: 5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
-      delete vid.dataset.src;
+      @keyframes thumb-spin { from { transform: translate(-50%,-50%) rotate(0deg);} to { transform: translate(-50%,-50%) rotate(360deg);} }
+    `;
+    document.head.appendChild(s);
+  }
+
+  // Render all cards into DOM immediately but media loads lazily
+  function renderProjects(){
+    if(!projectsGrid) {
+      console.warn('projectsGrid not found');
+      return;
     }
-    thumbObserver.unobserve(thumb);
-  });
-}, { root: null, rootMargin: LAZY_ROOT_MARGIN, threshold: 0.01 });
+    projectsGrid.innerHTML = '';
 
-// utilidad: forzar carga inmediata de media cuando se necesita (hover/tap antes de intersección)
-function ensureLoadThumbMedia(thumb) {
-  const img = thumb.querySelector('img[data-src]');
-  const vid = thumb.querySelector('video[data-src]');
-  if (img && img.dataset.src) {
-    img.src = img.dataset.src;
-    delete img.dataset.src;
-  }
-  if (vid && vid.dataset.src) {
-    const ds = vid.dataset.src;
-    if (ds && ds !== 'PLACEHOLDER_VIDEO') vid.src = ds;
-    delete vid.dataset.src;
-  }
-}
-
-
-function renderProjects(){
-  if(!projectsGrid){
-    console.warn('projectsGrid no encontrado');
-    return;
-  }
-
-  projectsGrid.innerHTML = '';
-  let idx = 0;
-
-  function renderBatch(){
-    const end = Math.min(idx + LAZY_BATCH_SIZE, PROJECTS.length);
-    for(; idx < end; idx++){
-      const p = PROJECTS[idx];
-      try {
+    for(let i=0;i<PROJECTS.length;i++){
+      const p = PROJECTS[i];
+      try{
         const card = document.createElement('div');
         card.className = 'card';
 
@@ -317,82 +315,20 @@ function renderProjects(){
         const imageMedia = (p.media||[]).find(m => m.type === 'image');
         const videoMedia = (p.media||[]).find(m => m.type === 'video');
 
-        // Decide cuál será la URL "real" y cuál el poster
         let intendedImgSrc = 'images/placeholder_thumb.jpg';
         if (imageMedia && imageMedia.src) intendedImgSrc = imageMedia.src;
         if (videoMedia && videoMedia.poster) intendedImgSrc = videoMedia.poster;
 
-        // --- spinner CSS (inserta solo una vez)
-        if (!document.getElementById('thumb-spinner-style')) {
-          const s = document.createElement('style');
-          s.id = 'thumb-spinner-style';
-          s.textContent = `
-            .thumb-spinner {
-              position: absolute;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%,-50%);
-              width: 36px;
-              height: 36px;
-              border-radius: 50%;
-              border: 4px solid rgba(255,255,255,0.12);
-              border-top-color: var(--accent);
-              box-sizing: border-box;
-              animation: thumb-spin 1s linear infinite;
-              z-index: 5;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-            }
-            @keyframes thumb-spin { from { transform: translate(-50%,-50%) rotate(0deg);} to { transform: translate(-50%,-50%) rotate(360deg);} }
-          `;
-          document.head.appendChild(s);
-        }
-
-        // placeholder tiny image to avoid 404 while actual asset loads
-        const PLACEHOLDER_DATA = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
-
         const img = document.createElement('img');
-        // set a tiny placeholder immediately so layout is instant
-        img.src = PLACEHOLDER_DATA;
+        img.src = PLACEHOLDER_DATA; // tiny placeholder to make layout appear instantly
         img.alt = p.title || '';
-
-        // store the intended (real) src in data-src to avoid immediate network request
         img.setAttribute('data-src', intendedImgSrc);
 
-        // create spinner overlay
         const spinner = document.createElement('div');
         spinner.className = 'thumb-spinner';
         thumb.appendChild(spinner);
-
-        // append placeholder img into thumb so card appears instantly
         thumb.appendChild(img);
 
-        // async load the real image in background without blocking
-        (function loadImageAsync(realSrc, imgEl, spinnerEl){
-          if(!realSrc) {
-            // nothing to load: remove spinner after short delay
-            setTimeout(()=>{ if(spinnerEl && spinnerEl.parentNode) spinnerEl.parentNode.removeChild(spinnerEl); }, 250);
-            return;
-          }
-          const loader = new Image();
-          loader.onload = () => {
-            // on success, swap src and remove spinner
-            imgEl.src = realSrc;
-            if(spinnerEl && spinnerEl.parentNode) spinnerEl.parentNode.removeChild(spinnerEl);
-          };
-          loader.onerror = () => {
-            // on error keep placeholder and show small error sign then remove spinner
-            spinnerEl.textContent = '⚠';
-            spinnerEl.style.border = '4px solid rgba(255,0,0,0.12)';
-            setTimeout(()=>{ if(spinnerEl && spinnerEl.parentNode) spinnerEl.parentNode.removeChild(spinnerEl); }, 1200);
-          };
-          // start loading (this is async)
-          loader.src = realSrc;
-        })(intendedImgSrc, img, spinner);
-
-        // if there's video media, create video element but DON'T set src directly.
-        // show spinner until poster or video ready. Video source will be loaded lazily by observer/hover.
         if (videoMedia) {
           const vid = document.createElement('video');
           if (videoMedia.src) vid.setAttribute('data-src', videoMedia.src);
@@ -408,24 +344,17 @@ function renderProjects(){
           vid.style.display = 'none';
           thumb.appendChild(vid);
 
-          // if there is a poster, try to load it and ensure spinner is removed once poster loads
+          // if poster already accessible, try to remove spinner when poster loads
           if (videoMedia.poster) {
-            const posterImg = new Image();
-            posterImg.onload = () => {
-              if (spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner);
-            };
-            posterImg.onerror = () => {
-              if (spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner);
-            };
-            posterImg.src = videoMedia.poster;
+            const posterCheck = new Image();
+            posterCheck.onload = () => { if (spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner); };
+            posterCheck.onerror = () => { /* ignore */ };
+            posterCheck.src = videoMedia.poster;
           }
 
-          // hover: ensure video source is requested and play (keeps previous behaviour)
           thumb.addEventListener('mouseenter', () => {
             const realVidSrc = vid.getAttribute('data-src');
-            if (realVidSrc && realVidSrc !== 'PLACEHOLDER_VIDEO') {
-              if (!vid.src) vid.src = realVidSrc;
-            }
+            if (realVidSrc && realVidSrc !== 'PLACEHOLDER_VIDEO' && !vid.src) vid.src = realVidSrc;
             if (vid.src) {
               img.style.display = 'none';
               vid.style.display = 'block';
@@ -440,7 +369,6 @@ function renderProjects(){
             }
           });
 
-          // click toggles video play on touch devices and prevents navigating to detail
           thumb.addEventListener('click', (ev) => {
             ev.stopPropagation();
             const realVidSrc = vid.getAttribute('data-src');
@@ -467,42 +395,42 @@ function renderProjects(){
                           <p>${descText}</p>
                           <div class="tags">${(p.tags||[]).map(t=>`<span>${t}</span>`).join('')}</div>`;
 
-        // make title and image clickable to open detail
+        // clickable title and image open detail
         const titleEl = meta.querySelector('h4');
         if(titleEl){ titleEl.style.cursor = 'pointer'; titleEl.addEventListener('click', ev => { ev.stopPropagation(); openDetail(p.id); }); }
         img.style.cursor = 'pointer';
         img.addEventListener('click', ev => { ev.stopPropagation(); openDetail(p.id); });
 
-        // card click opens detail
-        card.addEventListener('click', ()=>openDetail(p.id));
-
         card.appendChild(thumb);
         card.appendChild(meta);
         projectsGrid.appendChild(card);
 
-        // observe thumb for lazy loading (only observe the thumb element)
+        // observe thumb for lazy loading
         thumbObserver.observe(thumb);
 
-      } catch(err){
-        console.error('Error al renderizar project:', idx, p && p.id, err);
+        // defensive: if user hovers before observation triggers, ensure load
+        thumb.addEventListener('pointerover', () => {
+          // ensure immediate image load if not set yet
+          const di = thumb.querySelector('img[data-src]');
+          if (di && di.dataset.src) {
+            const loader = new Image();
+            loader.onload = () => { di.src = di.dataset.src; delete di.dataset.src; const sp = thumb.querySelector('.thumb-spinner'); if (sp && sp.parentNode) sp.parentNode.removeChild(sp); };
+            loader.onerror = () => { const sp = thumb.querySelector('.thumb-spinner'); if (sp) { sp.textContent = '⚠'; setTimeout(()=>sp.parentNode && sp.parentNode.removeChild(sp),1200); } };
+            loader.src = di.dataset.src;
+          }
+        });
+
+        // ensure accessible keyboard focus opens detail
+        card.tabIndex = 0;
+        card.addEventListener('keydown', (ev) => { if(ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openDetail(p.id); } });
+
+      }catch(err){
+        console.error('Error rendering project', p && p.id, err);
       }
-    } // end for
-
-    // if still projects left, schedule next batch to avoid blocking main thread
-    if(idx < PROJECTS.length){
-      // yield to main thread then render next batch
-      setTimeout(renderBatch, 60);
-    } else {
-      // final, small delay to ensure observer attached
-      setTimeout(()=>{ console.info('renderProjects completed. cards:', projectsGrid.children.length); }, 50);
     }
-  } // renderBatch
 
-  // start first batch
-  renderBatch();
-}
-
-
+    console.info('renderProjects completed. cards:', projectsGrid.children.length);
+  }
 
   function openDetail(id){
     try{
@@ -517,7 +445,7 @@ function renderProjects(){
       if(detailLinks) detailLinks.innerHTML = '';
       if(detailDevlog) detailDevlog.innerHTML = '';
 
-      const main = (p.media && p.media.length) ? (p.media.find(m=>m.type==='video') || p.media[0]) : null;
+      const main = (p.media && p.media.length) ? (p.media.find(m=>m.type==='video' && m.src && m.src!=='PLACEHOLDER_VIDEO') || p.media[0]) : null;
       if(main){
         if(main.type === 'video' && main.src && main.src !== 'PLACEHOLDER_VIDEO'){
           const mv = document.createElement('video');
@@ -638,8 +566,81 @@ function renderProjects(){
   const backBtn = document.getElementById('backToProjects');
   if(backBtn) backBtn.addEventListener('click', (e) => { e.preventDefault(); showSection('projects'); });
 
+  // Contact form handling: ensure contactStatus exists (insert if not)
+  const contactForm = document.getElementById('contactForm');
+  let contactStatus = document.getElementById('contactStatus');
+  if(!contactStatus && contactForm){
+    contactStatus = document.createElement('div');
+    contactStatus.id = 'contactStatus';
+    contactStatus.style.marginTop = '8px';
+    contactStatus.style.color = 'var(--muted)';
+    contactForm.parentNode.insertBefore(contactStatus, contactForm.nextSibling);
+  }
+
+  if (contactForm) {
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if(!contactStatus) return;
+
+      contactStatus.innerText = '';
+      contactStatus.style.color = '';
+
+      const name = document.getElementById('cName')?.value.trim() || '';
+      const email = document.getElementById('cEmail')?.value.trim() || '';
+      const msg = document.getElementById('cMsg')?.value.trim() || '';
+
+      if (!name || !email || !msg) {
+        contactStatus.innerText = 'Por favor completá todos los campos.';
+        contactStatus.style.color = '#ff6b6b';
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        contactStatus.innerText = 'El email no es válido.';
+        contactStatus.style.color = '#ff6b6b';
+        return;
+      }
+
+      if (!contactForm.action) {
+        contactStatus.innerText = 'Error: formulario sin destino de envío. Si querés, puedo ayudarte a configurar un backend gratuito.';
+        contactStatus.style.color = '#ff6b6b';
+        return;
+      }
+
+      try {
+        contactStatus.innerText = 'Enviando mensaje...';
+        contactStatus.style.color = 'var(--muted)';
+        const res = await fetch(contactForm.action, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            message: msg
+          })
+        });
+        if (res.ok) {
+          contactStatus.innerText = 'Mensaje enviado correctamente. ¡Gracias!';
+          contactStatus.style.color = '#4ade80';
+          contactForm.reset();
+        } else {
+          contactStatus.innerText = 'Error al enviar el mensaje. Intentá más tarde.';
+          contactStatus.style.color = '#ff6b6b';
+        }
+      } catch (err) {
+        contactStatus.innerText = 'Error de conexión. Revisá tu internet.';
+        contactStatus.style.color = '#ff6b6b';
+      }
+    });
+  }
+
+  // initialize: try to load projects from folder then render
   (async function init(){
-    await loadProjectsFromFolder();
+    await loadProjectsFromFolder(); // if folder exists, PROJECTS will be replaced
     renderProjects();
     showSection('home');
     setTimeout(()=>{ if(projectsGrid) console.info('rendered projects count:', projectsGrid.children.length, 'PROJECTS total:', PROJECTS.length); }, 200);
