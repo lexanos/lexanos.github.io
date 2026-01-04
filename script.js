@@ -249,13 +249,64 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  function renderProjects(){
-    if(!projectsGrid) return;
-    projectsGrid.innerHTML = '';
+// --- Lazy helpers (pegarlos justo antes de renderProjects) ---
+const LAZY_BATCH_SIZE = 4; // cuantas cards crear por frame
+const LAZY_ROOT_MARGIN = '300px'; // cuanto antes cargar (prefetch)
 
-    for(let i=0;i<PROJECTS.length;i++){
-      const p = PROJECTS[i];
-      try{
+// IntersectionObserver para thumbs (miniaturas) en el grid.
+// Cuando el thumb entra en pantalla se cargan la img y el video (si aplica).
+const thumbObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    const thumb = entry.target;
+    const img = thumb.querySelector('img[data-src]');
+    const vid = thumb.querySelector('video[data-src]');
+    if (img && img.dataset.src) {
+      img.src = img.dataset.src;
+      delete img.dataset.src;
+    }
+    if (vid && vid.dataset.src) {
+      const ds = vid.dataset.src;
+      // don't set real src if it's explicit PLACEHOLDER_VIDEO
+      if (ds && ds !== 'PLACEHOLDER_VIDEO') {
+        vid.src = ds;
+      }
+      delete vid.dataset.src;
+    }
+    thumbObserver.unobserve(thumb);
+  });
+}, { root: null, rootMargin: LAZY_ROOT_MARGIN, threshold: 0.01 });
+
+// utilidad: forzar carga inmediata de media cuando se necesita (hover/tap antes de intersección)
+function ensureLoadThumbMedia(thumb) {
+  const img = thumb.querySelector('img[data-src]');
+  const vid = thumb.querySelector('video[data-src]');
+  if (img && img.dataset.src) {
+    img.src = img.dataset.src;
+    delete img.dataset.src;
+  }
+  if (vid && vid.dataset.src) {
+    const ds = vid.dataset.src;
+    if (ds && ds !== 'PLACEHOLDER_VIDEO') vid.src = ds;
+    delete vid.dataset.src;
+  }
+}
+
+// --- Reemplaza tu función renderProjects con esta ---
+function renderProjects(){
+  if(!projectsGrid){
+    console.warn('projectsGrid no encontrado');
+    return;
+  }
+
+  projectsGrid.innerHTML = '';
+  let idx = 0;
+
+  function renderBatch(){
+    const end = Math.min(idx + LAZY_BATCH_SIZE, PROJECTS.length);
+    for(; idx < end; idx++){
+      const p = PROJECTS[idx];
+      try {
         const card = document.createElement('div');
         card.className = 'card';
 
@@ -263,39 +314,77 @@ document.addEventListener('DOMContentLoaded', () => {
         thumb.className = 'thumb';
         thumb.style.position = 'relative';
 
-        const imageMedia = (p.media||[]).find(m=>m.type==='image');
-        const videoMedia = (p.media||[]).find(m=>m.type==='video');
+        const imageMedia = (p.media||[]).find(m => m.type === 'image');
+        const videoMedia = (p.media||[]).find(m => m.type === 'video');
 
-        let imgSrc = 'images/placeholder_thumb.jpg';
-        if(imageMedia && imageMedia.src) imgSrc = imageMedia.src;
-        if(videoMedia && videoMedia.poster) imgSrc = videoMedia.poster;
+        // Decide cuál será la URL "real" y cuál el poster
+        let intendedImgSrc = 'images/placeholder_thumb.jpg';
+        if (imageMedia && imageMedia.src) intendedImgSrc = imageMedia.src;
+        if (videoMedia && videoMedia.poster) intendedImgSrc = videoMedia.poster;
 
         const img = document.createElement('img');
-        img.src = imgSrc;
+        // Store real src in data-src -> IntersectionObserver will set img.src later
+        img.setAttribute('data-src', intendedImgSrc);
+        // Use global placeholder immediately so layout no parpadea con ausencia de img
+        img.src = 'images/placeholder_thumb.jpg';
         img.alt = p.title || '';
+
         thumb.appendChild(img);
 
-        if(videoMedia){
+        // Si hay video, creamos la etiqueta pero ponemos data-src para no cargar el binario aún
+        if (videoMedia){
           const vid = document.createElement('video');
-          if(videoMedia.src && videoMedia.src !== 'PLACEHOLDER_VIDEO') vid.src = videoMedia.src;
-          vid.muted = true; vid.loop = true; vid.preload = 'metadata';
-          vid.style.position = 'absolute'; vid.style.top='0'; vid.style.left='0';
-          vid.style.width='100%'; vid.style.height='100%'; vid.style.objectFit='cover';
+          // store the real video source in data-src
+          if (videoMedia.src) vid.setAttribute('data-src', videoMedia.src);
+          vid.muted = true;
+          vid.loop = true;
+          vid.preload = 'metadata';
+          vid.style.position = 'absolute';
+          vid.style.top = '0';
+          vid.style.left = '0';
+          vid.style.width = '100%';
+          vid.style.height = '100%';
+          vid.style.objectFit = 'cover';
           vid.style.display = 'none';
           thumb.appendChild(vid);
 
-          thumb.addEventListener('mouseenter', ()=>{
-            if(vid.src){ img.style.display='none'; vid.style.display='block'; vid.play().catch(()=>{}); }
+          // hover play: si aún no se cargó el video (tiene data-src), cargalo forzadamente
+          thumb.addEventListener('mouseenter', () => {
+            // if video not loaded, ensure load then play
+            ensureLoadThumbMedia(thumb);
+            const v = thumb.querySelector('video');
+            if(v && v.src){
+              img.style.display = 'none';
+              v.style.display = 'block';
+              v.play().catch(()=>{});
+            }
           });
-          thumb.addEventListener('mouseleave', ()=>{
-            if(vid.src){ vid.pause(); vid.style.display='none'; img.style.display='block'; }
+          thumb.addEventListener('mouseleave', () => {
+            const v = thumb.querySelector('video');
+            if(v && v.src){
+              v.pause();
+              v.style.display = 'none';
+              img.style.display = 'block';
+            }
           });
 
-          thumb.addEventListener('click', (ev)=>{
+          // click on thumb toggles play for touch devices; prevent bubbling to card click
+          thumb.addEventListener('click', (ev) => {
             ev.stopPropagation();
-            if(!vid.src) return;
-            if(vid.paused){ vid.play().catch(()=>{}); vid.style.display='block'; img.style.display='none'; }
-            else { vid.pause(); vid.style.display='none'; img.style.display='block'; }
+            // ensure loaded then toggle
+            ensureLoadThumbMedia(thumb);
+            const v = thumb.querySelector('video');
+            if(!v) return;
+            if(!v.src) return; // nothing to toggle
+            if (v.paused){
+              img.style.display = 'none';
+              v.style.display = 'block';
+              v.play().catch(()=>{});
+            } else {
+              v.pause();
+              v.style.display = 'none';
+              img.style.display = 'block';
+            }
           });
         }
 
@@ -308,20 +397,41 @@ document.addEventListener('DOMContentLoaded', () => {
                           <p>${descText}</p>
                           <div class="tags">${(p.tags||[]).map(t=>`<span>${t}</span>`).join('')}</div>`;
 
+        // make title and image clickable to open detail
         const titleEl = meta.querySelector('h4');
-        if(titleEl){ titleEl.style.cursor='pointer'; titleEl.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); }); }
+        if(titleEl){ titleEl.style.cursor = 'pointer'; titleEl.addEventListener('click', ev => { ev.stopPropagation(); openDetail(p.id); }); }
         img.style.cursor = 'pointer';
-        img.addEventListener('click', (e)=>{ e.stopPropagation(); openDetail(p.id); });
+        img.addEventListener('click', ev => { ev.stopPropagation(); openDetail(p.id); });
 
+        // card click opens detail
         card.addEventListener('click', ()=>openDetail(p.id));
+
         card.appendChild(thumb);
         card.appendChild(meta);
         projectsGrid.appendChild(card);
+
+        // observe thumb for lazy loading (only observe the thumb element)
+        thumbObserver.observe(thumb);
+
       } catch(err){
-        console.error('Error rendering project at index', i, 'id/title:', (p && (p.id || p.title)), err);
+        console.error('Error al renderizar project:', idx, p && p.id, err);
       }
+    } // end for
+
+    // if still projects left, schedule next batch to avoid blocking main thread
+    if(idx < PROJECTS.length){
+      // yield to main thread then render next batch
+      setTimeout(renderBatch, 60);
+    } else {
+      // final, small delay to ensure observer attached
+      setTimeout(()=>{ console.info('renderProjects completed. cards:', projectsGrid.children.length); }, 50);
     }
-  }
+  } // renderBatch
+
+  // start first batch
+  renderBatch();
+}
+
 
   function openDetail(id){
     try{
