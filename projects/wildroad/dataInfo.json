@@ -1,0 +1,32 @@
+{
+  "id": "wildroad",
+  "title": "Wild Road",
+  "year": 2019,
+  "shortDesc_es": "Breve descripción de Wild Road",
+  "shortDesc_en": "Short description for Wild Road",
+  "longDesc_es": "Descripción larga de Wild Road.",
+  "longDesc_en": "Long description for Wild Road.",
+  "media": [
+    {
+      "type": "video",
+      "src": "PLACEHOLDER_VIDEO",
+      "poster": "projects/wildroad/poster.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/wildroad/ss1.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/wildroad/ss2.jpg"
+    }
+  ],
+  "links": {
+    "itch": "",
+    "download": ""
+  },
+  "tags": [
+    "PC",
+    "Web"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": "zombie_attack",
+  "title": "Zombie Attack Nightmare Endurance Apocalyptic Edition",
+  "year": 2020,
+  "shortDesc_es": "Breve descripción de Zombie Attack Nightmare Endurance Apocalyptic Edition",
+  "shortDesc_en": "Short description for Zombie Attack Nightmare Endurance Apocalyptic Edition",
+  "longDesc_es": "Descripción larga de Zombie Attack Nightmare Endurance Apocalyptic Edition.",
+  "longDesc_en": "Long description for Zombie Attack Nightmare Endurance Apocalyptic Edition.",
+  "media": [
+    {
+      "type": "video",
+      "src": "PLACEHOLDER_VIDEO",
+      "poster": "projects/zombie_attack/poster.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/zombie_attack/ss1.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/zombie_attack/ss2.jpg"
+    }
+  ],
+  "links": {
+    "itch": "",
+    "download": ""
+  },
+  "tags": [
+    "PC",
+    "Web"
+  ]
+}

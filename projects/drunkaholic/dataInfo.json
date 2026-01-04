@@ -1,0 +1,32 @@
+{
+  "id": "drunkaholic",
+  "title": "Drunkaholic",
+  "year": 2015,
+  "shortDesc_es": "Breve descripción de Drunkaholic",
+  "shortDesc_en": "Short description for Drunkaholic",
+  "longDesc_es": "Descripción larga de Drunkaholic.",
+  "longDesc_en": "Long description for Drunkaholic.",
+  "media": [
+    {
+      "type": "video",
+      "src": "PLACEHOLDER_VIDEO",
+      "poster": "projects/drunkaholic/poster.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/drunkaholic/ss1.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/drunkaholic/ss2.jpg"
+    }
+  ],
+  "links": {
+    "itch": "",
+    "download": ""
+  },
+  "tags": [
+    "PC",
+    "Web"
+  ]
+}

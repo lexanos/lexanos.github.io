@@ -1,0 +1,32 @@
+{
+  "id": "fist_party_command",
+  "title": "Fist Party Command",
+  "year": 2016,
+  "shortDesc_es": "Breve descripción de Fist Party Command",
+  "shortDesc_en": "Short description for Fist Party Command",
+  "longDesc_es": "Descripción larga de Fist Party Command.",
+  "longDesc_en": "Long description for Fist Party Command.",
+  "media": [
+    {
+      "type": "video",
+      "src": "PLACEHOLDER_VIDEO",
+      "poster": "projects/fist_party_command/poster.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/fist_party_command/ss1.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/fist_party_command/ss2.jpg"
+    }
+  ],
+  "links": {
+    "itch": "",
+    "download": ""
+  },
+  "tags": [
+    "PC",
+    "Web"
+  ]
+}

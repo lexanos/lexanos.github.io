@@ -1,0 +1,32 @@
+{
+  "id": "the_beyond",
+  "title": "The Beyond",
+  "year": 2017,
+  "shortDesc_es": "Breve descripción de The Beyond",
+  "shortDesc_en": "Short description for The Beyond",
+  "longDesc_es": "Descripción larga de The Beyond.",
+  "longDesc_en": "Long description for The Beyond.",
+  "media": [
+    {
+      "type": "video",
+      "src": "PLACEHOLDER_VIDEO",
+      "poster": "projects/the_beyond/poster.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/the_beyond/ss1.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/the_beyond/ss2.jpg"
+    }
+  ],
+  "links": {
+    "itch": "",
+    "download": ""
+  },
+  "tags": [
+    "PC",
+    "Web"
+  ]
+}

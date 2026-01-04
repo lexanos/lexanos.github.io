@@ -1,7 +1,19 @@
 [
-
+  {"id":"piratepenguin","title":"Pirate Penguin / Forja de Almas","year":2024},
+  {"id":"axiebrawl","title":"Axie Brawl","year":2023},
   {"id":"llamageddon","title":"Llamageddon","year":2020},
   {"id":"artool","title":"Artool","year":2019},
-
-{"id":"tokenfighter","title":"Token Fighter","year":2025}
+  {"id":"agentrabbit","title":"Agent Rabbit - Climber Ninja","year":2018},
+  {"id":"wildroad","title":"Wild Road","year":2019},
+  {"id":"pachis","title":"Pachis","year":2020},
+  {"id":"greenbrush","title":"Green Brush","year":2018},
+  {"id":"thebeyond","title":"The Beyond","year":2017},
+  {"id":"alphabet","title":"Alphabet","year":2015},
+  {"id":"drunkaholic","title":"Drunkaholic","year":2015},
+  {"id":"samuraiblade","title":"Samurai Blade : Rock, Paper & Scissors","year":2024},
+  {"id":"zombieattack","title":"Zombie Attack Nightmare Endurance Apocalyptic Edition","year":2020},
+  {"id":"lostxstars","title":"Los Xtar's","year":2017},
+  {"id":"tiempocuantico","title":"Tiempo Cuántico","year":2015},
+  {"id":"fistpartycommand","title":"Fist Party Command","year":2016},
+  {"id":"tokenfighter","title":"Token Fighter","year":2025}
 ]

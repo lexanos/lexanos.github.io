@@ -1,0 +1,32 @@
+{
+  "id": "samuraiblade",
+  "title": "Samurai Blade : Rock, Paper & Scissors",
+  "year": 2024,
+  "shortDesc_es": "Breve descripción de Samurai Blade : Rock, Paper & Scissors",
+  "shortDesc_en": "Short description for Samurai Blade : Rock, Paper & Scissors",
+  "longDesc_es": "Descripción larga de Samurai Blade : Rock, Paper & Scissors.",
+  "longDesc_en": "Long description for Samurai Blade : Rock, Paper & Scissors.",
+  "media": [
+    {
+      "type": "video",
+      "src": "PLACEHOLDER_VIDEO",
+      "poster": "projects/samuraiblade/poster.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/samuraiblade/ss1.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/samuraiblade/ss2.jpg"
+    }
+  ],
+  "links": {
+    "itch": "",
+    "download": ""
+  },
+  "tags": [
+    "PC",
+    "Web"
+  ]
+}

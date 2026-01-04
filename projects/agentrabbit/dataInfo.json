@@ -1,0 +1,32 @@
+{
+  "id": "agent_rabbit",
+  "title": "Agent Rabbit - Climber Ninja",
+  "year": 2018,
+  "shortDesc_es": "Breve descripción de Agent Rabbit - Climber Ninja",
+  "shortDesc_en": "Short description for Agent Rabbit - Climber Ninja",
+  "longDesc_es": "Descripción larga de Agent Rabbit - Climber Ninja.",
+  "longDesc_en": "Long description for Agent Rabbit - Climber Ninja.",
+  "media": [
+    {
+      "type": "video",
+      "src": "PLACEHOLDER_VIDEO",
+      "poster": "projects/agent_rabbit/poster.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/agent_rabbit/ss1.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/agent_rabbit/ss2.jpg"
+    }
+  ],
+  "links": {
+    "itch": "https://lexanos.itch.io/agent-rabbit-climber-ninja",
+    "download": "https://lexanos.itch.io/agent-rabbit-climber-ninja"
+  },
+  "tags": [
+    "PC",
+    "Web"
+  ]
+}

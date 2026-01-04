@@ -1,0 +1,32 @@
+{
+  "id": "pachis",
+  "title": "Pachis",
+  "year": 2020,
+  "shortDesc_es": "Breve descripción de Pachis",
+  "shortDesc_en": "Short description for Pachis",
+  "longDesc_es": "Descripción larga de Pachis.",
+  "longDesc_en": "Long description for Pachis.",
+  "media": [
+    {
+      "type": "video",
+      "src": "PLACEHOLDER_VIDEO",
+      "poster": "projects/pachis/poster.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/pachis/ss1.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/pachis/ss2.jpg"
+    }
+  ],
+  "links": {
+    "itch": "https://lexanos.itch.io/pachis",
+    "download": "https://lexanos.itch.io/pachis"
+  },
+  "tags": [
+    "PC",
+    "Web"
+  ]
+}

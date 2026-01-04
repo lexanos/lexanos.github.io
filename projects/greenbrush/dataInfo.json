@@ -1,0 +1,32 @@
+{
+  "id": "green_brush",
+  "title": "Green Brush",
+  "year": 2018,
+  "shortDesc_es": "Breve descripción de Green Brush",
+  "shortDesc_en": "Short description for Green Brush",
+  "longDesc_es": "Descripción larga de Green Brush.",
+  "longDesc_en": "Long description for Green Brush.",
+  "media": [
+    {
+      "type": "video",
+      "src": "PLACEHOLDER_VIDEO",
+      "poster": "projects/green_brush/poster.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/green_brush/ss1.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/green_brush/ss2.jpg"
+    }
+  ],
+  "links": {
+    "itch": "",
+    "download": ""
+  },
+  "tags": [
+    "PC",
+    "Web"
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "id": "alphabet",
+  "title": "Alphabet",
+  "year": 2015,
+  "shortDesc_es": "Breve descripción de Alphabet",
+  "shortDesc_en": "Short description for Alphabet",
+  "longDesc_es": "Descripción larga de Alphabet.",
+  "longDesc_en": "Long description for Alphabet.",
+  "media": [
+    {
+      "type": "video",
+      "src": "PLACEHOLDER_VIDEO",
+      "poster": "projects/alphabet/poster.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/alphabet/ss1.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/alphabet/ss2.jpg"
+    }
+  ],
+  "links": {
+    "itch": "",
+    "download": ""
+  },
+  "tags": [
+    "PC",
+    "Web"
+  ]
+}

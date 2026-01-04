@@ -1,0 +1,32 @@
+{
+  "id": "los_xtars",
+  "title": "Los Xtar's",
+  "year": 2018,
+  "shortDesc_es": "Breve descripción de Los Xtar's",
+  "shortDesc_en": "Short description for Los Xtar's",
+  "longDesc_es": "Descripción larga de Los Xtar's.",
+  "longDesc_en": "Long description for Los Xtar's.",
+  "media": [
+    {
+      "type": "video",
+      "src": "PLACEHOLDER_VIDEO",
+      "poster": "projects/los_xtars/poster.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/los_xtars/ss1.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/los_xtars/ss2.jpg"
+    }
+  ],
+  "links": {
+    "itch": "",
+    "download": ""
+  },
+  "tags": [
+    "PC",
+    "Web"
+  ]
+}

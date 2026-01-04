@@ -1,0 +1,32 @@
+{
+  "id": "tiempo_cuantico",
+  "title": "Tiempo Cuántico",
+  "year": 2015,
+  "shortDesc_es": "Breve descripción de Tiempo Cuántico",
+  "shortDesc_en": "Short description for Tiempo Cuántico",
+  "longDesc_es": "Descripción larga de Tiempo Cuántico.",
+  "longDesc_en": "Long description for Tiempo Cuántico.",
+  "media": [
+    {
+      "type": "video",
+      "src": "PLACEHOLDER_VIDEO",
+      "poster": "projects/tiempo_cuantico/poster.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/tiempo_cuantico/ss1.jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/tiempo_cuantico/ss2.jpg"
+    }
+  ],
+  "links": {
+    "itch": "",
+    "download": ""
+  },
+  "tags": [
+    "PC",
+    "Web"
+  ]
+}
