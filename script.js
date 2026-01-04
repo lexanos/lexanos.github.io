@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+  // Fallback data (no tocar)
   const PROJECTS_FALLBACK = [
     { id:'piratepenguin', title:'Pirate Penguin / Forja de Almas', year:2024,
       desc:{ es:'Juego de acción con fuerte foco en combate, estética cartoon y progresión de habilidades.', en:'Action game focused on combat, cartoon aesthetics and skill progression.' },
@@ -107,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   ];
 
-  let PROJECTS = PROJECTS_FALLBACK.slice();
+  let PROJECTS = PROJECTS_FALLBACK.slice(); // variable reemplazable por loadProjectsFromFolder
 
   let LANG = 'es';
 
@@ -128,24 +129,22 @@ document.addEventListener('DOMContentLoaded', () => {
   const overviewWrap = document.getElementById('detailOverview');
   const devlogWrap = document.getElementById('detailDevlogWrap');
 
-  // tiny placeholder image data URI so layout is instant
   const PLACEHOLDER_DATA = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
-
   const LAZY_ROOT_MARGIN = '300px';
 
-  // IntersectionObserver to lazy-load thumb media when thumb enters viewport
+  // IntersectionObserver para lazy-load de thumbs
   const thumbObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (!entry.isIntersecting) return;
       const thumb = entry.target;
       const img = thumb.querySelector('img[data-src]');
       const vid = thumb.querySelector('video[data-src]');
-      // load image via Image loader to control spinner removal
+      // cargar imagen mediante Image() para controlar spinner
       if (img && img.dataset.src) {
-        const realSrc = img.dataset.src;
+        const real = img.dataset.src;
         const loader = new Image();
         loader.onload = () => {
-          img.src = realSrc;
+          img.src = real;
           delete img.dataset.src;
           const spinner = thumb.querySelector('.thumb-spinner');
           if (spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner);
@@ -154,13 +153,14 @@ document.addEventListener('DOMContentLoaded', () => {
           const spinner = thumb.querySelector('.thumb-spinner');
           if (spinner) { spinner.textContent = '⚠'; spinner.style.border = '4px solid rgba(255,0,0,0.12)'; setTimeout(()=>{ if(spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner); }, 1200); }
         };
-        loader.src = realSrc;
+        loader.src = real;
       }
-      // preload video source (don't autoplay) if available
+      // asignar src del video (solo metadata, no autoplay)
       if (vid && vid.dataset.src) {
         const ds = vid.dataset.src;
         if (ds && ds !== 'PLACEHOLDER_VIDEO') {
-          vid.src = ds; // preload metadata
+          // no forzamos descarga de todos los videos; asignamos src para preload metadata
+          vid.src = ds;
         }
         delete vid.dataset.src;
       }
@@ -168,39 +168,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }, { root: null, rootMargin: LAZY_ROOT_MARGIN, threshold: 0.01 });
 
+  // helpers de fetch seguros
   async function fetchJsonSafe(url){
-    try {
-      const r = await fetch(url, {cache: "no-store"});
-      if(!r.ok) return null;
-      return await r.json();
-    } catch(e){ return null; }
+    try{ const r = await fetch(url, {cache:'no-store'}); if(!r.ok) return null; return await r.json(); } catch(e){ return null; }
   }
   async function fetchTextSafe(url){
-    try {
-      const r = await fetch(url, {cache: "no-store"});
-      if(!r.ok) return null;
-      return await r.text();
-    } catch(e){ return null; }
+    try{ const r = await fetch(url, {cache:'no-store'}); if(!r.ok) return null; return await r.text(); } catch(e){ return null; }
   }
 
+  // carga projects desde carpeta projects/index.json si existe (no tocar)
   async function loadProjectsFromFolder(){
     const candidates = ['./projects/', 'projects/', '/projects/'];
     let chosenBase = null;
     let idx = null;
     for(const base of candidates){
-      const url = base + 'index.json';
+      const idxUrl = base + 'index.json';
       try{
-        const res = await fetch(url, {cache: "no-store"});
+        const res = await fetch(idxUrl, {cache: "no-store"});
         if(res && res.ok){
-          try{
-            idx = await res.json();
-            chosenBase = base;
-            break;
-          }catch(e){ idx = null; }
+          try{ idx = await res.json(); chosenBase = base; break; } catch(e){ idx = null; }
         }
       }catch(e){}
     }
-    if(!chosenBase || !Array.isArray(idx) || idx.length === 0) return; // fallback to static
+    if(!chosenBase || !Array.isArray(idx) || idx.length === 0) return;
+
     const loaded = [];
     for(const entry of idx){
       if(!entry || !entry.id) continue;
@@ -218,23 +209,37 @@ document.addEventListener('DOMContentLoaded', () => {
         desc: { es: dataInfo?.shortDesc_es || entry.desc_es || '', en: dataInfo?.shortDesc_en || entry.desc_en || '' },
         longDesc: { es: descEs ? descEs.trim() : (dataInfo?.longDesc_es || ''), en: descEn ? descEn.trim() : (dataInfo?.longDesc_en || '') },
         links: dataInfo?.links || entry.links || {},
-        media: Array.isArray(dataInfo?.media) && dataInfo.media.length ? dataInfo.media.map(m => Object.assign({}, m)) : [],
+        media: [],
         tags: dataInfo?.tags || entry.tags || [],
         devlog: Array.isArray(devlogJson) ? devlogJson.slice() : (Array.isArray(devlogJson?.entries) ? devlogJson.entries.slice() : [])
       };
 
-      // if no media, try to detect placeholder.png; else add default placeholder image path
-      if(proj.media.length === 0) {
-        // we won't fetch binary here; assume file exists or fallback
-        proj.media.push({ type: 'image', src: base + 'placeholder.png' });
-      } else {
-        // if media items are relative, prefix base
-        proj.media = proj.media.map(m => {
+      // Normalizar media: si dataInfo.media existe, prefix base solo cuando sea relativo
+      if(Array.isArray(dataInfo?.media) && dataInfo.media.length){
+        proj.media = dataInfo.media.map(m => {
           const n = Object.assign({}, m);
-          if(n.src && !n.src.startsWith('http') && !n.src.startsWith('/')) n.src = base + n.src;
-          if(n.poster && !n.poster.startsWith('http') && !n.poster.startsWith('/')) n.poster = base + n.poster;
+          if(n.src && !n.src.match(/^https?:\/\//) && !n.src.startsWith('/') && !n.src.startsWith(base)){
+            n.src = base + n.src;
+          }
+          if(n.poster && !n.poster.match(/^https?:\/\//) && !n.poster.startsWith('/') && !n.poster.startsWith(base)){
+            n.poster = base + n.poster;
+          }
           return n;
         });
+      } else if(Array.isArray(entry.media) && entry.media.length){
+        proj.media = entry.media.map(m => {
+          const n = Object.assign({}, m);
+          if(n.src && !n.src.match(/^https?:\/\//) && !n.src.startsWith('/') && !n.src.startsWith(base)){
+            n.src = base + n.src;
+          }
+          if(n.poster && !n.poster.match(/^https?:\/\//) && !n.poster.startsWith('/') && !n.poster.startsWith(base)){
+            n.poster = base + n.poster;
+          }
+          return n;
+        });
+      } else {
+        // si no hay media declarada, intentamos placeholder.png dentro de carpeta (asumimos path)
+        proj.media.push({ type: 'image', src: base + 'placeholder.png' });
       }
 
       loaded.push(proj);
@@ -249,6 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.scrollTo(0,0);
   }
 
+  // nav handlers
   (function attachNav(){
     const links = document.querySelectorAll('header nav a[data-target]');
     links.forEach(l=>{
@@ -267,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // spinner style insertion (only once)
+  // insertar estilo spinner solo una vez
   if (!document.getElementById('thumb-spinner-style')) {
     const s = document.createElement('style');
     s.id = 'thumb-spinner-style';
@@ -294,12 +300,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(s);
   }
 
-  // Render all cards into DOM immediately but media loads lazily
+  // RENDER: crear cards INMEDIATAMENTE (sin esperar media)
   function renderProjects(){
-    if(!projectsGrid) {
-      console.warn('projectsGrid not found');
-      return;
-    }
+    if(!projectsGrid){ console.warn('projectsGrid no encontrado'); return; }
     projectsGrid.innerHTML = '';
 
     for(let i=0;i<PROJECTS.length;i++){
@@ -307,31 +310,39 @@ document.addEventListener('DOMContentLoaded', () => {
       try{
         const card = document.createElement('div');
         card.className = 'card';
+        card.setAttribute('data-project-id', p.id);
 
         const thumb = document.createElement('div');
         thumb.className = 'thumb';
         thumb.style.position = 'relative';
 
+        // encontrar media tipo image y video (no cargar aun)
         const imageMedia = (p.media||[]).find(m => m.type === 'image');
         const videoMedia = (p.media||[]).find(m => m.type === 'video');
 
-        let intendedImgSrc = 'images/placeholder_thumb.jpg';
-        if (imageMedia && imageMedia.src) intendedImgSrc = imageMedia.src;
-        if (videoMedia && videoMedia.poster) intendedImgSrc = videoMedia.poster;
+        // decidir url "real" (no asignarla todavía)
+        let intendedImg = 'images/placeholder_thumb.jpg';
+        if (imageMedia && imageMedia.src) intendedImg = imageMedia.src;
+        if (videoMedia && videoMedia.poster) intendedImg = videoMedia.poster;
 
+        // imagen placeholder inmediata para layout
         const img = document.createElement('img');
-        img.src = PLACEHOLDER_DATA; // tiny placeholder to make layout appear instantly
+        img.src = PLACEHOLDER_DATA; // tiny placeholder to avoid 404
         img.alt = p.title || '';
-        img.setAttribute('data-src', intendedImgSrc);
+        img.setAttribute('data-src', intendedImg);
 
+        // spinner
         const spinner = document.createElement('div');
         spinner.className = 'thumb-spinner';
+
         thumb.appendChild(spinner);
         thumb.appendChild(img);
 
+        // Si hay video, creamos elemento <video> pero sin src; lo marcamos con data-src
         if (videoMedia) {
           const vid = document.createElement('video');
           if (videoMedia.src) vid.setAttribute('data-src', videoMedia.src);
+          // don't set src now, let observer or hover set it
           vid.muted = true;
           vid.loop = true;
           vid.preload = 'metadata';
@@ -344,17 +355,10 @@ document.addEventListener('DOMContentLoaded', () => {
           vid.style.display = 'none';
           thumb.appendChild(vid);
 
-          // if poster already accessible, try to remove spinner when poster loads
-          if (videoMedia.poster) {
-            const posterCheck = new Image();
-            posterCheck.onload = () => { if (spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner); };
-            posterCheck.onerror = () => { /* ignore */ };
-            posterCheck.src = videoMedia.poster;
-          }
-
+          // hover sets src lazily and plays (only when user interacts)
           thumb.addEventListener('mouseenter', () => {
-            const realVidSrc = vid.getAttribute('data-src');
-            if (realVidSrc && realVidSrc !== 'PLACEHOLDER_VIDEO' && !vid.src) vid.src = realVidSrc;
+            const ds = vid.getAttribute('data-src');
+            if (ds && ds !== 'PLACEHOLDER_VIDEO' && !vid.src) vid.src = ds;
             if (vid.src) {
               img.style.display = 'none';
               vid.style.display = 'block';
@@ -369,10 +373,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           });
 
+          // click toggles play (touch devices)
           thumb.addEventListener('click', (ev) => {
             ev.stopPropagation();
-            const realVidSrc = vid.getAttribute('data-src');
-            if (realVidSrc && realVidSrc !== 'PLACEHOLDER_VIDEO' && !vid.src) vid.src = realVidSrc;
+            const ds = vid.getAttribute('data-src');
+            if (ds && ds !== 'PLACEHOLDER_VIDEO' && !vid.src) vid.src = ds;
             if (!vid.src) return;
             if (vid.paused) {
               img.style.display = 'none';
@@ -386,6 +391,7 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
 
+        // meta
         const meta = document.createElement('div');
         meta.className = 'meta';
         const titleText = p.title || 'Untitled';
@@ -395,7 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
                           <p>${descText}</p>
                           <div class="tags">${(p.tags||[]).map(t=>`<span>${t}</span>`).join('')}</div>`;
 
-        // clickable title and image open detail
+        // handlers: title and image open detail
         const titleEl = meta.querySelector('h4');
         if(titleEl){ titleEl.style.cursor = 'pointer'; titleEl.addEventListener('click', ev => { ev.stopPropagation(); openDetail(p.id); }); }
         img.style.cursor = 'pointer';
@@ -405,22 +411,10 @@ document.addEventListener('DOMContentLoaded', () => {
         card.appendChild(meta);
         projectsGrid.appendChild(card);
 
-        // observe thumb for lazy loading
+        // observe the thumb for lazy loading
         thumbObserver.observe(thumb);
 
-        // defensive: if user hovers before observation triggers, ensure load
-        thumb.addEventListener('pointerover', () => {
-          // ensure immediate image load if not set yet
-          const di = thumb.querySelector('img[data-src]');
-          if (di && di.dataset.src) {
-            const loader = new Image();
-            loader.onload = () => { di.src = di.dataset.src; delete di.dataset.src; const sp = thumb.querySelector('.thumb-spinner'); if (sp && sp.parentNode) sp.parentNode.removeChild(sp); };
-            loader.onerror = () => { const sp = thumb.querySelector('.thumb-spinner'); if (sp) { sp.textContent = '⚠'; setTimeout(()=>sp.parentNode && sp.parentNode.removeChild(sp),1200); } };
-            loader.src = di.dataset.src;
-          }
-        });
-
-        // ensure accessible keyboard focus opens detail
+        // keyboard accessibility
         card.tabIndex = 0;
         card.addEventListener('keydown', (ev) => { if(ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openDetail(p.id); } });
 
@@ -432,6 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.info('renderProjects completed. cards:', projectsGrid.children.length);
   }
 
+  // open detail (se mantiene)
   function openDetail(id){
     try{
       const p = PROJECTS.find(x=>x.id===id);
@@ -560,13 +555,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.openDetail = openDetail;
 
+  // tabs handlers (overview/devlog)
   if(tabOverview) tabOverview.addEventListener('click', (e) => { e.preventDefault(); overviewWrap.style.display='block'; devlogWrap.style.display='none'; tabOverview.style.background = ''; tabDevlog.style.background = '#1a2333'; });
   if(tabDevlog) tabDevlog.addEventListener('click', (e) => { e.preventDefault(); overviewWrap.style.display='none'; devlogWrap.style.display='block'; tabDevlog.style.background = ''; tabOverview.style.background = '#1a2333'; });
 
+  // back button
   const backBtn = document.getElementById('backToProjects');
   if(backBtn) backBtn.addEventListener('click', (e) => { e.preventDefault(); showSection('projects'); });
 
-  // Contact form handling: ensure contactStatus exists (insert if not)
+  // Contact form handling (dejo comportamiento existente, añado contactStatus si falta)
   const contactForm = document.getElementById('contactForm');
   let contactStatus = document.getElementById('contactStatus');
   if(!contactStatus && contactForm){
@@ -638,11 +635,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // initialize: try to load projects from folder then render
+  // init: intentar cargar projects desde carpeta, luego render
   (async function init(){
-    await loadProjectsFromFolder(); // if folder exists, PROJECTS will be replaced
-    renderProjects();
+    await loadProjectsFromFolder(); // si existe, reemplaza PROJECTS
+    renderProjects();              // crea cards inmediatamente
     showSection('home');
+    // debug info
     setTimeout(()=>{ if(projectsGrid) console.info('rendered projects count:', projectsGrid.children.length, 'PROJECTS total:', PROJECTS.length); }, 200);
   })();
 
