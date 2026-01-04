@@ -1,6 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-  let PROJECTS = [ /* === TU ARRAY ORIGINAL DE PROJECTS NO SE TOCA === */ ];
+  // --- Obtén la lista de proyectos desde donde exista (no sobrescribimos nada) ---
+  let projectsData = null;
+  if (typeof PROJECTS !== 'undefined' && Array.isArray(PROJECTS)) {
+    projectsData = PROJECTS;
+  } else if (window.PROJECTS && Array.isArray(window.PROJECTS)) {
+    projectsData = window.PROJECTS;
+  } else {
+    projectsData = null; // fallback: intentaremos cargar index.json más abajo
+  }
 
   const navLinks = document.querySelectorAll('header nav a[data-target]');
   const sections = document.querySelectorAll('main .section');
@@ -20,220 +28,268 @@ document.addEventListener('DOMContentLoaded', () => {
   const devlogWrap = document.getElementById('detailDevlogWrap');
 
   let LANG = 'es';
+  const PLACEHOLDER_IMG = 'images/placeholder_thumb.jpg';
+  const PLACEHOLDER_DATA_URI = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
 
-  /* ------------------ helpers ------------------ */
-
-  async function fetchTextSafe(url){
-    try{
-      const r = await fetch(url, { cache:'no-store' });
-      if(!r.ok) return null;
-      return await r.text();
-    }catch{ return null; }
-  }
-
-  async function fetchJsonSafe(url){
-    try{
-      const r = await fetch(url, { cache:'no-store' });
-      if(!r.ok) return null;
+  // safe fetch helpers
+  async function fetchJsonSafe(url) {
+    try {
+      const r = await fetch(url, {cache: 'no-store'});
+      if (!r.ok) return null;
       return await r.json();
-    }catch{ return null; }
+    } catch (e) { return null; }
   }
 
-  function showSection(id){
+  async function tryLoadIndexJson() {
+    const candidates = ['./projects/index.json', 'projects/index.json', '/projects/index.json'];
+    for (const c of candidates) {
+      try {
+        const res = await fetch(c, {cache:'no-store'});
+        if (!res.ok) continue;
+        const json = await res.json();
+        if (Array.isArray(json) && json.length) return {data: json, base: c.replace(/index\.json$/,'')};
+      } catch (e) { continue; }
+    }
+    return null;
+  }
+
+  function showSection(id) {
     sections.forEach(s => s.classList.toggle('active', s.id === id));
     navLinks.forEach(a => a.classList.toggle('active', a.dataset.target === id));
     window.scrollTo(0,0);
   }
 
-  /* ------------------ navegación ------------------ */
-
+  // attach nav handlers
   navLinks.forEach(l=>{
     l.addEventListener('click', e=>{
       e.preventDefault();
-      showSection(l.dataset.target);
+      const t = l.dataset.target;
+      if (t) showSection(t);
     });
   });
 
-  if(homeProjectsBtn){
-    homeProjectsBtn.onclick = e => {
+  if (homeProjectsBtn) {
+    homeProjectsBtn.addEventListener('click', e=>{
       e.preventDefault();
       showSection('projects');
-    };
+    });
   }
 
-  /* ------------------ spinner CSS (una vez) ------------------ */
+  // If a global openDetail function exists, use it; otherwise provide a non-destructive fallback.
+  const externalOpenDetail = (typeof window.openDetail === 'function') ? window.openDetail : null;
 
-  if(!document.getElementById('thumb-spinner-style')){
-    const s = document.createElement('style');
-    s.id = 'thumb-spinner-style';
-    s.textContent = `
-      .thumb{ position:relative }
-      .thumb-spinner{
-        position:absolute;
-        inset:0;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        background:rgba(0,0,0,.25);
-        z-index:2;
-      }
-      .thumb-spinner::after{
-        content:'';
-        width:32px;height:32px;
-        border:4px solid rgba(255,255,255,.2);
-        border-top-color:var(--accent);
-        border-radius:50%;
-        animation:spin 1s linear infinite;
-      }
-      @keyframes spin{to{transform:rotate(360deg)}}
-    `;
-    document.head.appendChild(s);
+  function localOpenDetail(id) {
+    // Minimal fallback: show detail section and set title if possible.
+    const p = (projectsData || []).find(x => x.id === id);
+    if (!p) {
+      showSection('detail');
+      return;
+    }
+    if (detailTitle) detailTitle.textContent = p.title || '';
+    if (detailDesc) detailDesc.textContent = (p.longDesc && p.longDesc[LANG]) ? p.longDesc[LANG] : (p.desc && p.desc[LANG]) ? p.desc[LANG] : '';
+    if (detailMedia) detailMedia.innerHTML = '';
+    if (detailThumbs) detailThumbs.innerHTML = '';
+    if (detailLinks) detailLinks.innerHTML = '';
+    if (detailDevlog) detailDevlog.innerHTML = '';
+    // basic preview
+    const main = (p.media && p.media.length) ? p.media[0] : null;
+    if (main && main.type === 'image') {
+      const im = document.createElement('img'); im.src = main.src || PLACEHOLDER_IMG; im.style.width = '100%'; detailMedia.appendChild(im);
+    } else {
+      detailMedia.innerHTML = '<div style="height:320px;background:#0b0d12;display:flex;align-items:center;justify-content:center;color:var(--muted)">Preview disponible</div>';
+    }
+    // devlog list
+    (p.devlog || []).forEach(d => {
+      const li = document.createElement('li'); li.innerText = d; detailDevlog.appendChild(li);
+    });
+    if (overviewWrap && devlogWrap) {
+      overviewWrap.style.display = 'block';
+      devlogWrap.style.display = 'none';
+      if (tabOverview) tabOverview.style.background = '';
+      if (tabDevlog) tabDevlog.style.background = '#1a2333';
+    }
+    showSection('detail');
   }
 
-  const PLACEHOLDER_IMG = 'images/placeholder_thumb.jpg';
+  function openDetailProxy(id) {
+    if (externalOpenDetail) {
+      try { externalOpenDetail(id); return; } catch (e) { console.error('external openDetail failed, using local fallback', e); }
+    }
+    localOpenDetail(id);
+  }
 
-  /* ------------------ render inmediato ------------------ */
+  window.openDetail = openDetailProxy;
 
-  function renderProjects(){
-    if(!projectsGrid) return;
-
+  // --- Render cards immediately (no waiting for images) ---
+  function renderProjectsImmediate(list) {
+    if (!projectsGrid) return;
     projectsGrid.innerHTML = '';
+    const frag = document.createDocumentFragment();
 
-    PROJECTS.forEach(p => {
-
-      /* card base */
+    list.forEach(p => {
       const card = document.createElement('div');
       card.className = 'card';
       card.tabIndex = 0;
 
-      card.onclick = () => openDetail(p.id);
-      card.onkeydown = e => {
-        if(e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          openDetail(p.id);
-        }
-      };
+      // click/keyboard to open (use proxy to avoid overwriting other function)
+      card.addEventListener('click', () => openDetailProxy(p.id));
+      card.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDetailProxy(p.id); } });
 
-      /* thumb */
-      const thumb = document.createElement('div');
-      thumb.className = 'thumb';
+      // thumb container
+      const thumb = document.createElement('div'); thumb.className = 'thumb';
+      thumb.style.position = 'relative';
 
       const img = document.createElement('img');
-      img.src = PLACEHOLDER_IMG;
       img.alt = p.title || '';
+      img.src = PLACEHOLDER_DATA_URI; // tiny placeholder, avoids layout reflow
+      img.style.width = '100%';
       thumb.appendChild(img);
 
       const spinner = document.createElement('div');
       spinner.className = 'thumb-spinner';
       thumb.appendChild(spinner);
 
-      /* async media load (NO bloquea render) */
-      const mediaImg = (p.media||[]).find(m=>m.type==='image');
-      const mediaVid = (p.media||[]).find(m=>m.type==='video');
-
-      const realImgSrc =
-        (mediaVid && mediaVid.poster) ||
-        (mediaImg && mediaImg.src) ||
-        null;
-
-      if(realImgSrc){
-        const loader = new Image();
-        loader.onload = () => {
-          img.src = realImgSrc;
-          spinner.remove();
-        };
-        loader.onerror = () => spinner.remove();
-        loader.src = realImgSrc;
-      } else {
-        spinner.remove();
-      }
-
-      /* video hover (solo si existe src real) */
-      if(mediaVid && mediaVid.src && mediaVid.src !== 'PLACEHOLDER_VIDEO'){
-        const vid = document.createElement('video');
-        vid.muted = true;
-        vid.loop = true;
-        vid.preload = 'metadata';
-        vid.style.display = 'none';
-        thumb.appendChild(vid);
-
-        thumb.onmouseenter = () => {
-          if(!vid.src) vid.src = mediaVid.src;
-          img.style.display = 'none';
-          vid.style.display = 'block';
-          vid.play().catch(()=>{});
-        };
-        thumb.onmouseleave = () => {
-          vid.pause();
-          vid.style.display = 'none';
-          img.style.display = 'block';
-        };
-      }
-
-      /* meta */
+      // meta
       const meta = document.createElement('div');
       meta.className = 'meta';
+      const titleHtml = `<h4>${p.title || 'Untitled'} <span style="font-weight:600;color:var(--muted);font-size:13px">(${p.year||''})</span></h4>`;
+      const descText = (p.desc && p.desc[LANG]) ? p.desc[LANG] : ((p.desc && p.desc.es) ? p.desc.es : '');
+      meta.innerHTML = `${titleHtml}<p>${descText || ''}</p><div class="tags">${(p.tags||[]).map(t=>`<span>${t}</span>`).join('')}</div>`;
 
-      meta.innerHTML = `
-        <h4>${p.title || 'Untitled'}
-          <span style="color:var(--muted)">(${p.year||''})</span>
-        </h4>
-        <p>${(p.desc && p.desc[LANG]) || ''}</p>
-        <div class="tags">${(p.tags||[]).map(t=>`<span>${t}</span>`).join('')}</div>
-      `;
+      // title clickable (stopPropagation to avoid double)
+      const titleEl = meta.querySelector('h4');
+      if (titleEl) {
+        titleEl.style.cursor = 'pointer';
+        titleEl.addEventListener('click', (e) => { e.stopPropagation(); openDetailProxy(p.id); });
+      }
 
+      // append
       card.appendChild(thumb);
       card.appendChild(meta);
-      projectsGrid.appendChild(card);
+      frag.appendChild(card);
+
+      // --- async load image/poster/video AFTER card inserted ---
+      (function loadMediaAsync(proj, imgEl, spinnerEl, thumbEl) {
+        // determine intended image/poster
+        const imageMedia = (proj.media||[]).find(m => m.type === 'image');
+        const videoMedia = (proj.media||[]).find(m => m.type === 'video');
+        const intended = (videoMedia && videoMedia.poster) ? videoMedia.poster : (imageMedia && imageMedia.src) ? imageMedia.src : null;
+        if (intended) {
+          const loader = new Image();
+          loader.onload = () => {
+            imgEl.src = intended;
+            if (spinnerEl && spinnerEl.parentNode) spinnerEl.parentNode.removeChild(spinnerEl);
+          };
+          loader.onerror = () => {
+            // keep placeholder and remove spinner
+            if (spinnerEl && spinnerEl.parentNode) spinnerEl.parentNode.removeChild(spinnerEl);
+          };
+          loader.src = intended;
+        } else {
+          // no poster/image: remove spinner quickly
+          if (spinnerEl && spinnerEl.parentNode) setTimeout(()=>spinnerEl.parentNode.removeChild(spinnerEl), 200);
+        }
+
+        // if video with real src, create a video element but do not set src yet (to avoid immediate download)
+        if (videoMedia && videoMedia.src && videoMedia.src !== 'PLACEHOLDER_VIDEO') {
+          const v = document.createElement('video');
+          v.muted = true; v.loop = true; v.preload = 'metadata';
+          v.style.position = 'absolute'; v.style.top = '0'; v.style.left = '0';
+          v.style.width = '100%'; v.style.height = '100%'; v.style.objectFit = 'cover'; v.style.display = 'none';
+          thumbEl.appendChild(v);
+          // hover handlers
+          thumbEl.addEventListener('mouseenter', () => {
+            if (!v.src) v.src = videoMedia.src;
+            imgEl.style.display = 'none';
+            v.style.display = 'block';
+            v.play().catch(()=>{});
+          });
+          thumbEl.addEventListener('mouseleave', () => {
+            v.pause();
+            v.style.display = 'none';
+            imgEl.style.display = 'block';
+          });
+          // click toggles on touch devices
+          thumbEl.addEventListener('click', (ev) => {
+            // stopPropagation already handled by card click - but toggles video first
+            ev.stopPropagation();
+            if (!v.src) v.src = videoMedia.src;
+            if (v.paused) {
+              imgEl.style.display = 'none';
+              v.style.display = 'block';
+              v.play().catch(()=>{});
+            } else {
+              v.pause();
+              v.style.display = 'none';
+              imgEl.style.display = 'block';
+            }
+          });
+        }
+      })(p, img, spinner, thumb);
     });
 
-    console.info('renderProjects completed. cards:', projectsGrid.children.length);
+    projectsGrid.appendChild(frag);
   }
 
-  /* ------------------ detalle (NO TOCADO salvo guards) ------------------ */
-
-  function openDetail(id){
-    const p = PROJECTS.find(x=>x.id===id);
-    if(!p) return;
-
-    detailTitle.textContent = p.title || '';
-    detailDesc.textContent = (p.longDesc && p.longDesc[LANG]) || (p.desc && p.desc[LANG]) || '';
-
-    detailMedia.innerHTML = '';
-    detailThumbs.innerHTML = '';
-    detailLinks.innerHTML = '';
-    detailDevlog.innerHTML = '';
-
-    const main = p.media && p.media.length ? p.media[0] : null;
-
-    if(main && main.type==='video' && main.src && main.src!=='PLACEHOLDER_VIDEO'){
-      const v = document.createElement('video');
-      v.controls = true;
-      v.src = main.src;
-      v.style.width='100%';
-      v.style.height='400px';
-      detailMedia.appendChild(v);
-    } else if(main && main.type==='image'){
-      const i = document.createElement('img');
-      i.src = main.src || PLACEHOLDER_IMG;
-      i.style.width='100%';
-      detailMedia.appendChild(i);
+  // If we already had projectsData (from inline script), render immediately.
+  // Otherwise try to fetch index.json and build projectsData then render.
+  (async function bootstrap() {
+    if (projectsData && Array.isArray(projectsData) && projectsData.length > 0) {
+      renderProjectsImmediate(projectsData);
+      showSection('home');
+      return;
     }
 
-    (p.devlog||[]).forEach(d=>{
-      const li=document.createElement('li');
-      li.textContent=d;
-      detailDevlog.appendChild(li);
-    });
+    // try to fetch projects/index.json (non-blocking, but we will await result)
+    const idx = await tryLoadIndexJson();
+    if (idx && Array.isArray(idx.data) && idx.data.length > 0) {
+      // if index.json exists, transform entries into minimal PROJECT objects expected by render
+      const loaded = idx.data.map(entry => {
+        return {
+          id: entry.id || (entry.title || '').toLowerCase().replace(/[^a-z0-9]+/ig,'-'),
+          title: entry.title || entry.id || 'Untitled',
+          year: entry.year || '',
+          desc: { es: entry.shortDesc_es || '', en: entry.shortDesc_en || '' },
+          longDesc: { es: entry.longDesc_es || '', en: entry.longDesc_en || '' },
+          links: entry.links || {},
+          media: Array.isArray(entry.media) ? entry.media : [],
+          tags: entry.tags || [],
+          devlog: entry.devlog || []
+        };
+      });
+      projectsData = loaded;
+      renderProjectsImmediate(projectsData);
+      showSection('home');
+      return;
+    }
 
-    showSection('detail');
+    // no inline or remote index.json -> try fallback: render empty but keep UI usable
+    projectsData = projectsData || [];
+    renderProjectsImmediate(projectsData);
+    showSection('home');
+  })();
+
+  // Tabs handlers (if exist)
+  if (tabOverview) {
+    tabOverview.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (overviewWrap) overviewWrap.style.display = 'block';
+      if (devlogWrap) devlogWrap.style.display = 'none';
+      if (tabOverview) tabOverview.style.background = 'var(--accent)';
+      if (tabDevlog) tabDevlog.style.background = '#1a2333';
+    });
+  }
+  if (tabDevlog) {
+    tabDevlog.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (overviewWrap) overviewWrap.style.display = 'none';
+      if (devlogWrap) devlogWrap.style.display = 'block';
+      if (tabDevlog) tabDevlog.style.background = 'var(--accent)';
+      if (tabOverview) tabOverview.style.background = '#1a2333';
+    });
   }
 
-  window.openDetail = openDetail;
-
-  /* ------------------ init ------------------ */
-
-  renderProjects();
-  showSection('home');
+  const backBtn = document.getElementById('backToProjects');
+  if (backBtn) backBtn.addEventListener('click', (e) => { e.preventDefault(); showSection('projects'); });
 
 });
