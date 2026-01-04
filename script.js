@@ -222,22 +222,27 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // -------------------------
-  // NAV handling (restore)
+  // NAV handling (robusto)
   // -------------------------
   function showSection(id){
-    sections.forEach(s => s.classList.toggle('active', s.id === id));
-    navLinks.forEach(a => a.classList.toggle('active', a.dataset.target === id));
+    // query fresh lists to avoid stale nodes
+    const secs = document.querySelectorAll('main .section');
+    const navs = document.querySelectorAll('header nav a[data-target]');
+    secs.forEach(s => s.classList.toggle('active', s.id === id));
+    navs.forEach(a => a.classList.toggle('active', a.dataset.target === id));
     window.scrollTo(0,0);
   }
 
+  // use event delegation on nav to catch clicks reliably
   (function attachNav(){
-    const links = document.querySelectorAll('header nav a[data-target]');
-    links.forEach(l=>{
-      l.addEventListener('click', (e)=>{
-        e.preventDefault();
-        const t = l.dataset.target;
-        if(t) showSection(t);
-      });
+    const navEl = document.querySelector('header nav');
+    if(!navEl) return;
+    navEl.addEventListener('click', (e) => {
+      const a = e.target.closest('a[data-target]');
+      if(!a) return;
+      e.preventDefault();
+      const t = a.dataset.target;
+      if(t) showSection(t);
     });
   })();
 
