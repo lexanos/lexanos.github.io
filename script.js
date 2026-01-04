@@ -292,7 +292,7 @@ function ensureLoadThumbMedia(thumb) {
   }
 }
 
-// --- Reemplaza tu función renderProjects con esta ---
+
 function renderProjects(){
   if(!projectsGrid){
     console.warn('projectsGrid no encontrado');
@@ -322,19 +322,79 @@ function renderProjects(){
         if (imageMedia && imageMedia.src) intendedImgSrc = imageMedia.src;
         if (videoMedia && videoMedia.poster) intendedImgSrc = videoMedia.poster;
 
+        // --- spinner CSS (inserta solo una vez)
+        if (!document.getElementById('thumb-spinner-style')) {
+          const s = document.createElement('style');
+          s.id = 'thumb-spinner-style';
+          s.textContent = `
+            .thumb-spinner {
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%,-50%);
+              width: 36px;
+              height: 36px;
+              border-radius: 50%;
+              border: 4px solid rgba(255,255,255,0.12);
+              border-top-color: var(--accent);
+              box-sizing: border-box;
+              animation: thumb-spin 1s linear infinite;
+              z-index: 5;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+            }
+            @keyframes thumb-spin { from { transform: translate(-50%,-50%) rotate(0deg);} to { transform: translate(-50%,-50%) rotate(360deg);} }
+          `;
+          document.head.appendChild(s);
+        }
+
+        // placeholder tiny image to avoid 404 while actual asset loads
+        const PLACEHOLDER_DATA = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+
         const img = document.createElement('img');
-        // Store real src in data-src -> IntersectionObserver will set img.src later
-        img.setAttribute('data-src', intendedImgSrc);
-        // Use global placeholder immediately so layout no parpadea con ausencia de img
-        img.src = 'images/placeholder_thumb.jpg';
+        // set a tiny placeholder immediately so layout is instant
+        img.src = PLACEHOLDER_DATA;
         img.alt = p.title || '';
 
+        // store the intended (real) src in data-src to avoid immediate network request
+        img.setAttribute('data-src', intendedImgSrc);
+
+        // create spinner overlay
+        const spinner = document.createElement('div');
+        spinner.className = 'thumb-spinner';
+        thumb.appendChild(spinner);
+
+        // append placeholder img into thumb so card appears instantly
         thumb.appendChild(img);
 
-        // Si hay video, creamos la etiqueta pero ponemos data-src para no cargar el binario aún
-        if (videoMedia){
+        // async load the real image in background without blocking
+        (function loadImageAsync(realSrc, imgEl, spinnerEl){
+          if(!realSrc) {
+            // nothing to load: remove spinner after short delay
+            setTimeout(()=>{ if(spinnerEl && spinnerEl.parentNode) spinnerEl.parentNode.removeChild(spinnerEl); }, 250);
+            return;
+          }
+          const loader = new Image();
+          loader.onload = () => {
+            // on success, swap src and remove spinner
+            imgEl.src = realSrc;
+            if(spinnerEl && spinnerEl.parentNode) spinnerEl.parentNode.removeChild(spinnerEl);
+          };
+          loader.onerror = () => {
+            // on error keep placeholder and show small error sign then remove spinner
+            spinnerEl.textContent = '⚠';
+            spinnerEl.style.border = '4px solid rgba(255,0,0,0.12)';
+            setTimeout(()=>{ if(spinnerEl && spinnerEl.parentNode) spinnerEl.parentNode.removeChild(spinnerEl); }, 1200);
+          };
+          // start loading (this is async)
+          loader.src = realSrc;
+        })(intendedImgSrc, img, spinner);
+
+        // if there's video media, create video element but DON'T set src directly.
+        // show spinner until poster or video ready. Video source will be loaded lazily by observer/hover.
+        if (videoMedia) {
           const vid = document.createElement('video');
-          // store the real video source in data-src
           if (videoMedia.src) vid.setAttribute('data-src', videoMedia.src);
           vid.muted = true;
           vid.loop = true;
@@ -348,41 +408,51 @@ function renderProjects(){
           vid.style.display = 'none';
           thumb.appendChild(vid);
 
-          // hover play: si aún no se cargó el video (tiene data-src), cargalo forzadamente
+          // if there is a poster, try to load it and ensure spinner is removed once poster loads
+          if (videoMedia.poster) {
+            const posterImg = new Image();
+            posterImg.onload = () => {
+              if (spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner);
+            };
+            posterImg.onerror = () => {
+              if (spinner && spinner.parentNode) spinner.parentNode.removeChild(spinner);
+            };
+            posterImg.src = videoMedia.poster;
+          }
+
+          // hover: ensure video source is requested and play (keeps previous behaviour)
           thumb.addEventListener('mouseenter', () => {
-            // if video not loaded, ensure load then play
-            ensureLoadThumbMedia(thumb);
-            const v = thumb.querySelector('video');
-            if(v && v.src){
+            const realVidSrc = vid.getAttribute('data-src');
+            if (realVidSrc && realVidSrc !== 'PLACEHOLDER_VIDEO') {
+              if (!vid.src) vid.src = realVidSrc;
+            }
+            if (vid.src) {
               img.style.display = 'none';
-              v.style.display = 'block';
-              v.play().catch(()=>{});
+              vid.style.display = 'block';
+              vid.play().catch(()=>{});
             }
           });
           thumb.addEventListener('mouseleave', () => {
-            const v = thumb.querySelector('video');
-            if(v && v.src){
-              v.pause();
-              v.style.display = 'none';
+            if (vid.src) {
+              vid.pause();
+              vid.style.display = 'none';
               img.style.display = 'block';
             }
           });
 
-          // click on thumb toggles play for touch devices; prevent bubbling to card click
+          // click toggles video play on touch devices and prevents navigating to detail
           thumb.addEventListener('click', (ev) => {
             ev.stopPropagation();
-            // ensure loaded then toggle
-            ensureLoadThumbMedia(thumb);
-            const v = thumb.querySelector('video');
-            if(!v) return;
-            if(!v.src) return; // nothing to toggle
-            if (v.paused){
+            const realVidSrc = vid.getAttribute('data-src');
+            if (realVidSrc && realVidSrc !== 'PLACEHOLDER_VIDEO' && !vid.src) vid.src = realVidSrc;
+            if (!vid.src) return;
+            if (vid.paused) {
               img.style.display = 'none';
-              v.style.display = 'block';
-              v.play().catch(()=>{});
+              vid.style.display = 'block';
+              vid.play().catch(()=>{});
             } else {
-              v.pause();
-              v.style.display = 'none';
+              vid.pause();
+              vid.style.display = 'none';
               img.style.display = 'block';
             }
           });
@@ -431,6 +501,7 @@ function renderProjects(){
   // start first batch
   renderBatch();
 }
+
 
 
   function openDetail(id){
