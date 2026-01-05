@@ -5,7 +5,7 @@
   "shortDesc_es": "Breve descripción de Samurai Blade : Rock, Paper & Scissors",
   "shortDesc_en": "Short description for Samurai Blade : Rock, Paper & Scissors",
   "longDesc_es": "Descripción larga de Samurai Blade : Rock, Paper & Scissors.",
-  "longDesc_en": "Long description for Samurai Blade : Rock, Paper & Scissors.",
+  "longDesc_en": "Samurai Blade: Rock, Paper & Scissors is an action arcade title that reimagines the classic Rock-Paper-Scissors showdown in a stylized feudal Japan setting.",
   "media": [
     {
       "type": "video",
@@ -30,7 +30,7 @@
     }
   ],
   "links": {
-    "itch": "",
+    "itch": "https://lexanos.itch.io/samuraiblade",
     "download": ""
   },
   "tags": [
