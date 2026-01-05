@@ -1,12 +1,40 @@
 {
   "id": "llamagedon",
   "title": "LLamagedon",
-  "year": 0,
-  "tags": ["arcade", "meme", "shooter"],
-  "platform": ["Web"],
-  "engine": "Unity",
+  "year": 2020,
+  "shortDesc_es": "Breve descripción de Samurai Blade : Rock, Paper & Scissors",
+  "shortDesc_en": "Short description for Samurai Blade : Rock, Paper & Scissors",
+  "longDesc_es": "El año 2020 tiene nuevas y catastróficas sorpresas para la humanidad, pero la Argentina está preparada.",
+  "longDesc_en": "Samurai Blade: Rock, Paper & Scissors is an action arcade title that reimagines the classic Rock-Paper-Scissors showdown in a stylized feudal Japan setting.",
+  "media": [
+    {
+      "type": "video",
+      "src": "PLACEHOLDER_VIDEO",
+      "poster": "projects/samuraiblade/poster.png"
+    },
+    {
+      "type": "image",
+      "src": "projects/samuraiblade/ss (1).jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/samuraiblade/ss (2).jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/samuraiblade/ss (3).jpg"
+    },
+    {
+      "type": "image",
+      "src": "projects/samuraiblade/ss (1).png"
+    }
+  ],
   "links": {
-    "itch": "",
+    "itch": "https://lexanos.itch.io/llamageddon",
     "download": ""
-  }
+  },
+  "tags": [
+    "Web"
+  ],
+  "engine": ["Unity"]
 }
