@@ -1,10 +1,10 @@
 {
-  "id": "",
-  "title": "",
+  "id": "llamagedon",
+  "title": "LLamagedon",
   "year": 0,
-  "tags": ["", ""],
-  "platform": [""],
-  "engine": "",
+  "tags": ["arcade", "meme", "shooter"],
+  "platform": ["Web"],
+  "engine": "Unity",
   "links": {
     "itch": "",
     "download": ""
